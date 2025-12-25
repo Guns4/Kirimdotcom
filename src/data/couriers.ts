@@ -10,6 +10,7 @@ export interface CourierService {
     description: string
     estimatedDays: string
     logoUrl: string
+    price?: number
 }
 
 export const courierList = [
@@ -55,7 +56,7 @@ export function calculateShippingRate(
     originId: string,
     destinationId: string,
     weight: number
-): CourierService[] {
+): Array<CourierService & { price: number }> {
     // Base rate calculation (mockup)
     const baseRate = 10000
     const weightFactor = Math.ceil(weight / 1000) * 2000
@@ -148,7 +149,7 @@ export function calculateShippingRate(
     return rates.map((service, index) => ({
         ...service,
         price: baseRate + weightFactor + distanceFactor + index * 3000,
-    })) as any
+    }))
 }
 
 // Mock tracking data
