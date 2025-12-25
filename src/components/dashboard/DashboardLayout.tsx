@@ -1,0 +1,145 @@
+'use client'
+
+import { ReactNode } from 'react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { createClient } from '@/utils/supabase/client'
+import {
+    LayoutDashboard,
+    History,
+    Settings,
+    Shield,
+    LogOut,
+    Crown,
+} from 'lucide-react'
+import type { Profile } from '@/types/database.types'
+
+interface DashboardLayoutProps {
+    children: ReactNode
+    user: {
+        email: string
+        id: string
+    }
+    profile: Profile | null
+}
+
+export function DashboardLayout({ children, user, profile }: DashboardLayoutProps) {
+    const pathname = usePathname()
+    const router = useRouter()
+    const supabase = createClient()
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        router.push('/')
+        router.refresh()
+    }
+
+    const menuItems = [
+        {
+            href: '/dashboard',
+            label: 'Overview',
+            icon: LayoutDashboard,
+            exact: true,
+        },
+        {
+            href: '/dashboard/history',
+            label: 'Riwayat',
+            icon: History,
+        },
+        {
+            href: '/dashboard/settings',
+            label: 'Pengaturan',
+            icon: Settings,
+        },
+    ]
+
+    // Add admin menu if user is admin
+    if (profile?.role === 'admin') {
+        menuItems.push({
+            href: '/dashboard/admin',
+            label: 'Admin Panel',
+            icon: Shield,
+        })
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-900">
+            <div className="flex">
+                {/* Sidebar */}
+                <motion.aside
+                    initial={{ x: -300 }}
+                    animate={{ x: 0 }}
+                    className="w-64 min-h-screen bg-gray-900/50 backdrop-blur-xl border-r border-white/10 p-6"
+                >
+                    {/* User Info */}
+                    <div className="mb-8">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                                {user.email.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-white font-semibold truncate">{user.email}</p>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-400 capitalize">
+                                        {profile?.role || 'user'}
+                                    </span>
+                                    {profile?.subscription_status === 'active' && (
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-bold rounded-full">
+                                            <Crown className="w-3 h-3" />
+                                            PRO
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="space-y-2">
+                        {menuItems.map((item) => {
+                            const Icon = item.icon
+                            const isActive = item.exact
+                                ? pathname === item.href
+                                : pathname.startsWith(item.href)
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                                            ? 'bg-indigo-600 text-white'
+                                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                        }`}
+                                >
+                                    <Icon className="w-5 h-5" />
+                                    <span className="font-medium">{item.label}</span>
+                                </Link>
+                            )
+                        })}
+                    </nav>
+
+                    {/* Logout Button */}
+                    <button
+                        onClick={handleLogout}
+                        className="w-full mt-8 flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
+                    >
+                        <LogOut className="w-5 h-5" />
+                        <span className="font-medium">Keluar</span>
+                    </button>
+                </motion.aside>
+
+                {/* Main Content */}
+                <main className="flex-1 p-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        {children}
+                    </motion.div>
+                </main>
+            </div>
+        </div>
+    )
+}

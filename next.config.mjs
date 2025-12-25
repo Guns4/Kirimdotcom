@@ -1,19 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        remotePatterns: [
+    // PWA Manifest
+    async headers() {
+        return [
             {
-                protocol: 'https',
-                hostname: '**',
+                source: '/manifest.json',
+                headers: [
+                    {
+                        key: 'Content-Type',
+                        value: 'application/manifest+json',
+                    },
+                ],
             },
-        ],
+        ]
     },
-    eslint: {
-        ignoreDuringBuilds: false,
-    },
-    typescript: {
-        ignoreBuildErrors: false,
-    },
-};
 
-export default nextConfig;
+    // Image optimization
+    images: {
+        domains: [
+            'onkmywglrpjqulhephkf.supabase.co', // Supabase storage
+        ],
+        formats: ['image/webp', 'image/avif'],
+    },
+
+    // Performance optimizations
+    compress: true,
+    poweredByHeader: false,
+}
+
+export default nextConfig

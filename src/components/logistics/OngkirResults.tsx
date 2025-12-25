@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { CheckOngkirResult, generateAIInsight } from '@/app/actions/logistics'
 import { Truck, Clock, AlertCircle, Sparkles } from 'lucide-react'
 import Image from 'next/image'
+import { AdPlaceholder } from '@/components/ads/AdPlaceholder'
+import { AffiliateButton } from '@/components/affiliate/AffiliateButton'
 
 interface OngkirResultsProps {
     result: CheckOngkirResult
@@ -70,69 +72,75 @@ export function OngkirResults({ result }: OngkirResultsProps) {
                 </h3>
             </div>
 
+            {/* Ad Placement - Top */}
+            <AdPlaceholder slot="top" />
+
             {/* Results Grid */}
             <div className="grid gap-4">
                 {result.data.map((service, index) => (
-                    <motion.div
-                        key={service.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        className="glass-card p-5 hover:border-indigo-500/50 transition-all cursor-pointer group"
-                    >
-                        <div className="flex items-center justify-between gap-4">
-                            {/* Courier Info */}
-                            <div className="flex items-center gap-4 flex-1">
-                                {/* Logo placeholder */}
-                                <div className="w-16 h-16 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-colors">
-                                    <Truck className="w-8 h-8 text-indigo-400" />
-                                </div>
+                    <>
+                        <motion.div
+                            key={service.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            className="glass-card p-5 hover:border-indigo-500/50 transition-all cursor-pointer group"
+                        >
+                            <div className="flex items-center justify-between gap-4">
+                                {/* Courier Info */}
+                                <div className="flex items-center gap-4 flex-1">
+                                    {/* Logo placeholder */}
+                                    <div className="w-16 h-16 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-colors">
+                                        <Truck className="w-8 h-8 text-indigo-400" />
+                                    </div>
 
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-white text-lg">
-                                        {service.courier}
-                                    </h4>
-                                    <p className="text-sm text-gray-400">{service.service}</p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span
-                                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${service.serviceType === 'Express'
+                                    <div className="flex-1">
+                                        <h4 className="font-bold text-white text-lg">
+                                            {service.courier}
+                                        </h4>
+                                        <p className="text-sm text-gray-400">{service.service}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span
+                                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${service.serviceType === 'Express'
                                                     ? 'bg-orange-500/20 text-orange-300'
                                                     : 'bg-blue-500/20 text-blue-300'
-                                                }`}
-                                        >
-                                            {service.serviceType}
-                                        </span>
+                                                    }`}
+                                            >
+                                                {service.serviceType}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Price & Estimate */}
+                                <div className="text-right flex-shrink-0">
+                                    <div className="text-2xl font-bold text-white mb-1">
+                                        Rp {(service as any).price.toLocaleString('id-ID')}
+                                    </div>
+                                    <div className="flex items-center gap-1 text-sm text-gray-400">
+                                        <Clock className="w-4 h-4" />
+                                        <span>{service.estimatedDays}</span>
+                                    </div>
+                                </div>
+
+                                {/* Affiliate Button */}
+                                <AffiliateButton
+                                    courier={service.courierCode}
+                                    service={service.service}
+                                    price={(service as any).price}
+                                />
                             </div>
 
-                            {/* Price & Estimate */}
-                            <div className="text-right flex-shrink-0">
-                                <div className="text-2xl font-bold text-white mb-1">
-                                    Rp {(service as any).price.toLocaleString('id-ID')}
-                                </div>
-                                <div className="flex items-center gap-1 text-sm text-gray-400">
-                                    <Clock className="w-4 h-4" />
-                                    <span>{service.estimatedDays}</span>
-                                </div>
-                            </div>
+                            {/* Description */}
+                            <p className="mt-3 text-sm text-gray-400 border-t border-white/5 pt-3">
+                                {service.description}
+                            </p>
+                        </motion.div>
 
-                            {/* Action Button */}
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
-                            >
-                                Pilih
-                            </motion.button>
-                        </div>
-
-                        {/* Description */}
-                        <p className="mt-3 text-sm text-gray-400 border-t border-white/5 pt-3">
-                            {service.description}
-                        </p>
-                    </motion.div>
+                        {/* Ad Placement - Middle (after 3rd item) */}
+                        {index === 2 && <AdPlaceholder slot="middle" key={`ad-${index}`} />}
+                    </>
                 ))}
             </div>
         </div>

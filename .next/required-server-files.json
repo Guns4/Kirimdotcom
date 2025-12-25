@@ -24,7 +24,7 @@
       "jsx",
       "js"
     ],
-    "poweredByHeader": true,
+    "poweredByHeader": false,
     "compress": true,
     "images": {
       "deviceSizes": [
@@ -50,21 +50,19 @@
       "path": "/_next/image",
       "loader": "default",
       "loaderFile": "",
-      "domains": [],
+      "domains": [
+        "onkmywglrpjqulhephkf.supabase.co"
+      ],
       "disableStaticImages": false,
       "minimumCacheTTL": 60,
       "formats": [
-        "image/webp"
+        "image/webp",
+        "image/avif"
       ],
       "dangerouslyAllowSVG": false,
       "contentSecurityPolicy": "script-src 'none'; frame-src 'none'; sandbox;",
       "contentDispositionType": "attachment",
-      "remotePatterns": [
-        {
-          "protocol": "https",
-          "hostname": "**"
-        }
-      ],
+      "remotePatterns": [],
       "unoptimized": false
     },
     "devIndicators": {
