@@ -8,6 +8,7 @@
 -- Add XP and rank columns to profiles table
 ALTER TABLE profiles
 ADD COLUMN IF NOT EXISTS xp_points INTEGER DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS display_name TEXT,
     ADD COLUMN IF NOT EXISTS current_rank VARCHAR(50) DEFAULT 'Scout',
     ADD COLUMN IF NOT EXISTS rank_updated_at TIMESTAMP DEFAULT NOW(),
     ADD COLUMN IF NOT EXISTS premium_expires_at TIMESTAMP DEFAULT NULL;
