@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
     title: "CekKirim - Cek Ongkir & Lacak Resi Pengiriman",
-    description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia. JNE, J&T, SiCepat, AnterAja & lebih banyak lagi!",
+    description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia",
     keywords: ["cek ongkir", "lacak resi", "pengiriman", "ekspedisi", "indonesia", "JNE", "J&T", "SiCepat"],
     icons: {
         icon: [
