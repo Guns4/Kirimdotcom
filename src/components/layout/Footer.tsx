@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Mail, ArrowRight, TrendingUp } from 'lucide-react';
 import { popularRoutes } from '@/data/popular-routes';
+import { LiteModeToggle } from '../ui/LiteModeToggle';
 
 // Top 8 routes for footer
 const topRoutes = popularRoutes.slice(0, 8);
@@ -80,6 +81,9 @@ export default function Footer() {
                             >
                                 <Mail className="w-5 h-5" />
                             </a>
+                        </div>
+                        <div className="mt-6 inline-block">
+                            <LiteModeToggle />
                         </div>
                     </div>
 

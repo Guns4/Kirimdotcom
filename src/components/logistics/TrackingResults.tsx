@@ -10,6 +10,7 @@ import { ComplaintGenerator } from '../ai/ComplaintGenerator'
 import { ShareButton } from '../share/ShareButton'
 import { WhatsAppShareButton } from '../tools/WhatsAppShareButton'
 import { CourierReviewForm } from '../reviews/CourierReviewForm'
+import { useLiteMode } from '@/context/LiteModeContext'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -17,6 +18,7 @@ interface TrackingResultsProps {
 }
 
 export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
+    const { isLiteMode } = useLiteMode()
     const [showReviewForm, setShowReviewForm] = useState(false)
 
     if (!result.success) {
@@ -51,9 +53,9 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             {/* AI Insight */}
             <motion.div
                 initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                animate={isLiteMode ? false : { opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass-card p-4 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border-purple-500/30"
+                className={isLiteMode ? "bg-white p-4 mb-6 border border-purple-100 shadow-sm rounded-xl" : "glass-card p-4 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border-purple-500/30"}
             >
                 <div className="flex items-start gap-3">
                     <Sparkles className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
@@ -72,8 +74,8 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             {/* Package Info Card */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass-card p-6"
+                animate={isLiteMode ? false : { opacity: 1, y: 0 }}
+                className={isLiteMode ? "bg-white p-6 border border-gray-200 shadow-sm rounded-xl" : "glass-card p-6"}
             >
                 <div className="flex items-center justify-between mb-4">
                     <div>
@@ -139,9 +141,9 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             {/* Tracking Timeline */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={isLiteMode ? false : { opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass-card p-6"
+                className={isLiteMode ? "bg-white p-6 border border-gray-200 shadow-sm rounded-xl" : "glass-card p-6"}
             >
                 <h3 className="text-lg font-semibold text-white mb-6">Riwayat Tracking</h3>
 
