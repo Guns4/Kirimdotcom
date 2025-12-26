@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/ai/generate-advice/route": "/api/ai/generate-advice",
+  "/auth/callback/route": "/auth/callback",
+  "/api/site-settings/route": "/api/site-settings",
+  "/dashboard/admin/page": "/dashboard/admin",
+  "/dashboard/history/page": "/dashboard/history",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/settings/page": "/dashboard/settings",
+  "/login/page": "/login",
+  "/page": "/",
+  "/register/page": "/register",
+  "/api/og/route": "/api/og"
+}
