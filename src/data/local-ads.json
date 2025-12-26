@@ -1,0 +1,230 @@
+{
+    "ads": [
+        {
+            "id": "bali-001",
+            "keywords": [
+                "bali",
+                "denpasar",
+                "badung",
+                "gianyar",
+                "ubud",
+                "kuta",
+                "seminyak"
+            ],
+            "title": "🏍️ Rental Motor Bali Murah",
+            "description": "Sewa motor harian mulai Rp 50.000. Antar ke bandara!",
+            "cta": "Pesan Sekarang",
+            "url": "https://example.com/rental-motor-bali?ref=cekkirim",
+            "image": "/images/ads/rental-motor-bali.jpg",
+            "bgColor": "from-orange-600 to-red-600",
+            "priority": 100
+        },
+        {
+            "id": "bali-002",
+            "keywords": [
+                "bali",
+                "denpasar",
+                "badung"
+            ],
+            "title": "🎁 Oleh-oleh Khas Bali",
+            "description": "Pie susu, kacang & keripik. Gratis ongkir!",
+            "cta": "Beli Sekarang",
+            "url": "https://tokopedia.link/oleh-oleh-bali?ref=cekkirim",
+            "image": "/images/ads/oleh-bali.jpg",
+            "bgColor": "from-green-600 to-teal-600",
+            "priority": 90
+        },
+        {
+            "id": "yogya-001",
+            "keywords": [
+                "yogyakarta",
+                "jogja",
+                "sleman",
+                "bantul",
+                "gunung kidul"
+            ],
+            "title": "🏨 Hotel Murah di Jogja",
+            "description": "Mulai Rp 150.000/malam. Dekat Malioboro!",
+            "cta": "Booking Sekarang",
+            "url": "https://example.com/hotel-jogja?ref=cekkirim",
+            "image": "/images/ads/hotel-jogja.jpg",
+            "bgColor": "from-purple-600 to-indigo-600",
+            "priority": 100
+        },
+        {
+            "id": "yogya-002",
+            "keywords": [
+                "yogyakarta",
+                "jogja"
+            ],
+            "title": "🍫 Bakpia & Gudeg Khas Jogja",
+            "description": "Oleh-oleh legendaris dengan harga terjangkau",
+            "cta": "Pesan Online",
+            "url": "https://shopee.co.id/bakpia-jogja?ref=cekkirim",
+            "image": "/images/ads/bakpia.jpg",
+            "bgColor": "from-amber-600 to-orange-600",
+            "priority": 85
+        },
+        {
+            "id": "bandung-001",
+            "keywords": [
+                "bandung",
+                "cimahi",
+                "lembang"
+            ],
+            "title": "☕ Factory Outlet Bandung",
+            "description": "Diskon hingga 70%! Belanja fashion branded",
+            "cta": "Lihat Katalog",
+            "url": "https://example.com/fo-bandung?ref=cekkirim",
+            "image": "/images/ads/fo-bandung.jpg",
+            "bgColor": "from-pink-600 to-rose-600",
+            "priority": 95
+        },
+        {
+            "id": "bandung-002",
+            "keywords": [
+                "bandung"
+            ],
+            "title": "🧀 Batagor & Brownies Bandung",
+            "description": "Jajanan khas Bandung, kirim ke seluruh Indonesia",
+            "cta": "Order Sekarang",
+            "url": "https://tokopedia.link/batagor-bandung?ref=cekkirim",
+            "image": "/images/ads/batagor.jpg",
+            "bgColor": "from-yellow-600 to-amber-600",
+            "priority": 80
+        },
+        {
+            "id": "surabaya-001",
+            "keywords": [
+                "surabaya",
+                "sidoarjo",
+                "gresik"
+            ],
+            "title": "🦐 Krupuk Udang Surabaya",
+            "description": "Langsung dari produsen. Harga grosir!",
+            "cta": "Beli Grosir",
+            "url": "https://shopee.co.id/krupuk-surabaya?ref=cekkirim",
+            "image": "/images/ads/krupuk.jpg",
+            "bgColor": "from-blue-600 to-cyan-600",
+            "priority": 90
+        },
+        {
+            "id": "medan-001",
+            "keywords": [
+                "medan",
+                "deli serdang",
+                "binjai"
+            ],
+            "title": "🧁 Bika Ambon Medan",
+            "description": "Asli Medan! Lembut dan wangi pandan",
+            "cta": "Pesan Online",
+            "url": "https://tokopedia.link/bika-ambon?ref=cekkirim",
+            "image": "/images/ads/bika-ambon.jpg",
+            "bgColor": "from-lime-600 to-green-600",
+            "priority": 90
+        },
+        {
+            "id": "makassar-001",
+            "keywords": [
+                "makassar",
+                "maros",
+                "gowa"
+            ],
+            "title": "🥧 Jalangkote & Coto Makassar",
+            "description": "Kuliner khas Sulawesi Selatan",
+            "cta": "Order Sekarang",
+            "url": "https://shopee.co.id/coto-makassar?ref=cekkirim",
+            "image": "/images/ads/coto.jpg",
+            "bgColor": "from-red-600 to-pink-600",
+            "priority": 85
+        },
+        {
+            "id": "solo-001",
+            "keywords": [
+                "solo",
+                "surakarta",
+                "karanganyar",
+                "boyolali"
+            ],
+            "title": "👗 Batik Solo Asli",
+            "description": "Motif klasik & modern. Kualitas premium!",
+            "cta": "Lihat Koleksi",
+            "url": "https://tokopedia.link/batik-solo?ref=cekkirim",
+            "image": "/images/ads/batik-solo.jpg",
+            "bgColor": "from-amber-700 to-yellow-600",
+            "priority": 95
+        },
+        {
+            "id": "malang-001",
+            "keywords": [
+                "malang",
+                "batu"
+            ],
+            "title": "🍎 Apel Malang Segar",
+            "description": "Langsung dari petani. Manis & segar!",
+            "cta": "Beli Sekarang",
+            "url": "https://tokopedia.link/apel-malang?ref=cekkirim",
+            "image": "/images/ads/apel-malang.jpg",
+            "bgColor": "from-red-500 to-rose-600",
+            "priority": 90
+        },
+        {
+            "id": "palembang-001",
+            "keywords": [
+                "palembang",
+                "ogan ilir"
+            ],
+            "title": "🍢 Pempek Palembang Asli",
+            "description": "Cuko khas Palembang. Frozen, tahan lama!",
+            "cta": "Order Online",
+            "url": "https://shopee.co.id/pempek-palembang?ref=cekkirim",
+            "image": "/images/ads/pempek.jpg",
+            "bgColor": "from-orange-500 to-red-500",
+            "priority": 95
+        },
+        {
+            "id": "semarang-001",
+            "keywords": [
+                "semarang",
+                "kendal",
+                "demak"
+            ],
+            "title": "🍩 Lumpia Semarang",
+            "description": "Renyah & gurih. Cocok untuk oleh-oleh!",
+            "cta": "Pesan Sekarang",
+            "url": "https://tokopedia.link/lumpia-semarang?ref=cekkirim",
+            "image": "/images/ads/lumpia.jpg",
+            "bgColor": "from-yellow-500 to-orange-500",
+            "priority": 90
+        }
+    ],
+    "defaultAds": [
+        {
+            "id": "default-001",
+            "title": "📦 Gratis Ongkir Shopee",
+            "description": "Belanja hemat dengan voucher gratis ongkir!",
+            "cta": "Klaim Voucher",
+            "url": "https://shopee.co.id?ref=cekkirim",
+            "bgColor": "from-orange-500 to-red-500",
+            "priority": 50
+        },
+        {
+            "id": "default-002",
+            "title": "🛒 Flash Sale Tokopedia",
+            "description": "Diskon hingga 90%! Hanya hari ini",
+            "cta": "Lihat Promo",
+            "url": "https://tokopedia.link/flash-sale?ref=cekkirim",
+            "bgColor": "from-green-500 to-emerald-500",
+            "priority": 50
+        },
+        {
+            "id": "default-003",
+            "title": "💼 Packing Supplies Murah",
+            "description": "Bubble wrap, kardus, lakban. Harga grosir!",
+            "cta": "Beli Sekarang",
+            "url": "https://tokopedia.link/packing-supplies?ref=cekkirim",
+            "bgColor": "from-blue-500 to-indigo-500",
+            "priority": 60
+        }
+    ]
+}
