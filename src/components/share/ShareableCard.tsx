@@ -50,9 +50,11 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                 {/* Header with Logo */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                            <Package className="w-6 h-6 text-white" />
-                        </div>
+                        <img
+                            src="/logo.png"
+                            alt="CekKirim Logo"
+                            className="w-10 h-10 object-contain"
+                        />
                         <div>
                             <h1 className="text-2xl font-bold">CekKirim</h1>
                             <p className="text-xs text-white/70">Tracking Made Easy</p>
@@ -67,8 +69,8 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                 {/* Status Badge */}
                 <div className="mb-6">
                     <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${isDelivered
-                            ? 'bg-green-500'
-                            : 'bg-yellow-500'
+                        ? 'bg-green-500'
+                        : 'bg-yellow-500'
                         }`}>
                         {isDelivered && <CheckCircle2 className="w-6 h-6" />}
                         <span className="text-xl font-bold">

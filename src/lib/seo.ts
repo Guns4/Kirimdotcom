@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: 'website',
         locale: 'id_ID',
-        url: 'https://kirimdotcom.vercel.app',
+        url: 'https://www.cekkirim.com',
         title: 'CekKirim - Cek Resi & Ongkir Semua Ekspedisi',
         description:
             'Cek resi paket dan ongkir termurah semua ekspedisi Indonesia. JNE, J&T, SiCepat, AnterAja & lebih banyak lagi!',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
         images: ['/og-image.png'],
     },
     alternates: {
-        canonical: 'https://kirimdotcom.vercel.app',
+        canonical: 'https://www.cekkirim.com',
     },
     verification: {
         google: 'your-google-verification-code', // TODO: Add from Google Search Console
@@ -57,8 +57,8 @@ export function generateWebsiteSchema() {
         },
         description:
             'Platform untuk mengecek resi paket dan tarif ongkir semua ekspedisi Indonesia',
-        url: 'https://kirimdotcom.vercel.app',
-        image: 'https://kirimdotcom.vercel.app/og-image.png',
+        url: 'https://www.cekkirim.com',
+        image: 'https://www.cekkirim.com/og-image.png',
         aggregateRating: {
             '@type': 'AggregateRating',
             ratingValue: '4.8',
@@ -79,8 +79,8 @@ export function generateOrganizationSchema() {
         '@context': 'https://schema.org',
         '@type': 'Organization',
         name: 'CekKirim',
-        url: 'https://kirimdotcom.vercel.app',
-        logo: 'https://kirimdotcom.vercel.app/logo.png',
+        url: 'https://www.cekkirim.com',
+        logo: 'https://www.cekkirim.com/logo.png',
         description: 'Platform terpercaya untuk cek resi dan ongkir di Indonesia',
         sameAs: [
             // TODO: Add social media links

@@ -12,8 +12,32 @@ const inter = Inter({
 
 export const metadata: Metadata = {
     title: "CekKirim - Cek Ongkir & Lacak Resi Pengiriman",
-    description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia",
-    keywords: ["cek ongkir", "lacak resi", "pengiriman", "ekspedisi", "indonesia"],
+    description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia. JNE, J&T, SiCepat, AnterAja & lebih banyak lagi!",
+    keywords: ["cek ongkir", "lacak resi", "pengiriman", "ekspedisi", "indonesia", "JNE", "J&T", "SiCepat"],
+    icons: {
+        icon: [
+            { url: "/favicon.ico", sizes: "any" },
+            { url: "/logo.png", type: "image/png" },
+        ],
+        apple: "/logo.png",
+        shortcut: "/logo.png",
+    },
+    openGraph: {
+        title: "CekKirim - Cek Ongkir & Lacak Resi",
+        description: "Cek ongkir dan lacak resi semua kurir Indonesia",
+        images: ["/og-image.png"],
+        url: "https://www.cekkirim.com",
+        siteName: "CekKirim",
+        type: "website",
+        locale: "id_ID",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "CekKirim - Cek Ongkir & Lacak Resi",
+        description: "Cek ongkir dan lacak resi semua kurir Indonesia",
+        images: ["/og-image.png"],
+    },
+    manifest: "/manifest.json",
 };
 
 export default function RootLayout({

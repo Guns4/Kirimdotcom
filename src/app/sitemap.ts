@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://kirimdotcom.vercel.app'
+    const baseUrl = 'https://www.cekkirim.com'
 
     // Core pages
     const routes = [

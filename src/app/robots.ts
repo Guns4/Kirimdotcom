@@ -18,6 +18,6 @@ export default function robots(): MetadataRoute.Robots {
                 disallow: ['/dashboard/admin'],
             },
         ],
-        sitemap: 'https://kirimdotcom.vercel.app/sitemap.xml',
+        sitemap: 'https://www.cekkirim.com/sitemap.xml',
     }
 }
