@@ -6,6 +6,7 @@ import { Package, MapPin, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-rea
 import { ErrorState } from './ErrorState'
 import { ShippingInsight } from '../ai/ShippingInsight'
 import { ComplaintGenerator } from '../ai/ComplaintGenerator'
+import { ShareButton } from '../share/ShareButton'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -95,9 +96,10 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             {/* AI Shipping Insight - Auto-detects stuck packages */}
             <ShippingInsight trackingData={data} />
 
-            {/* Complaint Generator Button */}
-            <div className="flex justify-center">
+            {/* Action Buttons */}
+            <div className="flex gap-2 justify-center flex-wrap">
                 <ComplaintGenerator trackingData={data} />
+                <ShareButton trackingData={data} />
             </div>
 
             {/* Tracking Timeline */}

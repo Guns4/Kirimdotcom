@@ -11,11 +11,14 @@
     "dependencies": {
         "@supabase/ssr": "^0.8.0",
         "@supabase/supabase-js": "^2.89.0",
+        "@vercel/og": "^0.8.6",
         "clsx": "^2.1.1",
         "framer-motion": "^11.18.2",
+        "html2canvas": "^1.4.1",
         "lucide-react": "^0.462.0",
         "next": "^15.1.0",
         "next-pwa": "^5.6.0",
+        "qrcode": "^1.5.4",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-select": "^5.10.2",
@@ -23,6 +26,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.10.2",
+        "@types/qrcode": "^1.5.6",
         "@types/react": "^19.0.1",
         "@types/react-dom": "^19.0.2",
         "autoprefixer": "^10.4.20",
