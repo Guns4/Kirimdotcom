@@ -1,4 +1,5 @@
 {
+  "/api/ai/generate-advice/route": "/api/ai/generate-advice",
   "/_not-found/page": "/_not-found",
   "/auth/callback/route": "/auth/callback",
   "/api/site-settings/route": "/api/site-settings",

@@ -1,12 +1,20 @@
 {
-    "name": "CekKirim",
+    "name": "CekKirim - Lacak Paket Semua Kurir Indonesia",
     "short_name": "CekKirim",
-    "description": "Platform untuk cek resi paket dan ongkir termurah semua ekspedisi Indonesia",
+    "description": "Platform untuk cek resi paket dan ongkir termurah semua ekspedisi Indonesia dengan AI Assistant",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0f172a",
     "theme_color": "#6366f1",
     "orientation": "portrait",
+    "scope": "/",
+    "lang": "id",
+    "dir": "ltr",
+    "categories": [
+        "utilities",
+        "productivity",
+        "shopping"
+    ],
     "icons": [
         {
             "src": "/icon-192.png",
@@ -21,17 +29,40 @@
             "purpose": "any maskable"
         }
     ],
-    "categories": [
-        "utilities",
-        "productivity"
-    ],
-    "lang": "id",
-    "dir": "ltr",
     "screenshots": [
         {
-            "src": "/screenshot-1.png",
-            "sizes": "540x720",
-            "type": "image/png"
+            "src": "/screenshot-mobile.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow"
         }
-    ]
+    ],
+    "shortcuts": [
+        {
+            "name": "Cek Resi",
+            "short_name": "Resi",
+            "description": "Lacak paket dengan nomor resi",
+            "url": "/?tab=resi",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Cek Ongkir",
+            "short_name": "Ongkir",
+            "description": "Hitung tarif pengiriman",
+            "url": "/?tab=ongkir",
+            "icons": [
+                {
+                    "src": "/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
 }

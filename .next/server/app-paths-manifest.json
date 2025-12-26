@@ -1,4 +1,5 @@
 {
+  "/api/ai/generate-advice/route": "app/api/ai/generate-advice/route.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/auth/callback/route": "app/auth/callback/route.js",
   "/api/site-settings/route": "app/api/site-settings/route.js",

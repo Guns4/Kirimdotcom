@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { TrackResiResult, generateAIInsight } from '@/app/actions/logistics'
 import { Package, MapPin, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react'
 import { ErrorState } from './ErrorState'
+import { ShippingInsight } from '../ai/ShippingInsight'
+import { ComplaintGenerator } from '../ai/ComplaintGenerator'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -89,6 +91,14 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
                     </div>
                 </div>
             </motion.div>
+
+            {/* AI Shipping Insight - Auto-detects stuck packages */}
+            <ShippingInsight trackingData={data} />
+
+            {/* Complaint Generator Button */}
+            <div className="flex justify-center">
+                <ComplaintGenerator trackingData={data} />
+            </div>
 
             {/* Tracking Timeline */}
             <motion.div
