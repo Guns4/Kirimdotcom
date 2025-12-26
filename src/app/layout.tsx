@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { LiteModeProvider } from "@/context/LiteModeContext";
+import { SystemStatusProvider } from "@/context/SystemStatusContext";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -49,13 +50,15 @@ export default function RootLayout({
     return (
         <html lang="id" className={inter.variable}>
             <body className="font-sans antialiased min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
-                <LiteModeProvider>
-                    <Navbar />
-                    <main className="flex-1">
-                        {children}
-                    </main>
-                    <Footer />
-                </LiteModeProvider>
+                <SystemStatusProvider>
+                    <LiteModeProvider>
+                        <Navbar />
+                        <main className="flex-1">
+                            {children}
+                        </main>
+                        <Footer />
+                    </LiteModeProvider>
+                </SystemStatusProvider>
             </body>
         </html>
     );

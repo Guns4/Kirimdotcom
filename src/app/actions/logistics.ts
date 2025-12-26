@@ -14,6 +14,7 @@ import {
     setCachedOngkir,
 } from '@/lib/cache/logistics'
 import { createClient } from '@/utils/supabase/server'
+import { getOfficialFallbackUrl } from '@/lib/courier-links'
 
 // ============================================
 // SERVER ACTION: Check Shipping Rates
@@ -198,7 +199,9 @@ export interface TrackResiResult {
         history: TrackingHistory[]
     }
     error?: string
-    errorType?: 'not-found' | 'rate-limit' | 'network' | 'general'
+    errorType?: 'not-found' | 'rate-limit' | 'network' | 'general' | 'system_error'
+    officialUrl?: string
+    courier?: string
     fromCache?: boolean
 }
 
@@ -281,12 +284,25 @@ export async function trackResi(
             data: trackingData,
             fromCache: false,
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('trackResi error:', error)
 
-        // Determine error type
-        let errorType: 'not-found' | 'rate-limit' | 'network' | 'general' = 'general'
-        if (isNotFoundError(error)) {
+        // Determine error type and valid fallback
+        let errorType: 'not-found' | 'rate-limit' | 'network' | 'general' | 'system_error' = 'general'
+
+        // Check for specific error patterns
+        const errorMessage = typeof error === 'string' ? error.toLowerCase() : (error.message || '').toLowerCase()
+        const isSystemError =
+            errorMessage.includes('500') ||
+            errorMessage.includes('502') ||
+            errorMessage.includes('503') ||
+            errorMessage.includes('timeout') ||
+            errorMessage.includes('network') ||
+            errorMessage.includes('fetch failed')
+
+        if (isSystemError) {
+            errorType = 'system_error'
+        } else if (isNotFoundError(error)) {
             errorType = 'not-found'
         } else if (isRateLimitError(error)) {
             errorType = 'rate-limit'
@@ -294,8 +310,10 @@ export async function trackResi(
 
         return {
             success: false,
-            error: getErrorMessage(error),
+            error: isSystemError ? 'Gangguan sistem pada server ekspedisi.' : getErrorMessage(error),
             errorType,
+            courier: params.courierCode,
+            officialUrl: params.courierCode ? getOfficialFallbackUrl(params.courierCode) : undefined
         }
     }
 }

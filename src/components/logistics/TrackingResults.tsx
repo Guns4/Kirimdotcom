@@ -11,6 +11,8 @@ import { ShareButton } from '../share/ShareButton'
 import { WhatsAppShareButton } from '../tools/WhatsAppShareButton'
 import { CourierReviewForm } from '../reviews/CourierReviewForm'
 import { useLiteMode } from '@/context/LiteModeContext'
+import { useSystemStatus } from '@/context/SystemStatusContext'
+import { FailSafeFallback } from './FailSafeFallback'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -19,13 +21,25 @@ interface TrackingResultsProps {
 
 export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
     const { isLiteMode } = useLiteMode()
+    const { reportError } = useSystemStatus()
     const [showReviewForm, setShowReviewForm] = useState(false)
 
     if (!result.success) {
+        // Fail-Safe: System Error / Network Error
+        if (result.errorType === 'system_error' || result.errorType === 'network' || result.errorType === 'rate-limit') {
+            reportError() // Signal global status
+            return (
+                <FailSafeFallback
+                    courier={(result.courier || 'Ekspedisi').toUpperCase()}
+                    officialUrl={result.officialUrl || '#'}
+                />
+            )
+        }
+
         return (
             <ErrorState
                 type={result.errorType || 'general'}
-                message={result.error}
+                message={result.error || 'Terjadi kesalahan'}
                 onRetry={onRetry}
             />
         )

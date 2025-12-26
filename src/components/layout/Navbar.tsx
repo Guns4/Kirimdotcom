@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, AlertCircle } from 'lucide-react';
+import { useSystemStatus } from '@/context/SystemStatusContext';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { status } = useSystemStatus();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -25,6 +27,15 @@ export default function Navbar() {
                 : 'bg-transparent'
                 }`}
         >
+            {/* System Status Banner */}
+            {status !== 'normal' && (
+                <div className="bg-yellow-500/90 text-white text-xs py-1 px-4 text-center backdrop-blur-sm animate-fade-in">
+                    <div className="container-custom flex items-center justify-center gap-2">
+                        <AlertCircle className="w-3 h-3" />
+                        <span>Tracking API sedang mengalami gangguan intermiten. Gunakan link alternatif jika tracking gagal.</span>
+                    </div>
+                </div>
+            )}
             <div className="container-custom">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo + Brand Name */}
