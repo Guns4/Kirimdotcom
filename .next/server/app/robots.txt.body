@@ -1,0 +1,11 @@
+User-Agent: *
+Allow: /
+Disallow: /dashboard/admin
+Disallow: /api/
+Disallow: /_next/
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /dashboard/admin
+
+Sitemap: https://kirimdotcom.vercel.app/sitemap.xml

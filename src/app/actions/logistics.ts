@@ -81,7 +81,7 @@ export async function checkOngkir(
         )
 
         if (cached) {
-            console.log('✅ Cache HIT - Using cached ongkir data')
+            // Cache hit - using cached data
             return {
                 success: true,
                 data: cached.rates_json,
@@ -89,7 +89,7 @@ export async function checkOngkir(
             }
         }
 
-        console.log('❌ Cache MISS - Fetching from API')
+        // Cache miss - fetch from API
 
         // Step 2: Fetch from API
         const couriers = courierCode
@@ -220,7 +220,7 @@ export async function trackResi(
         const cached = await getCachedTracking(resiNumber, courierCode)
 
         if (cached) {
-            console.log('✅ Cache HIT - Using cached tracking data')
+            // Cache hit - using cached data
             return {
                 success: true,
                 data: cached.status_json,
@@ -228,7 +228,7 @@ export async function trackResi(
             }
         }
 
-        console.log('❌ Cache MISS - Fetching from API')
+        // Cache miss - fetch from API
 
         // Step 2: Fetch from API
         const apiResponse = await trackResiAPI(resiNumber, courierCode)
