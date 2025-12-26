@@ -1,6 +1,7 @@
 {
   "version": 1,
   "functions": {
-    "/api/og": {}
+    "/api/og": {},
+    "/api/webhooks/payment": {}
   }
 }
