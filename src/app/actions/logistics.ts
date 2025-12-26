@@ -147,10 +147,11 @@ export async function checkOngkir(
         } = await supabase.auth.getUser()
 
         if (user) {
+            // Format: originId:destinationId:weight for easy parsing in popular-routes
             await supabase.from('search_history').insert({
                 user_id: user.id,
                 type: 'ongkir',
-                query: `${originId} → ${destinationId} (${weight}g)`,
+                query: `${originId}:${destinationId}:${weight}`,
             })
         }
 
