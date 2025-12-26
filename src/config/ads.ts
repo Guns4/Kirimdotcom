@@ -3,7 +3,7 @@ export const AD_CONFIG = {
     enabled: true,
 
     // Google AdSense Publisher ID
-    publisherId: 'ca-pub-XXXXXXXXXXXXXXXX', // REPLACE WITH REAL ID
+    publisherId: 'ca-pub-5099892029462046', // REPLACE WITH REAL ID
 
     // Ad Units
     slots: {
