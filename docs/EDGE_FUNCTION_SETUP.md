@@ -285,6 +285,6 @@ curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/update-tracking \
 | Variable | Description |
 |----------|-------------|
 | `SUPABASE_URL` | Auto-provided by Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Auto-provided by Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Auto-provided by Supabase |npm
 | `BINDERBYTE_API_KEY` | Your BinderByte API key |
 | `RESEND_API_KEY` | Your Resend.com API key |
