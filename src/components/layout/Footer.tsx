@@ -107,6 +107,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/tools/kalkulator-marketplace" className="text-sm text-gray-400 hover:text-white transition-colors">
+                                    Kalkulator Marketplace
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/login" className="text-sm text-gray-400 hover:text-white transition-colors">
                                     Masuk
                                 </Link>
