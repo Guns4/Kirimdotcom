@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { LiteModeProvider } from "@/context/LiteModeContext";
 import { SystemStatusProvider } from "@/context/SystemStatusContext";
+import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -56,6 +57,7 @@ export default function RootLayout({
                         <main className="flex-1">
                             {children}
                         </main>
+                        <FeedbackWidget />
                         <Footer />
                     </LiteModeProvider>
                 </SystemStatusProvider>
