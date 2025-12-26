@@ -8,6 +8,7 @@ import { ErrorState } from './ErrorState'
 import { ShippingInsight } from '../ai/ShippingInsight'
 import { ComplaintGenerator } from '../ai/ComplaintGenerator'
 import { ShareButton } from '../share/ShareButton'
+import { WhatsAppShareButton } from '../tools/WhatsAppShareButton'
 import { CourierReviewForm } from '../reviews/CourierReviewForm'
 
 interface TrackingResultsProps {
@@ -108,6 +109,7 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             <div className="flex gap-2 justify-center flex-wrap">
                 <ComplaintGenerator trackingData={data} />
                 <ShareButton trackingData={data} />
+                <WhatsAppShareButton trackingData={data} />
 
                 {/* Review Button - Only show if delivered */}
                 {isDelivered && (
