@@ -47,6 +47,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 }
 
 
+// Validate ../../src/app/cek-ongkir/[...route]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/cek-ongkir/[...route]">> = Specific
+  const handler = {} as typeof import("../../src/app/cek-ongkir/[...route]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/dashboard/admin/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/dashboard/admin">> = Specific

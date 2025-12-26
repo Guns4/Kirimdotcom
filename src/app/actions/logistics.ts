@@ -303,10 +303,10 @@ export async function trackResi(
 // AI INSIGHT GENERATOR (Keep existing)
 // ============================================
 
-export function generateAIInsight(params: {
+export async function generateAIInsight(params: {
     type: 'ongkir' | 'resi'
     data: any
-}): string {
+}): Promise<string> {
     const { type, data } = params
 
     if (type === 'ongkir') {
