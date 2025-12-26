@@ -2,6 +2,8 @@ import { getCourierStatistics } from '@/app/actions/reviews'
 import { CourierLeaderboard } from '@/components/reviews/CourierLeaderboard'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
     title: 'Statistik & Review Kurir - CekKirim',
     description: 'Lihat rating dan review kurir pengiriman terbaik di Indonesia',

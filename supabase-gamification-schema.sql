@@ -68,6 +68,7 @@ VALUES ('Scout', 0, 50, '🔰', 'text-gray-400', '{}'),
 -- ============================================
 -- 4. XP EARNING FUNCTION
 -- ============================================
+DROP FUNCTION IF EXISTS add_user_xp(UUID, VARCHAR, INTEGER, TEXT);
 CREATE OR REPLACE FUNCTION add_user_xp(
         p_user_id UUID,
         p_activity_type VARCHAR(50),
@@ -149,6 +150,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 -- 5. CHECK USER PREMIUM STATUS
 -- ============================================
+DROP FUNCTION IF EXISTS is_user_premium(UUID);
 CREATE OR REPLACE FUNCTION is_user_premium(p_user_id UUID) RETURNS BOOLEAN AS $$
 DECLARE v_expires_at TIMESTAMP;
 BEGIN

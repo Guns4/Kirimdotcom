@@ -1,7 +1,8 @@
+
 import { MetadataRoute } from 'next'
-import { createClient } from '@/utils/supabase/server'
 import { indonesianCities } from '@/data/cities'
 import { popularRoutes } from '@/data/popular-routes'
+import { createClient } from '@supabase/supabase-js'
 
 // Helper to convert city name to slug
 function cityToSlug(cityName: string): string {
@@ -14,7 +15,7 @@ function cityToSlug(cityName: string): string {
 // Get city name by ID
 function getCityNameById(cityId: string): string {
     const city = indonesianCities.find(c => c.id === cityId)
-    return city?.name || `City-${cityId}`
+    return city?.name || `City - ${cityId} `
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -70,7 +71,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const dynamicRoutes: MetadataRoute.Sitemap = []
 
     try {
-        const supabase = await createClient()
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
 
         // Get popular routes from last 30 days
         const thirtyDaysAgo = new Date()
