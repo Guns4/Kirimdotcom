@@ -7,6 +7,7 @@ import { courierList } from '@/data/couriers'
 import { trackResi, type TrackResiResult } from '@/app/actions/logistics'
 import { TrackingResults } from './TrackingResults'
 import { Loader2, Search } from 'lucide-react'
+import { useSearchHistory } from '@/hooks/useSearchHistory'
 
 const courierOptions = courierList.map((courier) => ({
     value: courier.code,
@@ -60,6 +61,7 @@ export function CekResiForm() {
     const [waybill, setWaybill] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState<TrackResiResult | null>(null)
+    const { saveToHistory } = useSearchHistory()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -81,6 +83,14 @@ export function CekResiForm() {
                 resiNumber: waybill.trim(),
             })
             setResult(res)
+
+            if (res.success && res.data) {
+                saveToHistory({
+                    resi: res.data.resiNumber,
+                    courier: res.data.courier,
+                    last_status: res.data.currentStatus
+                })
+            }
         } catch (error) {
             setResult({
                 success: false,

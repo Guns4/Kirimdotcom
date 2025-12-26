@@ -140,7 +140,7 @@ export default function Footer() {
                 {/* Copyright */}
                 <div className="mt-8 pt-8 border-t border-white/10 text-center">
                     <p className="text-xs text-gray-500">
-                        &copy; {currentYear} CekKirim. All rights reserved. Made with ❤️ in Indonesia
+                        &copy; {currentYear} CekKirim. All rights reserved.
                     </p>
                 </div>
             </div>
