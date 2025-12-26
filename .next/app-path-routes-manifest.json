@@ -6,11 +6,12 @@
   "/sitemap.xml/route": "/sitemap.xml",
   "/api/site-settings/route": "/api/site-settings",
   "/dashboard/admin/page": "/dashboard/admin",
-  "/dashboard/settings/page": "/dashboard/settings",
-  "/page": "/",
-  "/login/page": "/login",
-  "/dashboard/page": "/dashboard",
   "/dashboard/history/page": "/dashboard/history",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/settings/page": "/dashboard/settings",
+  "/login/page": "/login",
+  "/page": "/",
   "/register/page": "/register",
+  "/statistics/page": "/statistics",
   "/api/og/route": "/api/og"
 }

@@ -1,12 +1,14 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { TrackResiResult, generateAIInsight } from '@/app/actions/logistics'
 import { Package, MapPin, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react'
 import { ErrorState } from './ErrorState'
 import { ShippingInsight } from '../ai/ShippingInsight'
 import { ComplaintGenerator } from '../ai/ComplaintGenerator'
 import { ShareButton } from '../share/ShareButton'
+import { CourierReviewForm } from '../reviews/CourierReviewForm'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -14,6 +16,8 @@ interface TrackingResultsProps {
 }
 
 export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
+    const [showReviewForm, setShowReviewForm] = useState(false)
+
     if (!result.success) {
         return (
             <ErrorState
@@ -29,6 +33,10 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
     if (!data) {
         return null
     }
+
+    // Check if package is delivered
+    const isDelivered = data.currentStatus?.toUpperCase().includes('TERKIRIM') ||
+        data.currentStatus?.toUpperCase().includes('DELIVERED')
 
     const getStatusColor = (status: string) => {
         if (status === 'DELIVERED') return 'text-green-400 bg-green-500/20'
@@ -100,7 +108,31 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             <div className="flex gap-2 justify-center flex-wrap">
                 <ComplaintGenerator trackingData={data} />
                 <ShareButton trackingData={data} />
+
+                {/* Review Button - Only show if delivered */}
+                {isDelivered && (
+                    <button
+                        onClick={() => setShowReviewForm(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-lg transition-all text-sm font-medium shadow-lg shadow-yellow-500/30"
+                    >
+                        ⭐ Beri Rating
+                    </button>
+                )}
             </div>
+
+            {/* Review Form Modal */}
+            {showReviewForm && (
+                <CourierReviewForm
+                    courierCode={data.courier}
+                    courierName={data.courier}
+                    resiNumber={data.resiNumber}
+                    onClose={() => setShowReviewForm(false)}
+                    onSuccess={() => {
+                        setShowReviewForm(false)
+                        // Could show success message here
+                    }}
+                />
+            )}
 
             {/* Tracking Timeline */}
             <motion.div

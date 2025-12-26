@@ -140,6 +140,12 @@
       "regex": "^/sitemap\\.xml(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/statistics",
+      "regex": "^/statistics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/statistics(?:/)?$"
     }
   ],
   "dataRoutes": [],
