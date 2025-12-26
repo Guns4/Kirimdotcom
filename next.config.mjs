@@ -1,4 +1,8 @@
 import withPWA from 'next-pwa'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+// Initialize next-intl plugin
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -116,4 +120,5 @@ const pwaConfig = withPWA({
     ],
 })
 
-export default pwaConfig(nextConfig)
+// Wrap with both PWA and i18n
+export default withNextIntl(pwaConfig(nextConfig))
