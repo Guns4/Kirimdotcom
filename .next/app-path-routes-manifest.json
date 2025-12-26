@@ -1,9 +1,9 @@
 {
   "/api/ai/generate-advice/route": "/api/ai/generate-advice",
+  "/_not-found/page": "/_not-found",
   "/auth/callback/route": "/auth/callback",
   "/robots.txt/route": "/robots.txt",
   "/sitemap.xml/route": "/sitemap.xml",
-  "/_not-found/page": "/_not-found",
   "/api/site-settings/route": "/api/site-settings",
   "/dashboard/admin/page": "/dashboard/admin",
   "/dashboard/history/page": "/dashboard/history",

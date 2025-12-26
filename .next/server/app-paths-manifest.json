@@ -1,9 +1,9 @@
 {
   "/api/ai/generate-advice/route": "app/api/ai/generate-advice/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/auth/callback/route": "app/auth/callback/route.js",
   "/robots.txt/route": "app/robots.txt/route.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/site-settings/route": "app/api/site-settings/route.js",
   "/dashboard/admin/page": "app/dashboard/admin/page.js",
   "/dashboard/history/page": "app/dashboard/history/page.js",
