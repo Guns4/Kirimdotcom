@@ -73,10 +73,16 @@ export function CekOngkirForm() {
         setResult(null)
 
         try {
+            // Read Custom Key from LocalStorage
+            const customKey = localStorage.getItem('rajaongkir_api_key')
+            const accountType = localStorage.getItem('rajaongkir_account_type') || 'starter'
+
             const res = await checkOngkir({
                 originId: origin.value,
                 destinationId: destination.value,
                 weight: parseInt(weight),
+                customKey: customKey || undefined,
+                accountType: accountType
             })
             setResult(res)
         } catch (error) {

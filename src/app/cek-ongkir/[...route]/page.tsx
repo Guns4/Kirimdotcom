@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { checkOngkir } from '@/app/actions/logistics'
 import { slugToDisplayName, getRouteBySlug, popularRoutes } from '@/data/popular-routes'
-import { OngkirResultsSSR } from '@/components/seo/OngkirResultsSSR'
+import { OngkirComparisonTable } from '@/components/logistics/OngkirComparisonTable'
 import { ArrowRight, MapPin, Package, TrendingDown, Clock } from 'lucide-react'
 
 interface PageProps {
@@ -70,6 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             canonical: `https://www.cekkirim.com/cek-ongkir/${resolvedParams.route.join('/')}`,
         },
     }
+}
+
+// Generate Static Params for Popular Routes
+export async function generateStaticParams() {
+    return popularRoutes.map((route) => ({
+        route: [route.originSlug + '-ke-' + route.destinationSlug],
+    }))
 }
 
 export default async function OngkirRoutePage({ params }: PageProps) {
@@ -175,14 +182,14 @@ export default async function OngkirRoutePage({ params }: PageProps) {
                     </div>
                 </div>
 
-                {/* Ongkir Results */}
+                {/* Ongkir Results Table */}
                 <section className="mb-12">
                     <h2 className="text-2xl font-bold text-white mb-6">
-                        💰 Daftar Tarif Ongkir {originName} → {destinationName}
+                        💰 Tabel Perbandingan Ongkir Lengkap
                     </h2>
 
                     {ongkirResult?.success && ongkirResult.data ? (
-                        <OngkirResultsSSR
+                        <OngkirComparisonTable
                             data={ongkirResult.data}
                             origin={originName}
                             destination={destinationName}

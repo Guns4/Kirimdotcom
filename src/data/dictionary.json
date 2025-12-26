@@ -1,0 +1,110 @@
+[
+    {
+        "term": "Manifested",
+        "slug": "manifested",
+        "definition": "Paket sudah diterima oleh kurir dan sedang menunggu untuk diberangkatkan dari gudang asal.",
+        "courier": "JNE (Umum)",
+        "related_terms": [
+            "On Process",
+            "Received at Sorting Center"
+        ],
+        "solution": "Status ini normal. Tunggu 1x24 jam untuk update berikutnya."
+    },
+    {
+        "term": "On Process",
+        "slug": "on-process",
+        "definition": "Paket sedang dalam proses pengiriman atau pemrosesan di gudang/hub.",
+        "courier": "JNE/J&T",
+        "related_terms": [
+            "Manifested",
+            "Departed"
+        ],
+        "solution": "Pantau terus. Jika lebih dari 3 hari tidak berubah, hubungi CS."
+    },
+    {
+        "term": "On Transit",
+        "slug": "on-transit",
+        "definition": "Paket sedang transit di kota lain sebelum menuju ke kota tujuan.",
+        "courier": "Umum",
+        "related_terms": [
+            "Gateway",
+            "Hub"
+        ],
+        "solution": "Wajar terjadi untuk pengiriman antar pulau atau jarak jauh."
+    },
+    {
+        "term": "Delivered",
+        "slug": "delivered",
+        "definition": "Paket sudah berhasil dikirim dan diterima oleh penerima.",
+        "courier": "Semua Kurir",
+        "related_terms": [
+            "POD",
+            "Selesai"
+        ],
+        "solution": "Jika merasa belum terima tapi status delivered, tanya tetangga atau satpam."
+    },
+    {
+        "term": "Bad Address",
+        "slug": "bad-address",
+        "definition": "Alamat tujuan tidak ditemukan atau kurang lengkap.",
+        "courier": "Semua Kurir",
+        "related_terms": [
+            "Alamat Tidak Ditemukan",
+            "Failed"
+        ],
+        "solution": "Segera hubungi CS kurir untuk revisi alamat atau patokan."
+    },
+    {
+        "term": "Crag",
+        "slug": "crag",
+        "definition": "Status khusus SiCepat yang berarti paket sedang di gudang (Cargo Area).",
+        "courier": "SiCepat",
+        "related_terms": [
+            "Manifested"
+        ],
+        "solution": "Tunggu proses selanjutnya."
+    },
+    {
+        "term": "Sprinter",
+        "slug": "sprinter",
+        "definition": "Kurir J&T yang bertugas menjemput atau mengantar paket.",
+        "courier": "J&T",
+        "related_terms": [
+            "Kurir",
+            "Driver"
+        ],
+        "solution": "-"
+    },
+    {
+        "term": "Gateway",
+        "slug": "gateway",
+        "definition": "Gudang utama di bandara atau pelabuhan tempat keluar masuknya paket antar kota/negara.",
+        "courier": "Umum",
+        "related_terms": [
+            "Hub",
+            "Sorting Center"
+        ],
+        "solution": "-"
+    },
+    {
+        "term": "With Delivery Courier",
+        "slug": "with-delivery-courier",
+        "definition": "Paket dibawa kurir untuk diantar ke alamat tujuan hari ini.",
+        "courier": "JNE/Tiki",
+        "related_terms": [
+            "Out for Delivery"
+        ],
+        "solution": "Pastikan ada orang di rumah untuk menerima paket."
+    },
+    {
+        "term": "Hold",
+        "slug": "hold",
+        "definition": "Paket ditahan di gudang karena masalah tertentu (dokumen kurang, denda, dll).",
+        "courier": "Umum",
+        "related_terms": [
+            "On Hold",
+            "Masalah"
+        ],
+        "solution": "Hubungi CS segera untuk mengetahui penyebab penahanan."
+    }
+]

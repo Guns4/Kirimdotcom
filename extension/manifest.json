@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "CekKirim - Cek Resi Cepat",
+    "version": "1.0.0",
+    "description": "Cek resi pengiriman JNE, J&T, SiCepat langsung dari browser.",
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icon16.png",
+            "48": "icon48.png",
+            "128": "icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
+    "host_permissions": [
+        "https://www.cekkirim.com/*",
+        "http://localhost:3000/*"
+    ]
+}

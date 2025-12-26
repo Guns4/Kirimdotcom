@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            width: 320px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 16px;
+            background: #0f172a;
+            color: white;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #818cf8;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #result {
+            margin-top: 16px;
+            font-size: 13px;
+            display: none;
+            padding: 12px;
+            background: #1e293b;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .status-delivered {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .status-process {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .error {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            display: none;
+            margin-top: 8px;
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔮 CekKirim Express</h1>
+
+    <input type="text" id="resiInput" placeholder="Masukkan Nomor Resi" />
+
+    <select id="courierSelect">
+        <option value="jne">JNE</option>
+        <option value="jnt">J&T Express</option>
+        <option value="sicepat">SiCepat</option>
+        <option value="anteraja">AnterAja</option>
+        <option value="shopee">Shopee Express</option>
+        <option value="ninja">Ninja Xpress</option>
+        <option value="pos">POS Indonesia</option>
+        <option value="tiki">TIKI</option>
+    </select>
+
+    <button id="checkBtn">Lacak Paket</button>
+
+    <div id="error" class="error"></div>
+
+    <div id="result">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span id="resStatusBadge" class="status-badge status-process">XXX</span>
+            <span id="resDate" style="color: #94a3b8; font-size: 11px;">-</span>
+        </div>
+        <div id="resDesc" style="color: #e2e8f0; margin-bottom: 8px;">-</div>
+        <div id="resLoc" style="color: #94a3b8; font-size: 11px; display: flex; align-items: center; gap: 4px;">
+            📍 <span id="resLocText">-</span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

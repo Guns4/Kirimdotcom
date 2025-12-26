@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+// import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import { MARKETPLACE_FEES } from '@/data/marketplace-fees'
 import { Calculator, DollarSign, Package, ShoppingBag, ExternalLink, Info } from 'lucide-react'
 import Select from 'react-select'
@@ -49,7 +49,7 @@ const customSelectStyles = {
 
 const COLORS = ['#10B981', '#F59E0B', '#6366F1', '#EF4444']; // Green (Profit), Yellow (Cost), Indigo (Admin), Red (Shipping)
 
-export function MarketplaceCalculator() {
+export default function MarketplaceCalculator() {
     const [price, setPrice] = useState<number | ''>(100000)
     const [cost, setCost] = useState<number | ''>(50000) // Modal
     const [shipping, setShipping] = useState<number | ''>(0) // Ongkir (usually paid by buyer, but sometimes impactful if free shipping fee calculated based on it or subsidi)
@@ -253,38 +253,10 @@ export function MarketplaceCalculator() {
 
                 {/* Donut Chart */}
                 <div className="glass-card p-6 min-h-[300px] flex flex-col items-center justify-center">
-                    {(!selectedTier || !price) ? (
-                        <div className="text-center text-gray-500">
-                            <Info className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                            <p>Masukkan data untuk melihat grafik</p>
-                        </div>
-                    ) : (
-                        <div className="w-full h-[300px]">
-                            <h3 className="text-center text-gray-300 text-sm mb-2">Breakdown Alokasi Dana</h3>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={chartData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        <Cell key="cell-0" fill="#F59E0B" /> {/* Modal */}
-                                        <Cell key="cell-1" fill="#10B981" /> {/* Profit */}
-                                        <Cell key="cell-2" fill="#6366F1" /> {/* Admin */}
-                                    </Pie>
-                                    <Tooltip
-                                        formatter={(value: number) => `Rp ${value.toLocaleString('id-ID')}`}
-                                        contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#fff' }}
-                                    />
-                                    <Legend verticalAlign="bottom" height={36} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    )}
+                    <div className="text-center text-gray-500">
+                        <Info className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p>Grafik sedang dalam perbaikan.</p>
+                    </div>
                 </div>
 
                 {/* Fees Detail */}

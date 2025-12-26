@@ -125,16 +125,18 @@ export function CekResiForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="resi-input" className="block text-sm font-medium text-gray-300">
                         Nomor Resi
                     </label>
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                         <input
+                            id="resi-input"
                             type="text"
                             value={waybill}
                             onChange={(e) => setWaybill(e.target.value.toUpperCase())}
                             placeholder="Contoh: JNE123456789"
+                            aria-label="Nomor Resi"
                             className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all uppercase"
                         />
                     </div>

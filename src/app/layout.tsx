@@ -42,13 +42,22 @@ export const metadata: Metadata = {
         images: ["/og-image.png"],
     },
     manifest: "/manifest.json",
+    verification: {
+        google: "google-site-verification=YOUR_VERIFICATION_CODE", // Ganti dengan kode dari Google Search Console
+    },
 };
 
-export default function RootLayout({
+import { headers } from "next/headers";
+
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const headersList = await headers();
+    const pathname = headersList.get("x-pathname") || "";
+    const isWidget = pathname.startsWith("/widget");
+
     return (
         <html lang="id" className={inter.variable}>
             <head>
@@ -59,15 +68,15 @@ export default function RootLayout({
                     strategy="afterInteractive"
                 />
             </head>
-            <body className="font-sans antialiased min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
+            <body className={`font-sans antialiased min-h-screen flex flex-col ${isWidget ? 'bg-transparent' : 'bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30'}`}>
                 <SystemStatusProvider>
                     <LiteModeProvider>
-                        <Navbar />
-                        <main className="flex-1">
+                        {!isWidget && <Navbar />}
+                        <main className={isWidget ? "min-h-screen flex items-center justify-center p-4" : "flex-1"}>
                             {children}
                         </main>
-                        <FeedbackWidget />
-                        <Footer />
+                        {!isWidget && <FeedbackWidget />}
+                        {!isWidget && <Footer />}
                     </LiteModeProvider>
                 </SystemStatusProvider>
             </body>

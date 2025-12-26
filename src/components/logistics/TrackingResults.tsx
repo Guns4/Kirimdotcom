@@ -13,6 +13,8 @@ import { CourierReviewForm } from '../reviews/CourierReviewForm'
 import { useLiteMode } from '@/context/LiteModeContext'
 import { useSystemStatus } from '@/context/SystemStatusContext'
 import { FailSafeFallback } from './FailSafeFallback'
+import { IssueReportButton } from './IssueReportButton'
+import { SmartText } from '@/components/common/SmartText'
 
 interface TrackingResultsProps {
     result: TrackResiResult
@@ -125,7 +127,9 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
             <div className="flex gap-2 justify-center flex-wrap">
                 <ComplaintGenerator trackingData={data} />
                 <ShareButton trackingData={data} />
+                <ShareButton trackingData={data} />
                 <WhatsAppShareButton trackingData={data} />
+                <IssueReportButton city={data.history[0]?.location || ''} />
 
                 {/* Review Button - Only show if delivered */}
                 {isDelivered && (
@@ -200,14 +204,16 @@ export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
                                 >
                                     <div className="flex items-start justify-between mb-2">
                                         <h4 className={`font-semibold ${isLatest ? 'text-indigo-300' : 'text-white'}`}>
-                                            {item.desc}
+                                            <SmartText text={item.desc} />
                                         </h4>
                                         <div className="text-right text-sm text-gray-400">
                                             <div>{item.date}</div>
                                         </div>
                                     </div>
 
-                                    <p className="text-sm text-gray-300 mb-2">{item.desc}</p>
+                                    <p className="text-sm text-gray-300 mb-2">
+                                        <SmartText text={item.desc} />
+                                    </p>
 
                                     <div className="flex items-center gap-1 text-xs text-gray-400">
                                         <MapPin className="w-3 h-3" />

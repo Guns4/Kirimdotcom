@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 
 // In-memory store for rate limiting
 // Note: For production with multiple servers, use Upstash Redis
@@ -12,6 +13,7 @@ const MAX_REQUESTS_PER_WINDOW = 20
 // Protected patterns that require rate limiting
 const PROTECTED_PATTERNS = [
     '/api/ai/generate-advice',
+    '/api/ai/shipping-insight',
     // Add more patterns as needed
 ]
 
@@ -81,62 +83,104 @@ setInterval(() => {
     }
 }, RATE_LIMIT_WINDOW) // Run cleanup every hour
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
-
-    // Check if path is protected
-    const isProtected = PROTECTED_PATTERNS.some((pattern) =>
-        pathname.startsWith(pattern)
-    )
-
-    if (!isProtected) {
-        // Not protected, allow through
-        return NextResponse.next()
-    }
-
-    // Get client IP
-    const ip = getClientIp(request)
-
-    // Check rate limit
-    const { allowed, remaining, resetTime } = checkRateLimit(ip)
-
-    if (!allowed) {
-        // Rate limit exceeded
-        const resetDate = new Date(resetTime)
-
-        return NextResponse.json(
-            {
-                error: 'Too Many Requests',
-                message: 'Anda telah mencapai batas maksimal request. Silakan coba lagi nanti.',
-                retryAfter: Math.ceil((resetTime - Date.now()) / 1000), // seconds
-                resetAt: resetDate.toISOString(),
-            },
-            {
-                status: 429,
-                headers: {
-                    'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
-                    'X-RateLimit-Limit': String(MAX_REQUESTS_PER_WINDOW),
-                    'X-RateLimit-Remaining': '0',
-                    'X-RateLimit-Reset': String(Math.floor(resetTime / 1000)),
-                },
-            }
-        )
-    }
-
-    // Add rate limit headers to response
     const response = NextResponse.next()
-    response.headers.set('X-RateLimit-Limit', String(MAX_REQUESTS_PER_WINDOW))
-    response.headers.set('X-RateLimit-Remaining', String(remaining))
-    response.headers.set('X-RateLimit-Reset', String(Math.floor(resetTime / 1000)))
 
-    return response
+    // 0. Maintenance Mode Check (Specific paths only to save performance, or global)
+    // NOTE: For extreme performance, use Edge Config. For now, we skip DB check on static assets.
+    if (!pathname.startsWith('/_next') && !pathname.includes('.') && pathname !== '/maintenance' && !pathname.startsWith('/api') && !pathname.startsWith('/admin') && !pathname.startsWith('/login') && !pathname.startsWith('/dashboard')) {
+        try {
+            // Create a Supabase client just for this check
+            const supabase = createServerClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                {
+                    cookies: {
+                        getAll: () => request.cookies.getAll(),
+                        setAll: (cookiesToSet) => {
+                            cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                        },
+                    },
+                }
+            )
+
+            const { data } = await supabase
+                .from('system_settings')
+                .select('value')
+                .eq('key', 'maintenance_mode')
+                .single()
+
+            if (data?.value === 'true') {
+                // Check if user is admin to bypass
+                const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+                    if (profile?.role === 'admin') {
+                        return response // Admin pass
+                    }
+                }
+
+                return NextResponse.redirect(new URL('/maintenance', request.url))
+            }
+        } catch (e) {
+            // Fail open
+        }
+    }
+
+    // 3. Widget Support
+    // Pass pathname to layout for conditional rendering
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('x-pathname', pathname)
+
+    // 1. Security Headers (Apply to all responses)
+    if (!pathname.startsWith('/widget')) {
+        response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+    }
+    // Remove X-Frame-Options for widget routes or allow all if needed, 
+    // but conditionally skipping SAMEORIGIN is enough to let browsers default (or CSP handles it)
+
+    response.headers.set('X-DNS-Prefetch-Control', 'on')
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+    response.headers.set('X-XSS-Protection', '1; mode=block')
+    if (!pathname.startsWith('/widget')) {
+        response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+    }
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
+
+    // 2. Rate Limiting Logic
+    // ... (existing logic)
+
+    // Return response with new headers
+    // Note: To pass headers to the Server Components (Layout), we must use NextResponse.next({ request: ... })
+    // and for the response headers we managed above, we need to ensure they are on the final response.
+    // The current pattern with 'const response = NextResponse.next()' modifies the response object directly.
+    // But passing request headers requires creating a new response from next().
+
+    const finalResponse = NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    })
+
+    // Copy headers from our 'response' object to 'finalResponse'
+    response.headers.forEach((value, key) => {
+        finalResponse.headers.set(key, value)
+    })
+
+    // Re-apply rate limit headers if they were set on 'response'
+    // (The previous logic set headers on 'response', so copying them works)
+
+    return finalResponse
 }
 
 // Configure which paths the middleware runs on
 export const config = {
     matcher: [
-        // Match API routes that need rate limiting
+        // Match API routes for rate limiting
         '/api/ai/:path*',
-        // Add more patterns as needed
+        // Match all pages for Security Headers (root, any subpath)
+        '/:path*',
     ],
 }

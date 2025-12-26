@@ -146,8 +146,65 @@ export async function getShippingCost(
     origin: string,
     destination: string,
     weight: number,
-    courierCode: string
+    courierCode: string,
+    customKey?: string,
+    accountType: string = 'starter'
 ): Promise<BinderByteCostResponse> {
+    // 1. Custom Key Logic (Direct RajaOngkir)
+    if (customKey) {
+        try {
+            const baseUrl = accountType === 'pro'
+                ? 'https://pro.rajaongkir.com/api/cost'
+                : 'https://api.rajaongkir.com/starter/cost'
+
+            const response = await fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'key': customKey,
+                    'content-type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    origin,
+                    destination,
+                    weight: weight.toString(),
+                    courier: courierCode.toLowerCase()
+                }),
+                next: { revalidate: 3600 }
+            })
+
+            if (!response.ok) {
+                // Fallback to BinderByte if fail? No, user explicitly wanted custom key.
+                throw new LogisticsAPIError('Custom API Error', response.status, response.statusText)
+            }
+
+            const rawData = await response.json()
+            const roResults = rawData.rajaongkir?.results?.[0]?.costs || []
+
+            // Map RajaOngkir to BinderByte Format since our app uses that structure
+            const mappedData = roResults.map((service: any) => ({
+                service: service.service,
+                description: service.description,
+                cost: service.cost.map((c: any) => ({
+                    value: c.value,
+                    etd: c.etd,
+                    note: c.note
+                }))
+            }))
+
+            return {
+                status: 200,
+                message: 'Success (Custom Key)',
+                data: mappedData
+            }
+
+        } catch (error) {
+            console.error('RajaOngkir Custom Key Error:', error)
+            // Don't fail completely, maybe return empty or throw specific
+            throw new LogisticsAPIError('Gagal menggunakan Custom Key', 500)
+        }
+    }
+
+    // 2. Default Logic (BinderByte)
     if (!API_KEY) {
         throw new LogisticsAPIError(
             'API key not configured',

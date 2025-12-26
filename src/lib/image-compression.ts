@@ -105,7 +105,7 @@ export async function compressImage(
                             { type: mimeType }
                         )
 
-                        console.log(`[Image Compression] ${file.name}: ${(file.size / 1024).toFixed(1)}KB → ${(compressedFile.size / 1024).toFixed(1)}KB`)
+                        // console.log(`[Image Compression] ${file.name}: ${(file.size / 1024).toFixed(1)}KB → ${(compressedFile.size / 1024).toFixed(1)}KB`)
 
                         resolve(compressedFile)
                     },

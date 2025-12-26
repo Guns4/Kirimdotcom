@@ -25,6 +25,8 @@ export interface CheckOngkirParams {
     destinationId: string
     weight: number // in grams
     courierCode?: string // Optional: specific courier
+    customKey?: string // User's custom API Key
+    accountType?: string // starter | pro
 }
 
 export interface OngkirRate {
@@ -49,7 +51,7 @@ export async function checkOngkir(
     params: CheckOngkirParams
 ): Promise<CheckOngkirResult> {
     try {
-        const { originId, destinationId, weight, courierCode } = params
+        const { originId, destinationId, weight, courierCode, customKey, accountType } = params
 
         // Validation
         if (!originId || !destinationId) {
@@ -81,7 +83,7 @@ export async function checkOngkir(
             courierCode
         )
 
-        if (cached) {
+        if (cached && !customKey) { // Skip cache if custom key is used (to get fresh data)
             // Cache hit - using cached data
             return {
                 success: true,
@@ -105,7 +107,9 @@ export async function checkOngkir(
                     originId,
                     destinationId,
                     weight,
-                    courier
+                    courier,
+                    customKey,
+                    accountType
                 )
 
                 if (apiResponse.data) {
@@ -138,8 +142,10 @@ export async function checkOngkir(
             }
         }
 
-        // Step 3: Save to cache
-        await setCachedOngkir(originId, destinationId, weight, allRates, courierCode)
+        // Step 3: Save to cache (Only if NOT custom key)
+        if (!customKey) {
+            await setCachedOngkir(originId, destinationId, weight, allRates, courierCode)
+        }
 
         // Step 4: Save to search history
         const supabase = await createClient()
@@ -319,7 +325,7 @@ export async function trackResi(
 }
 
 // ============================================
-// AI INSIGHT GENERATOR (Keep existing)
+// AI INSIGHT GENERATOR
 // ============================================
 
 export async function generateAIInsight(params: {
@@ -330,7 +336,7 @@ export async function generateAIInsight(params: {
 
     if (type === 'ongkir') {
         const cheapest = data.price
-        return `Berdasarkan analisis AI, harga Rp ${cheapest.toLocaleString('id-ID')} termasuk kompetitif untuk rute ini. Estimasi pengiriman ${data.estimatedDays}.`
+        return `Berdasarkan analisis AI, harga Rp ${cheapest?.toLocaleString('id-ID')} termasuk kompetitif untuk rute ini. Estimasi pengiriman ${data.estimatedDays}.`
     }
 
     // resi

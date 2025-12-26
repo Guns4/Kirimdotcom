@@ -52,34 +52,34 @@ export default function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Facebook"
+                                aria-label="Kunjungi Facebook kami"
                             >
-                                <Facebook className="w-5 h-5" />
+                                <Facebook className="w-5 h-5" aria-hidden="true" />
                             </a>
                             <a
                                 href="https://instagram.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Instagram"
+                                aria-label="Kunjungi Instagram kami"
                             >
-                                <Instagram className="w-5 h-5" />
+                                <Instagram className="w-5 h-5" aria-hidden="true" />
                             </a>
                             <a
                                 href="https://twitter.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Twitter"
+                                aria-label="Kunjungi Twitter kami"
                             >
-                                <Twitter className="w-5 h-5" />
+                                <Twitter className="w-5 h-5" aria-hidden="true" />
                             </a>
                             <a
                                 href="mailto:info@cekkirim.com"
                                 className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Email"
+                                aria-label="Kirim Email"
                             >
-                                <Mail className="w-5 h-5" />
+                                <Mail className="w-5 h-5" aria-hidden="true" />
                             </a>
                         </div>
                         <div className="mt-6 inline-block">
@@ -109,6 +109,11 @@ export default function Footer() {
                             <li>
                                 <Link href="/tools/kalkulator-marketplace" className="text-sm text-gray-400 hover:text-white transition-colors">
                                     Kalkulator Marketplace
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/tools/widget-generator" className="text-sm text-gray-400 hover:text-white transition-colors">
+                                    Widget Cek Resi <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-1 py-0.5 rounded ml-1">NEW</span>
                                 </Link>
                             </li>
                             <li>
