@@ -1,7 +1,19 @@
 'use server'
 
-import { calculateShippingRate, generateMockTracking, generateDeliveredTracking } from '@/data/couriers'
-import type { CourierService, TrackingStatus } from '@/data/couriers'
+import {
+    trackResi as trackResiAPI,
+    getShippingCost as getShippingCostAPI,
+    getErrorMessage,
+    isNotFoundError,
+    isRateLimitError,
+} from '@/lib/api/logistics'
+import {
+    getCachedTracking,
+    setCachedTracking,
+    getCachedOngkir,
+    setCachedOngkir,
+} from '@/lib/cache/logistics'
+import { createClient } from '@/utils/supabase/server'
 
 // ============================================
 // SERVER ACTION: Check Shipping Rates
@@ -11,17 +23,32 @@ export interface CheckOngkirParams {
     originId: string
     destinationId: string
     weight: number // in grams
+    courierCode?: string // Optional: specific courier
+}
+
+export interface OngkirRate {
+    id: string
+    courier: string
+    courierCode: string
+    service: string
+    serviceType: string
+    description: string
+    estimatedDays: string
+    price: number
 }
 
 export interface CheckOngkirResult {
     success: boolean
-    data?: Array<CourierService & { price: number }>
+    data?: OngkirRate[]
     error?: string
+    fromCache?: boolean
 }
 
-export async function checkOngkir(params: CheckOngkirParams): Promise<CheckOngkirResult> {
+export async function checkOngkir(
+    params: CheckOngkirParams
+): Promise<CheckOngkirResult> {
     try {
-        const { originId, destinationId, weight } = params
+        const { originId, destinationId, weight, courierCode } = params
 
         // Validation
         if (!originId || !destinationId) {
@@ -45,25 +72,99 @@ export async function checkOngkir(params: CheckOngkirParams): Promise<CheckOngki
             }
         }
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        // Step 1: Check cache first
+        const cached = await getCachedOngkir(
+            originId,
+            destinationId,
+            weight,
+            courierCode
+        )
 
-        // TODO: Replace with actual API call to RajaOngkir/BinderByte
-        // const response = await fetch('API_URL', { ... })
-        // const data = await response.json()
+        if (cached) {
+            console.log('✅ Cache HIT - Using cached ongkir data')
+            return {
+                success: true,
+                data: cached.rates_json,
+                fromCache: true,
+            }
+        }
 
-        // For now, use mock data
-        const rates = calculateShippingRate(originId, destinationId, weight)
+        console.log('❌ Cache MISS - Fetching from API')
+
+        // Step 2: Fetch from API
+        const couriers = courierCode
+            ? [courierCode]
+            : ['jne', 'jnt', 'sicepat', 'anteraja', 'pos', 'ninja']
+
+        const allRates: OngkirRate[] = []
+
+        for (const courier of couriers) {
+            try {
+                const apiResponse = await getShippingCostAPI(
+                    originId,
+                    destinationId,
+                    weight,
+                    courier
+                )
+
+                if (apiResponse.data) {
+                    // Transform API response to our format
+                    apiResponse.data.forEach((service, index) => {
+                        service.cost.forEach((cost) => {
+                            allRates.push({
+                                id: `${courier}-${index}-${Date.now()}`,
+                                courier: courier.toUpperCase(),
+                                courierCode: courier,
+                                service: service.service,
+                                serviceType: service.service.includes('REG') ? 'Regular' : 'Express',
+                                description: service.description,
+                                estimatedDays: cost.etd || '1-2 hari',
+                                price: cost.value,
+                            })
+                        })
+                    })
+                }
+            } catch (error) {
+                console.error(`Error fetching ${courier}:`, error)
+                // Continue with next courier
+            }
+        }
+
+        if (allRates.length === 0) {
+            return {
+                success: false,
+                error: 'Tidak ada layanan tersedia untuk rute ini',
+            }
+        }
+
+        // Step 3: Save to cache
+        await setCachedOngkir(originId, destinationId, weight, allRates, courierCode)
+
+        // Step 4: Save to search history
+        const supabase = await createClient()
+        const {
+            data: { user },
+        } = await supabase.auth.getUser()
+
+        if (user) {
+            await supabase.from('search_history').insert({
+                user_id: user.id,
+                type: 'ongkir',
+                query: `${originId} → ${destinationId} (${weight}g)`,
+            })
+        }
 
         return {
             success: true,
-            data: rates,
+            data: allRates,
+            fromCache: false,
         }
     } catch (error) {
-        console.error('Error checking ongkir:', error)
+        console.error('checkOngkir error:', error)
+
         return {
             success: false,
-            error: 'Terjadi kesalahan saat mengecek ongkir',
+            error: getErrorMessage(error),
         }
     }
 }
@@ -73,101 +174,146 @@ export async function checkOngkir(params: CheckOngkirParams): Promise<CheckOngki
 // ============================================
 
 export interface TrackResiParams {
-    courier: string
-    waybill: string
+    resiNumber: string
+    courierCode: string
+}
+
+export interface TrackingHistory {
+    date: string
+    desc: string
+    location: string
 }
 
 export interface TrackResiResult {
     success: boolean
     data?: {
-        waybill: string
+        resiNumber: string
         courier: string
+        service?: string
         currentStatus: string
-        estimatedDelivery: string
-        history: TrackingStatus[]
+        statusDate: string
+        statusDesc: string
+        weight?: string
+        history: TrackingHistory[]
     }
     error?: string
+    errorType?: 'not-found' | 'rate-limit' | 'network' | 'general'
+    fromCache?: boolean
 }
 
-export async function trackResi(params: TrackResiParams): Promise<TrackResiResult> {
+export async function trackResi(
+    params: TrackResiParams
+): Promise<TrackResiResult> {
     try {
-        const { courier, waybill } = params
+        const { resiNumber, courierCode } = params
 
         // Validation
-        if (!courier) {
+        if (!resiNumber || !courierCode) {
             return {
                 success: false,
-                error: 'Kurir harus dipilih',
+                error: 'Nomor resi dan kurir harus diisi',
+                errorType: 'general',
             }
         }
 
-        if (!waybill || waybill.length < 8) {
+        // Step 1: Check cache first
+        const cached = await getCachedTracking(resiNumber, courierCode)
+
+        if (cached) {
+            console.log('✅ Cache HIT - Using cached tracking data')
             return {
-                success: false,
-                error: 'Nomor resi tidak valid',
+                success: true,
+                data: cached.status_json,
+                fromCache: true,
             }
         }
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1200))
+        console.log('❌ Cache MISS - Fetching from API')
 
-        // TODO: Replace with actual API call to courier tracking API
-        // const response = await fetch(`API_URL/${courier}/${waybill}`)
-        // const data = await response.json()
+        // Step 2: Fetch from API
+        const apiResponse = await trackResiAPI(resiNumber, courierCode)
 
-        // For now, use mock data
-        // Simulate "delivered" status for waybills ending with "99"
-        const trackingData = waybill.endsWith('99')
-            ? generateDeliveredTracking(courier, waybill)
-            : generateMockTracking(courier, waybill)
+        if (!apiResponse.data) {
+            return {
+                success: false,
+                error: 'Data tracking tidak tersedia',
+                errorType: 'not-found',
+            }
+        }
+
+        // Transform API response to our format
+        const trackingData = {
+            resiNumber: apiResponse.data.summary.awb,
+            courier: apiResponse.data.summary.courier,
+            service: apiResponse.data.summary.service,
+            currentStatus: apiResponse.data.summary.status,
+            statusDate: apiResponse.data.summary.date,
+            statusDesc: apiResponse.data.summary.desc,
+            weight: apiResponse.data.summary.weight,
+            history: apiResponse.data.history || [],
+        }
+
+        // Step 3: Save to cache
+        await setCachedTracking(
+            resiNumber,
+            courierCode,
+            trackingData,
+            trackingData.currentStatus
+        )
+
+        // Step 4: Save to search history
+        const supabase = await createClient()
+        const {
+            data: { user },
+        } = await supabase.auth.getUser()
+
+        if (user) {
+            await supabase.from('search_history').insert({
+                user_id: user.id,
+                type: 'resi',
+                query: `${resiNumber} (${courierCode.toUpperCase()})`,
+            })
+        }
 
         return {
             success: true,
             data: trackingData,
+            fromCache: false,
         }
     } catch (error) {
-        console.error('Error tracking resi:', error)
+        console.error('trackResi error:', error)
+
+        // Determine error type
+        let errorType: 'not-found' | 'rate-limit' | 'network' | 'general' = 'general'
+        if (isNotFoundError(error)) {
+            errorType = 'not-found'
+        } else if (isRateLimitError(error)) {
+            errorType = 'rate-limit'
+        }
+
         return {
             success: false,
-            error: 'Terjadi kesalahan saat melacak paket',
+            error: getErrorMessage(error),
+            errorType,
         }
     }
 }
 
 // ============================================
-// AI INSIGHT GENERATOR (Simple Logic)
+// AI INSIGHT GENERATOR (Keep existing)
 // ============================================
 
-export function generateAIInsight(context: {
-    type: 'ongkir' | 'tracking'
-    data?: any
+export function generateAIInsight(params: {
+    type: 'ongkir' | 'resi'
+    data: any
 }): string {
-    if (context.type === 'ongkir' && context.data) {
-        const { estimatedDays, serviceType } = context.data
+    const { type, data } = params
 
-        // Extract days from string like "2-3 hari"
-        const days = parseInt(estimatedDays.split('-')[1] || estimatedDays)
-
-        if (days > 4) {
-            return '⏰ Pengiriman agak lama karena jarak lintas pulau. Pertimbangkan layanan Express jika membutuhkan pengiriman lebih cepat.'
-        } else if (days <= 2 && serviceType === 'Regular') {
-            return '⚡ Estimasi pengiriman cukup cepat! Ini adalah pilihan yang baik untuk paket reguler.'
-        } else if (serviceType === 'Express') {
-            return '🚀 Layanan express dipilih - paket Anda akan tiba lebih cepat dengan prioritas tinggi.'
-        }
+    if (type === 'ongkir') {
+        const cheapest = data.price
+        return `Berdasarkan analisis AI, harga Rp ${cheapest.toLocaleString('id-ID')} termasuk kompetitif untuk rute ini. Estimasi pengiriman ${data.estimatedDays}.`
     }
 
-    if (context.type === 'tracking' && context.data) {
-        const { currentStatus } = context.data
-
-        if (currentStatus === 'DELIVERED') {
-            return '✅ Paket telah diterima! Terima kasih telah menggunakan layanan kami.'
-        } else if (currentStatus === 'OUT FOR DELIVERY') {
-            return '📦 Paket Anda sedang dalam perjalanan! Siapkan diri untuk menerima paket hari ini.'
-        } else if (currentStatus === 'IN TRANSIT') {
-            return '🚚 Paket Anda sedang dalam perjalanan ke kota tujuan. Mohon bersabar.'
-        }
-    }
-
-    return '💡 Gunakan fitur ini secara rutin untuk mendapatkan update terbaru paket Anda.'
+    // resi
+    return `Status terkini: ${data.currentStatus}. Paket Anda sedang dalam proses pengiriman dengan estimasi ${data.statusDesc}.`
 }

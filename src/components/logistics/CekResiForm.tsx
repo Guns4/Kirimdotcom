@@ -77,8 +77,8 @@ export function CekResiForm() {
 
         try {
             const res = await trackResi({
-                courier: courier.value,
-                waybill: waybill.trim(),
+                courierCode: courier.value,
+                resiNumber: waybill.trim(),
             })
             setResult(res)
         } catch (error) {

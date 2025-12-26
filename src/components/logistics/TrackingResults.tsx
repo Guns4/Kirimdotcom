@@ -2,28 +2,22 @@
 
 import { motion } from 'framer-motion'
 import { TrackResiResult, generateAIInsight } from '@/app/actions/logistics'
-import { Package, MapPin, Clock, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react'
+import { Package, MapPin, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react'
+import { ErrorState } from './ErrorState'
 
 interface TrackingResultsProps {
     result: TrackResiResult
+    onRetry?: () => void
 }
 
-export function TrackingResults({ result }: TrackingResultsProps) {
+export function TrackingResults({ result, onRetry }: TrackingResultsProps) {
     if (!result.success) {
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="glass-card p-6 border-red-500/30"
-            >
-                <div className="flex items-center gap-3 text-red-400">
-                    <AlertCircle className="w-6 h-6" />
-                    <div>
-                        <p className="font-semibold">Gagal Melacak Paket</p>
-                        <p className="text-sm text-red-300">{result.error}</p>
-                    </div>
-                </div>
-            </motion.div>
+            <ErrorState
+                type={result.errorType || 'general'}
+                message={result.error}
+                onRetry={onRetry}
+            />
         )
     }
 
@@ -55,8 +49,8 @@ export function TrackingResults({ result }: TrackingResultsProps) {
                         <p className="text-sm font-semibold text-purple-300 mb-1">AI Insight</p>
                         <p className="text-sm text-gray-300">
                             {generateAIInsight({
-                                type: 'tracking',
-                                data: { currentStatus: data.currentStatus },
+                                type: 'resi',
+                                data: data,
                             })}
                         </p>
                     </div>
@@ -72,7 +66,7 @@ export function TrackingResults({ result }: TrackingResultsProps) {
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <p className="text-sm text-gray-400">Nomor Resi</p>
-                        <p className="text-xl font-bold text-white">{data.waybill}</p>
+                        <p className="text-xl font-bold text-white">{data.resiNumber}</p>
                     </div>
                     <div className="text-right">
                         <p className="text-sm text-gray-400">Kurir</p>
@@ -91,7 +85,7 @@ export function TrackingResults({ result }: TrackingResultsProps) {
                     </div>
                     <div className="text-right">
                         <p className="text-sm text-gray-400 mb-1">Estimasi Sampai</p>
-                        <p className="text-white font-semibold">{data.estimatedDelivery}</p>
+                        <p className="text-white font-semibold">{data.statusDate}</p>
                     </div>
                 </div>
             </motion.div>
@@ -111,7 +105,7 @@ export function TrackingResults({ result }: TrackingResultsProps) {
 
                     {data.history.map((item, index) => {
                         const isLatest = index === 0
-                        const isDelivered = item.status === 'DELIVERED'
+                        const isDelivered = item.desc?.toUpperCase().includes('TERKIRIM') || item.desc?.toUpperCase().includes('DELIVERED')
 
                         return (
                             <motion.div
@@ -124,10 +118,10 @@ export function TrackingResults({ result }: TrackingResultsProps) {
                                 {/* Timeline dot */}
                                 <div
                                     className={`absolute left-0 w-12 h-12 rounded-full flex items-center justify-center ${isDelivered
-                                            ? 'bg-green-500/20 border-2 border-green-500'
-                                            : isLatest
-                                                ? 'bg-indigo-500/20 border-2 border-indigo-500 animate-pulse'
-                                                : 'bg-gray-500/20 border-2 border-gray-500'
+                                        ? 'bg-green-500/20 border-2 border-green-500'
+                                        : isLatest
+                                            ? 'bg-indigo-500/20 border-2 border-indigo-500 animate-pulse'
+                                            : 'bg-gray-500/20 border-2 border-gray-500'
                                         }`}
                                 >
                                     {isDelivered ? (
@@ -144,15 +138,14 @@ export function TrackingResults({ result }: TrackingResultsProps) {
                                 >
                                     <div className="flex items-start justify-between mb-2">
                                         <h4 className={`font-semibold ${isLatest ? 'text-indigo-300' : 'text-white'}`}>
-                                            {item.status.replace(/_/g, ' ')}
+                                            {item.desc}
                                         </h4>
                                         <div className="text-right text-sm text-gray-400">
                                             <div>{item.date}</div>
-                                            <div>{item.time}</div>
                                         </div>
                                     </div>
 
-                                    <p className="text-sm text-gray-300 mb-2">{item.description}</p>
+                                    <p className="text-sm text-gray-300 mb-2">{item.desc}</p>
 
                                     <div className="flex items-center gap-1 text-xs text-gray-400">
                                         <MapPin className="w-3 h-3" />
