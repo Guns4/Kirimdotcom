@@ -6,6 +6,10 @@ import { Badge } from '@/components/ui/badge' // Assuming you have this
 import { redirect } from 'next/navigation'
 import { Key, ShieldAlert, CheckCircle2, Copy } from 'lucide-react'
 
+import { Database } from '@/types/database'
+
+type ApiKey = Database['public']['Tables']['api_keys']['Row']
+
 export default async function DeveloperDashboard() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -14,11 +18,13 @@ export default async function DeveloperDashboard() {
         redirect('/login')
     }
 
-    const { data: apiKeys } = await supabase
+    const { data } = await supabase
         .from('api_keys')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
+
+    const apiKeys = data as ApiKey[] | null
 
     // UI helper for Copy (Client Component would be better for interactivity, but we'll use a form/button for actions)
     // For simplicity in this Server Component structure, we'll render the list.

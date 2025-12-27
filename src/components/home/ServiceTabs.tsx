@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
+import { Card, CardContent } from '@/components/ui/card';
+import Input from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Calculator, Package } from 'lucide-react';
 

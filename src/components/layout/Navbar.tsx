@@ -7,6 +7,8 @@ import { Menu, X, AlertCircle } from 'lucide-react';
 import { useSystemStatus } from '@/context/SystemStatusContext';
 import { useMergeHistory } from '@/hooks/useMergeHistory';
 
+import { siteConfig } from '@/config/site';
+
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -46,14 +48,14 @@ export default function Navbar() {
                     <Link href="/" className="flex items-center space-x-2">
                         <Image
                             src="/logo.png"
-                            alt="CekKirim Logo"
+                            alt={`${siteConfig.name} Logo`}
                             width={40}
                             height={40}
                             className="w-10 h-10 object-contain"
                             priority
                         />
                         <span className="text-2xl font-bold gradient-text">
-                            CekKirim
+                            {siteConfig.name}
                         </span>
                     </Link>
 

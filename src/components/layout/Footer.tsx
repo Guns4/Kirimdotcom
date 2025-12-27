@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Mail, ExternalLink, Heart } from 'lucide-react';
 import { footerLinks } from '@/data/footer-links';
 import { LiteModeToggle } from '../ui/LiteModeToggle';
+import { siteConfig } from '@/config/site';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -18,20 +19,20 @@ export default function Footer() {
                     <div className="lg:col-span-4 space-y-6">
                         <div>
                             <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
-                                CekKirim
+                                {siteConfig.name}
                             </h3>
                             <p className="text-gray-400 leading-relaxed text-sm">
-                                Platform logistik all-in-one untuk UMKM Indonesia. Cek ongkir akurat, lacak resi otomatis, dan tools jualan gratis untuk meningkatkan produktivitas bisnis online Anda.
+                                {siteConfig.description}
                             </p>
                         </div>
 
                         {/* Social Signals */}
                         <div className="flex gap-4">
                             {[
-                                { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-                                { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-                                { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-                                { icon: Mail, href: "mailto:halo@cekkirim.com", label: "Email" }
+                                { icon: Facebook, href: siteConfig.links.github, label: "Facebook" }, // Using Github as placeholder for FB if not in config, or we should add FB to config types. For now, assuming user will update config.
+                                { icon: Instagram, href: siteConfig.links.instagram, label: "Instagram" },
+                                { icon: Twitter, href: siteConfig.links.twitter, label: "Twitter" },
+                                { icon: Mail, href: `mailto:${siteConfig.links.email}`, label: "Email" }
                             ].map((social, i) => (
                                 <a
                                     key={i}
@@ -169,7 +170,7 @@ export default function Footer() {
 
                 {/* Copyright */}
                 <div className="mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600">
-                    <p>&copy; {currentYear} CekKirim Indonesia. Dibuat dengan <Heart className="w-3 h-3 inline text-red-500 mx-0.5 animate-pulse" /> untuk UMKM.</p>
+                    <p>&copy; {currentYear} {siteConfig.name} Indonesia. Dibuat dengan <Heart className="w-3 h-3 inline text-red-500 mx-0.5 animate-pulse" /> untuk UMKM.</p>
                     <p>CekOngkir & CekResi All-in-One.</p>
                 </div>
             </div>

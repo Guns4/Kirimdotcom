@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, Suspense, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Package, Play, Download, AlertTriangle, CheckCircle, Clock, Loader2, FileSpreadsheet, Trash2, Copy } from 'lucide-react'
 import { copyToClipboardAsTable, exportToCSV } from '@/utils/clipboard'
 
@@ -136,8 +137,24 @@ class TrackingQueue {
     }
 }
 
-export default function BulkTrackingPage() {
-    const [input, setInput] = useState('')
+function BulkTrackingContent() {
+    const searchParams = useSearchParams()
+
+    // Initialize input from search params if available
+    const initialResi = searchParams.get('resi') || ''
+
+    // Only set initial state once to avoid overwriting user changes unless strictly navigated
+    const [input, setInput] = useState(initialResi ? initialResi.split(',').join('\n') : '')
+
+    // If URL changes (e.g. navigation from same page), helpful to update input too if it was empty?
+    // But let's keep it simple: just initial state.
+
+    useEffect(() => {
+        if (initialResi && !input) {
+            setInput(initialResi.split(',').join('\n'))
+        }
+    }, [initialResi])
+
     const [results, setResults] = useState<TrackingResult[]>([])
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState({ current: 0, total: 0 })
@@ -443,5 +460,13 @@ export default function BulkTrackingPage() {
                 )}
             </div>
         </div>
+    )
+}
+
+export default function BulkTrackingPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Loading...</div>}>
+            <BulkTrackingContent />
+        </Suspense>
     )
 }

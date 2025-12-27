@@ -8,6 +8,8 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { LiteModeProvider } from "@/context/LiteModeContext";
 import { SystemStatusProvider } from "@/context/SystemStatusContext";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
+import { siteConfig } from "@/config/site";
+import { headers } from "next/headers";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -16,10 +18,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://www.cekkirim.com'),
-    title: "CekKirim - Cek Ongkir & Lacak Resi Pengiriman",
-    description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia",
-    keywords: ["cek ongkir", "lacak resi", "pengiriman", "ekspedisi", "indonesia", "JNE", "J&T", "SiCepat"],
+    metadataBase: new URL(siteConfig.url),
+    title: {
+        default: siteConfig.name,
+        template: `%s | ${siteConfig.name}`,
+    },
+    description: siteConfig.description,
+    keywords: siteConfig.keywords,
     icons: {
         icon: [
             { url: "/favicon.ico", sizes: "any" },
@@ -29,27 +34,31 @@ export const metadata: Metadata = {
         shortcut: "/logo.png",
     },
     openGraph: {
-        title: "CekKirim - Cek Ongkir & Lacak Resi",
-        description: "Cek ongkir dan lacak resi semua kurir Indonesia",
-        images: ["/og-image.png"],
-        url: "https://www.cekkirim.com",
-        siteName: "CekKirim",
+        title: {
+            default: siteConfig.name,
+            template: `%s | ${siteConfig.name}`,
+        },
+        description: siteConfig.description,
+        images: [siteConfig.ogImage],
+        url: siteConfig.url,
+        siteName: siteConfig.name,
         type: "website",
         locale: "id_ID",
     },
     twitter: {
         card: "summary_large_image",
-        title: "CekKirim - Cek Ongkir & Lacak Resi",
-        description: "Cek ongkir dan lacak resi semua kurir Indonesia",
-        images: ["/og-image.png"],
+        title: {
+            default: siteConfig.name,
+            template: `%s | ${siteConfig.name}`,
+        },
+        description: siteConfig.description,
+        images: [siteConfig.ogImage],
     },
     manifest: "/manifest.json",
     verification: {
         google: "google-site-verification=YOUR_VERIFICATION_CODE", // Ganti dengan kode dari Google Search Console
     },
 };
-
-import { headers } from "next/headers";
 
 export default async function RootLayout({
     children,
