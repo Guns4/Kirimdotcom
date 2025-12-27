@@ -21,6 +21,7 @@
         "browser-image-compression": "^2.0.2",
         "clsx": "^2.1.1",
         "framer-motion": "^11.18.2",
+        "grammy": "^1.38.4",
         "gray-matter": "^4.0.3",
         "html2canvas": "^1.4.1",
         "jsbarcode": "^3.12.1",

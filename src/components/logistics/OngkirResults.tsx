@@ -2,16 +2,20 @@
 
 import { motion } from 'framer-motion'
 import { CheckOngkirResult, generateAIInsight } from '@/app/actions/logistics'
-import { Truck, Clock, AlertCircle, Sparkles } from 'lucide-react'
+import { Truck, Clock, AlertCircle, Sparkles, Leaf, Zap, Car } from 'lucide-react'
 import Image from 'next/image'
 import { AdPlaceholder } from '@/components/ads/AdPlaceholder'
 import { AffiliateButton } from '@/components/affiliate/AffiliateButton'
+import { calculateCarbonFootprint } from '@/utils/carbon-calculator'
 
 interface OngkirResultsProps {
     result: CheckOngkirResult
+    originId: string
+    destinationId: string
+    weight: number // in grams
 }
 
-export function OngkirResults({ result }: OngkirResultsProps) {
+export function OngkirResults({ result, originId, destinationId, weight }: OngkirResultsProps) {
     if (!result.success) {
         return (
             <motion.div
@@ -42,8 +46,51 @@ export function OngkirResults({ result }: OngkirResultsProps) {
         )
     }
 
+    const footprint = calculateCarbonFootprint(originId, destinationId, { value: weight, isGrams: true })
+
     return (
         <div className="space-y-4">
+            {/* Carbon Footprint (New) */}
+            {footprint && (
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="glass-card p-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-emerald-500/30"
+                >
+                    <div className="flex items-start gap-4">
+                        <div className="bg-emerald-500/20 p-2 rounded-full">
+                            <Leaf className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                                <p className="text-sm font-semibold text-emerald-300">Jejak Karbon Paketmu</p>
+                                <span className="text-xs text-emerald-400/70 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                                    ~{footprint.distanceKm} km
+                                </span>
+                            </div>
+                            <p className="text-2xl font-bold text-white mt-1">
+                                {footprint.emissionKg} <span className="text-sm text-gray-400 font-normal">kg CO₂</span>
+                            </p>
+
+                            <div className="mt-3 pt-3 border-t border-emerald-500/20 grid grid-cols-2 gap-2">
+                                {footprint.comparisons.map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 text-xs text-gray-300">
+                                        <span className="text-emerald-400">
+                                            {item.icon === 'bottle' ? '🍼' : item.icon === 'smartphone' ? '⚡' : '🚗'}
+                                        </span>
+                                        <span>Setara {item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <p className="mt-2 text-[10px] text-gray-400 italic">
+                                *Estimasi emisi transportasi darat. Gabungkan pesanan untuk mengurangi jejak karbon!
+                            </p>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
             {/* AI Insight */}
             <motion.div
                 initial={{ opacity: 0, x: -20 }}

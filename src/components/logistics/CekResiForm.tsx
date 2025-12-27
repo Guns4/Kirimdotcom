@@ -9,6 +9,7 @@ import { TrackingResults } from './TrackingResults'
 import { Loader2, Search } from 'lucide-react'
 import { useSearchHistory } from '@/hooks/useSearchHistory'
 import { VoiceSearchButton } from '@/components/common/VoiceSearchButton'
+import TurnstileWidget from '@/components/security/TurnstileWidget'
 
 const courierOptions = courierList.map((courier) => ({
     value: courier.code,
@@ -63,6 +64,7 @@ export function CekResiForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState<TrackResiResult | null>(null)
     const { saveToHistory } = useSearchHistory()
+    const [turnstileToken, setTurnstileToken] = useState<string>('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -82,6 +84,7 @@ export function CekResiForm() {
             const res = await trackResi({
                 courierCode: courier.value,
                 resiNumber: waybill.trim(),
+                token: turnstileToken
             })
             setResult(res)
 
@@ -111,6 +114,10 @@ export function CekResiForm() {
                 onSubmit={handleSubmit}
                 className="glass-card p-6 space-y-5"
             >
+                <div className="hidden">
+                    <TurnstileWidget onVerify={setTurnstileToken} />
+                </div>
+
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">
                         Pilih Kurir

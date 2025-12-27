@@ -7,6 +7,7 @@ import {
     isNotFoundError,
     isRateLimitError,
 } from '@/lib/api/logistics'
+import { verifyTurnstile } from './security'
 import {
     getCachedTracking,
     setCachedTracking,
@@ -27,6 +28,7 @@ export interface CheckOngkirParams {
     courierCode?: string // Optional: specific courier
     customKey?: string // User's custom API Key
     accountType?: string // starter | pro
+    token?: string // Turnstile token
 }
 
 export interface OngkirRate {
@@ -51,7 +53,19 @@ export async function checkOngkir(
     params: CheckOngkirParams
 ): Promise<CheckOngkirResult> {
     try {
-        const { originId, destinationId, weight, courierCode, customKey, accountType } = params
+        const { originId, destinationId, weight, courierCode, customKey, accountType, token } = params
+
+        // Security Check (Turnstile)
+        // Public users (no custom key) must verify, unless we want to enforce for all
+        if (!customKey && token) {
+            const isHuman = await verifyTurnstile(token)
+            if (!isHuman) {
+                return {
+                    success: false,
+                    error: 'Verifikasi keamanan gagal. Silakan refresh halaman.',
+                }
+            }
+        }
 
         // Validation
         if (!originId || !destinationId) {
@@ -184,6 +198,7 @@ export async function checkOngkir(
 export interface TrackResiParams {
     resiNumber: string
     courierCode: string
+    token?: string // Turnstile token
 }
 
 export interface TrackingHistory {
@@ -215,7 +230,19 @@ export async function trackResi(
     params: TrackResiParams
 ): Promise<TrackResiResult> {
     try {
-        const { resiNumber, courierCode } = params
+        const { resiNumber, courierCode, token } = params
+
+        // Security Check (Turnstile)
+        if (token) {
+            const isHuman = await verifyTurnstile(token)
+            if (!isHuman) {
+                return {
+                    success: false,
+                    error: 'Verifikasi keamanan gagal. Silakan refresh halaman.',
+                    errorType: 'general',
+                }
+            }
+        }
 
         // Validation
         if (!resiNumber || !courierCode) {

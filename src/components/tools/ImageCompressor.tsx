@@ -56,12 +56,19 @@ export function ImageCompressor() {
                 let outputBlob = await imageCompression(originalFile, options)
 
                 // 2. Watermark (if enabled)
+                // 2. Watermark (if enabled)
                 if (useWatermark) {
-                    outputBlob = await applyWatermark(outputBlob)
+                    // Convert Blob back to File
+                    const watermarkedFile = new File([await applyWatermark(outputBlob)], originalFile.name, {
+                        type: outputBlob.type,
+                        lastModified: Date.now(),
+                    })
+                    setCompressedFile(watermarkedFile)
+                    setPreviewUrl(URL.createObjectURL(outputBlob))
+                } else {
+                    setCompressedFile(outputBlob)
+                    setPreviewUrl(URL.createObjectURL(outputBlob))
                 }
-
-                setCompressedFile(outputBlob)
-                setPreviewUrl(URL.createObjectURL(outputBlob))
             } catch (error) {
                 console.error(error)
                 toast.error('Gagal memproses gambar')
