@@ -161,7 +161,8 @@ Order sekarang juga!
 #BuyMoreSaveMore #SpecialPrice',
         'fashion',
         'discount',
-        'Buy 2 Get 1'
+        'Buy 2 Get 1',
+        false
     );
 -- FOOD - Hard Selling
 INSERT INTO public.caption_templates (
@@ -434,8 +435,7 @@ INSERT INTO public.caption_templates (
         sales_type,
         template_name
     )
-VALUES -- More fashion templates
-    (
+VALUES (
         'OUTFIT OF THE DAY 👗
 
 Mix & match ala professional!
@@ -453,7 +453,6 @@ Semua available di store kita!
         'soft_selling',
         'OOTD Professional'
     ),
-    -- More food templates
     (
         'Comfort food untuk hari yang melelahkan 🍜
 
@@ -466,7 +465,6 @@ Menu comfort food favorit kamu apa nih?
         'soft_selling',
         'Comfort Food'
     ),
-    -- More general templates
     (
         'CUSTOMER REVIEW! ⭐⭐⭐⭐⭐
 

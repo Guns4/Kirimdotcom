@@ -1,29 +1,64 @@
 {
-    "name": "CekKirim - Lacak Paket Semua Kurir Indonesia",
+    "name": "CekKirim - Cek Ongkir & Tools Seller",
     "short_name": "CekKirim",
-    "description": "Platform untuk cek resi paket dan ongkir termurah semua ekspedisi Indonesia dengan AI Assistant",
+    "description": "Platform lengkap untuk seller Indonesia: Cek ongkir, tracking resi, beli pulsa, dan tools produktivitas.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#6366f1",
-    "orientation": "portrait",
+    "background_color": "#ffffff",
+    "theme_color": "#3B82F6",
+    "orientation": "portrait-primary",
     "scope": "/",
-    "lang": "id",
-    "dir": "ltr",
+    "lang": "id-ID",
     "categories": [
-        "utilities",
+        "business",
         "productivity",
         "shopping"
     ],
     "icons": [
         {
-            "src": "/icon-192.png",
+            "src": "/icons/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "/icon-512.png",
+            "src": "/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
@@ -31,33 +66,51 @@
     ],
     "screenshots": [
         {
-            "src": "/screenshot-mobile.png",
-            "sizes": "390x844",
+            "src": "/screenshots/home-mobile.png",
+            "sizes": "540x720",
+            "type": "image/png",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshots/tracking-mobile.png",
+            "sizes": "540x720",
             "type": "image/png",
             "form_factor": "narrow"
         }
     ],
     "shortcuts": [
         {
-            "name": "Cek Resi",
-            "short_name": "Resi",
-            "description": "Lacak paket dengan nomor resi",
-            "url": "/?tab=resi",
+            "name": "Cek Ongkir",
+            "short_name": "Ongkir",
+            "description": "Cek ongkir kirim paket",
+            "url": "/cek-ongkir",
             "icons": [
                 {
-                    "src": "/icon-192.png",
+                    "src": "/icons/shortcut-ongkir.png",
                     "sizes": "192x192"
                 }
             ]
         },
         {
-            "name": "Cek Ongkir",
-            "short_name": "Ongkir",
-            "description": "Hitung tarif pengiriman",
-            "url": "/?tab=ongkir",
+            "name": "Tracking Resi",
+            "short_name": "Tracking",
+            "description": "Lacak paket Anda",
+            "url": "/tracking",
             "icons": [
                 {
-                    "src": "/icon-192.png",
+                    "src": "/icons/shortcut-tracking.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Beli Pulsa",
+            "short_name": "Pulsa",
+            "description": "Top up pulsa cepat",
+            "url": "/ppob",
+            "icons": [
+                {
+                    "src": "/icons/shortcut-pulsa.png",
                     "sizes": "192x192"
                 }
             ]
