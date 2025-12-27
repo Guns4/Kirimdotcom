@@ -4,10 +4,10 @@ import { MapPin, Package, Clock, TrendingDown, ChevronRight } from 'lucide-react
 import Link from 'next/link';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         kota: string;
         kecamatan: string;
-    };
+    }>;
 }
 
 // Generate static params for SSG
@@ -29,13 +29,14 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps) {
+    const { kota, kecamatan: kecamatanSlug } = await params;
     const supabase = await createClient();
 
     const { data: kecamatan } = await supabase
         .from('kecamatan')
         .select('*, cities(*)')
-        .eq('kecamatan_slug', params.kecamatan)
-        .eq('cities.city_slug', params.kota)
+        .eq('kecamatan_slug', kecamatanSlug)
+        .eq('cities.city_slug', kota)
         .single();
 
     if (!kecamatan) {
@@ -65,14 +66,15 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function KecamatanPage({ params }: PageProps) {
+    const { kota, kecamatan: kecamatanSlug } = await params;
     const supabase = await createClient();
 
     // Fetch kecamatan data
     const { data: kecamatan } = await supabase
         .from('kecamatan')
         .select('*, cities(*)')
-        .eq('kecamatan_slug', params.kecamatan)
-        .eq('cities.city_slug', params.kota)
+        .eq('kecamatan_slug', kecamatanSlug)
+        .eq('cities.city_slug', kota)
         .single();
 
     if (!kecamatan) {
@@ -115,7 +117,7 @@ export default async function KecamatanPage({ params }: PageProps) {
                         <ChevronRight className="w-4 h-4" />
                         <li><Link href="/cek-ongkir" className="hover:text-blue-600">Cek Ongkir</Link></li>
                         <ChevronRight className="w-4 h-4" />
-                        <li><Link href={`/cek-ongkir/${params.kota}`} className="hover:text-blue-600">{kecamatan.cities.city_name}</Link></li>
+                        <li><Link href={`/cek-ongkir/${kota}`} className="hover:text-blue-600">{kecamatan.cities.city_name}</Link></li>
                         <ChevronRight className="w-4 h-4" />
                         <li className="text-gray-900 font-semibold">{kecamatan.kecamatan_name}</li>
                     </ol>
@@ -243,7 +245,7 @@ export default async function KecamatanPage({ params }: PageProps) {
                             {nearbyKecamatan.map((k: any) => (
                                 <Link
                                     key={k.kecamatan_slug}
-                                    href={`/cek-ongkir/${params.kota}/${k.kecamatan_slug}`}
+                                    href={`/cek-ongkir/${kota}/${k.kecamatan_slug}`}
                                     className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition"
                                 >
                                     <p className="font-semibold text-gray-900">{k.kecamatan_name}</p>

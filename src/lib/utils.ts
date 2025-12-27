@@ -63,3 +63,9 @@ export const isClient = typeof window !== 'undefined';
  * Check if we're on server side
  */
 export const isServer = !isClient;
+
+/**
+ * Format currency (alias for formatRupiah)
+ */
+export const formatCurrency = formatRupiah;
+
