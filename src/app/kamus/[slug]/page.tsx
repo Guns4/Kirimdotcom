@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, Lightbulb, Truck } from 'lucide-react'
 import { Metadata } from 'next'
+import { JsonLd } from '@/components/seo/JsonLd'
 
 interface PageProps {
     params: Promise<{
@@ -36,8 +37,21 @@ export default async function TermPage({ params }: PageProps) {
         notFound()
     }
 
+    // Schema.org Data
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'DefinedTerm',
+        name: term.term,
+        description: term.definition,
+        inDefinedTermSet: {
+            '@type': 'DefinedTermSet',
+            name: 'Kamus Istilah Logistik'
+        }
+    }
+
     return (
         <main className="min-h-screen bg-slate-950 py-20 px-4">
+            <JsonLd data={jsonLd} />
             <div className="max-w-3xl mx-auto">
                 <Link
                     href="/kamus"

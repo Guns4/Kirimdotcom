@@ -1,3 +1,4 @@
+import './src/env.mjs'
 import withPWA from 'next-pwa'
 import createNextIntlPlugin from 'next-intl/plugin'
 
@@ -40,7 +41,7 @@ const nextConfig = {
                     },
                     {
                         key: 'X-Frame-Options',
-                        value: 'SAMEORIGIN',
+                        value: 'SAMEORIGIN', // Allows same origin iframe (widgets)
                     },
                     {
                         key: 'X-Content-Type-Options',
@@ -57,6 +58,10 @@ const nextConfig = {
                     {
                         key: 'Permissions-Policy',
                         value: 'camera=(), microphone=(), geolocation=()',
+                    },
+                    {
+                        key: 'Content-Security-Policy',
+                        value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://challenges.cloudflare.com https://pagead2.googlesyndication.com https://partner.googleadservices.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com data:; frame-src 'self' https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://www.google.com; connect-src 'self' https://onkmywglrpjqulhephkf.supabase.co https://api.binderbyte.com https://pagead2.googlesyndication.com;",
                     },
                 ],
             },
@@ -121,4 +126,12 @@ const pwaConfig = withPWA({
 })
 
 // Wrap with both PWA and i18n
-export default withNextIntl(pwaConfig(nextConfig))
+// Bundle Analyzer
+import withBundleAnalyzer from '@next/bundle-analyzer'
+
+const bundleAnalyzer = withBundleAnalyzer({
+    enabled: process.env.ANALYZE === 'true',
+})
+
+// Wrap with PWA, i18n, and Bundle Analyzer
+export default withNextIntl(pwaConfig(bundleAnalyzer(nextConfig)))

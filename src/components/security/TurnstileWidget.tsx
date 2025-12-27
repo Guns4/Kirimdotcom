@@ -49,7 +49,7 @@ export default function TurnstileWidget({ onVerify, onError, className }: Turnst
         <div className={className}>
             <Script
                 src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-                strategy="afterInteractive"
+                strategy="lazyOnload"
                 onLoad={() => setIsScriptLoaded(true)}
             />
             <div ref={containerRef} className="my-4" />

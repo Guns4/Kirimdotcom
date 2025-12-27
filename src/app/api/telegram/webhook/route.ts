@@ -146,7 +146,7 @@ bot.command('ongkir', async (ctx) => {
         return ctx.reply(
             '⚠️ Kota tidak ditemukan atau format ambigu.\n' +
             'Pastikan nama kota benar.\n' +
-            'Tips: Gunakan nama kota utama.' + MARKETS_FOOTER,
+            'Tips: Gunakan nama kota utama.' + MARKETING_FOOTER,
             { parse_mode: 'Markdown' }
         )
     }

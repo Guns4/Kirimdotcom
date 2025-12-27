@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { ImageCompressor } from '@/components/tools/ImageCompressor'
+import ImageCompressorWrapper from '@/components/tools/ImageCompressorWrapper'
 
 export const metadata: Metadata = {
     title: 'Kompres Foto Produk (Gratis & Cepat) - CekKirim',
@@ -19,7 +19,7 @@ export default function ImageCompressorPage() {
                     </p>
                 </div>
 
-                <ImageCompressor />
+                <ImageCompressorWrapper />
 
                 <div className="mt-16 text-center text-sm text-gray-600 max-w-2xl mx-auto">
                     <p>

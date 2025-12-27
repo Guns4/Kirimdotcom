@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { LabelGenerator } from '@/components/label/LabelGenerator'
+import LabelGeneratorWrapper from '@/components/label/LabelGeneratorWrapper'
 
 export const metadata: Metadata = {
     title: 'Cetak Label Pengiriman Gratis (Thermal A6) - CekKirim',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function CetakLabelPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-12 px-4 md:px-6">
-            <LabelGenerator />
+            <LabelGeneratorWrapper />
         </div>
     )
 }

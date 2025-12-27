@@ -5,11 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, AlertCircle } from 'lucide-react';
 import { useSystemStatus } from '@/context/SystemStatusContext';
+import { useMergeHistory } from '@/hooks/useMergeHistory';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { status } = useSystemStatus();
+
+    // Auto-merge local history to DB on mount
+    useMergeHistory();
 
     useEffect(() => {
         const handleScroll = () => {

@@ -1,150 +1,71 @@
-
 import { MetadataRoute } from 'next'
-import { indonesianCities } from '@/data/cities'
-import { popularRoutes } from '@/data/popular-routes'
-import { createClient } from '@supabase/supabase-js'
-
-// Helper to convert city name to slug
-function cityToSlug(cityName: string): string {
-    return cityName
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[()]/g, '')
-}
-
-// Get city name by ID
-function getCityNameById(cityId: string): string {
-    const city = indonesianCities.find(c => c.id === cityId)
-    return city?.name || `City - ${cityId} `
-}
+import { terms } from '@/lib/dictionary'
+import { createClient } from '@/utils/supabase/server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://www.cekkirim.com'
+    const supabase = await createClient()
 
-    // Core pages
+    // 1. Core Routes
     const coreRoutes: MetadataRoute.Sitemap = [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/pricing`,
+        '',
+        '/cek-ongkir',
+        '/cek-resi',
+        '/tools/cek-cod',
+        '/tools/kompres-foto',
+        '/tools/generator-caption',
+        '/about',
+        '/privacy',
+        '/terms',
+    ].map((route) => ({
+        url: `${baseUrl}${route}`,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: route === '' ? 1 : 0.8,
+    }))
+
+    // 2. Dynamic Routes (Popular Routes from History)
+    let dynamicRoutes: MetadataRoute.Sitemap = []
+
+    // Fetch popular ongkir queries
+    const { data: ongkirHistory } = await supabase
+        .from('search_history')
+        .select('query')
+        .eq('type', 'ongkir')
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+    if (ongkirHistory) {
+        // query format: "Jakarta -> Bandung"
+        const slugs = new Set<string>()
+        ongkirHistory.forEach(h => {
+            const parts = h.query.split(' -> ')
+            if (parts.length === 2) {
+                const source = parts[0].toLowerCase().replace(/\s+/g, '-')
+                const dest = parts[1].toLowerCase().replace(/\s+/g, '-')
+                slugs.add(`${source}/${dest}`)
+            }
+        })
+
+        dynamicRoutes = Array.from(slugs).map(slug => ({
+            url: `${baseUrl}/cek-ongkir/${slug}`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/statistics`,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/login`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/register`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/privacy`,
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
-            priority: 0.3,
-        },
-        {
-            url: `${baseUrl}/terms`,
-            lastModified: new Date(),
-            changeFrequency: 'yearly',
-            priority: 0.3,
-        },
-    ]
-
-    // Dynamic routes from search history
-    const dynamicRoutes: MetadataRoute.Sitemap = []
-
-    try {
-        const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        )
-
-        // Get popular routes from last 30 days
-        const thirtyDaysAgo = new Date()
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
-        const { data } = await supabase
-            .from('search_history')
-            .select('query')
-            .eq('type', 'ongkir')
-            .gte('created_at', thirtyDaysAgo.toISOString())
-            .limit(500)
-
-        if (data) {
-            const routeSet = new Set<string>()
-
-            data.forEach((item: any) => {
-                try {
-                    const query = item.query
-                    let originId, destId
-
-                    if (query.includes(':')) {
-                        const parts = query.split(':')
-                        originId = parts[0]
-                        destId = parts[1]
-                    } else if (query.includes('{')) {
-                        const parsed = JSON.parse(query)
-                        originId = parsed.originId || parsed.origin_id
-                        destId = parsed.destinationId || parsed.destination_id
-                    }
-
-                    if (originId && destId) {
-                        const originName = getCityNameById(originId)
-                        const destName = getCityNameById(destId)
-                        const slug = `${cityToSlug(originName)}-ke-${cityToSlug(destName)}`
-
-                        if (!routeSet.has(slug)) {
-                            routeSet.add(slug)
-                            dynamicRoutes.push({
-                                url: `${baseUrl}/cek-ongkir/${slug}`,
-                                lastModified: new Date(),
-                                changeFrequency: 'weekly' as const,
-                                priority: 0.7,
-                            })
-                        }
-                    }
-                } catch {
-                    // Skip invalid entries
-                }
-            })
-        }
-    } catch (error) {
-        console.error('Error generating dynamic sitemap routes:', error)
+            priority: 0.7,
+        }))
     }
 
-    // Add fallback static routes if not enough dynamic routes
-    if (dynamicRoutes.length < 10) {
-        const existingSlugs = new Set(dynamicRoutes.map(r => r.url))
+    // 3. Dictionary Routes (Kamus)
+    const dictionaryRoutes: MetadataRoute.Sitemap = terms.map(term => ({
+        url: `${baseUrl}/kamus/${term.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+    }))
 
-        for (const route of popularRoutes) {
-            const url = `${baseUrl}/cek-ongkir/${route.originSlug}-ke-${route.destinationSlug}`
-            if (!existingSlugs.has(url)) {
-                dynamicRoutes.push({
-                    url,
-                    lastModified: new Date(),
-                    changeFrequency: 'weekly' as const,
-                    priority: 0.7,
-                })
-            }
-        }
-    }
+    // 4. User Profiles (Sample - dynamic fetching usually expensive for sitemap, 
+    // but we can query top users if we had a users table accessible. 
+    // For now, we allowed /u/* in robots, but we might not list them all here to save build time)
 
-    return [...coreRoutes, ...dynamicRoutes]
+    return [...coreRoutes, ...dictionaryRoutes, ...dynamicRoutes]
 }

@@ -16,6 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://www.cekkirim.com'),
     title: "CekKirim - Cek Ongkir & Lacak Resi Pengiriman",
     description: "Aplikasi untuk mengecek ongkos kirim dan melacak resi pengiriman dari berbagai ekspedisi di Indonesia",
     keywords: ["cek ongkir", "lacak resi", "pengiriman", "ekspedisi", "indonesia", "JNE", "J&T", "SiCepat"],
@@ -66,7 +67,7 @@ export default async function RootLayout({
                     async
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5099892029462046"
                     crossOrigin="anonymous"
-                    strategy="afterInteractive"
+                    strategy="lazyOnload"
                 />
             </head>
             <body className={`font-sans antialiased min-h-screen flex flex-col ${isWidget ? 'bg-transparent' : 'bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30'}`}>

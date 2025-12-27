@@ -5,6 +5,7 @@ import { checkOngkir } from '@/app/actions/logistics'
 import { slugToDisplayName, getRouteBySlug, popularRoutes } from '@/data/popular-routes'
 import { OngkirComparisonTable } from '@/components/logistics/OngkirComparisonTable'
 import { ArrowRight, MapPin, Package, TrendingDown, Clock } from 'lucide-react'
+import { JsonLd } from '@/components/seo/JsonLd'
 
 interface PageProps {
     params: Promise<{
@@ -110,8 +111,23 @@ export default async function OngkirRoutePage({ params }: PageProps) {
         .filter(r => !(r.originSlug === parsed.origin && r.destinationSlug === parsed.destination))
         .slice(0, 6)
 
+    // Schema.org Data
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: `Ongkir ${originName} ke ${destinationName}`,
+        description: `Cek ongkos kirim termurah dari ${originName} ke ${destinationName}.`,
+        offers: {
+            '@type': 'AggregateOffer',
+            lowPrice: ongkirResult?.data?.[0]?.price || 0,
+            priceCurrency: 'IDR',
+            offerCount: ongkirResult?.data?.length || 0
+        }
+    }
+
     return (
         <main className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20 px-4">
+            <JsonLd data={jsonLd} />
             <div className="max-w-5xl mx-auto">
                 {/* Breadcrumb */}
                 <nav className="mb-6 text-sm">
