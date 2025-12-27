@@ -1,25 +1,113 @@
-import { forwardRef, InputHTMLAttributes } from 'react';
-import { clsx } from 'clsx';
+'use client';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> { }
+import * as React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ className, type, ...props }, ref) => {
+/**
+ * Input Component - Shadcn-inspired with CekKirim Design System
+ * Features: Focus states, variants, icons, and error states
+ */
+
+const inputVariants = cva(
+    // Base styles
+    `flex w-full rounded-lg border bg-white px-4 py-3 text-sm
+   text-surface-900 placeholder:text-surface-500
+   ring-offset-white transition-all duration-200
+   file:border-0 file:bg-transparent file:text-sm file:font-medium
+   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0
+   disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-surface-100`,
+    {
+        variants: {
+            variant: {
+                default: `
+          border-surface-200
+          hover:border-surface-300
+          focus-visible:border-primary-500 focus-visible:ring-primary-100
+        `,
+                filled: `
+          border-transparent bg-surface-100
+          hover:bg-surface-200
+          focus-visible:bg-white focus-visible:border-primary-500 focus-visible:ring-primary-100
+        `,
+                ghost: `
+          border-transparent bg-transparent
+          hover:bg-surface-100
+          focus-visible:bg-white focus-visible:border-primary-500 focus-visible:ring-primary-100
+        `,
+                error: `
+          border-error-500 text-error-900 placeholder:text-error-400
+          focus-visible:border-error-500 focus-visible:ring-error-100
+        `,
+                success: `
+          border-success-500
+          focus-visible:border-success-500 focus-visible:ring-success-100
+        `,
+            },
+            inputSize: {
+                sm: 'h-9 px-3 text-xs rounded-md',
+                md: 'h-10 px-4 py-2',
+                lg: 'h-12 px-5 text-base rounded-xl',
+                xl: 'h-14 px-6 text-lg rounded-xl',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+            inputSize: 'md',
+        },
+    }
+);
+
+export interface InputProps
+    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    VariantProps<typeof inputVariants> {
+    leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    error?: string;
+    hint?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+    ({ className, variant, inputSize, type, leftIcon, rightIcon, error, hint, ...props }, ref) => {
+        const effectiveVariant = error ? 'error' : variant;
+
         return (
-            <input
-                type={type}
-                className={clsx(
-                    'flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                    className
+            <div className="relative w-full">
+                <div className="relative">
+                    {leftIcon && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-500">
+                            {leftIcon}
+                        </div>
+                    )}
+                    <input
+                        type={type}
+                        className={cn(
+                            inputVariants({ variant: effectiveVariant, inputSize }),
+                            leftIcon && 'pl-10',
+                            rightIcon && 'pr-10',
+                            className
+                        )}
+                        ref={ref}
+                        {...props}
+                    />
+                    {rightIcon && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500">
+                            {rightIcon}
+                        </div>
+                    )}
+                </div>
+                {error && (
+                    <p className="mt-1.5 text-xs text-error-500">{error}</p>
                 )}
-                ref={ref}
-                {...props}
-            />
+                {hint && !error && (
+                    <p className="mt-1.5 text-xs text-surface-500">{hint}</p>
+                )}
+            </div>
         );
     }
 );
+
 Input.displayName = 'Input';
 
-export { Input };
+export { Input, inputVariants };
 export default Input;
-

@@ -1,0 +1,276 @@
+/* Micro-Interactions & Animation Styles */
+
+/* ============================================
+   SHIMMER ANIMATION (for Skeleton)
+   ============================================ */
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 1.5s ease-in-out infinite;
+    background: linear-gradient(90deg,
+            var(--color-surface-200, #eeeeee) 0%,
+            var(--color-surface-100, #f5f5f5) 50%,
+            var(--color-surface-200, #eeeeee) 100%);
+    background-size: 200% 100%;
+}
+
+/* ============================================
+   RIPPLE EFFECT
+   ============================================ */
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Ripple for dark backgrounds */
+.ripple-dark {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   CLICK FEEDBACK - Scale Down
+   ============================================ */
+.click-scale {
+    transition: transform 0.1s ease;
+}
+
+.click-scale:active {
+    transform: scale(0.97);
+}
+
+/* Stronger scale for buttons */
+.click-scale-strong:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   HOVER EFFECTS
+   ============================================ */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.1);
+}
+
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(0, 102, 204, 0.3);
+}
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* ============================================
+   FADE ANIMATIONS
+   ============================================ */
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.fade-in-down {
+    animation: fadeInDown 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   STAGGER ANIMATION
+   ============================================ */
+.stagger-container>* {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.stagger-container>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stagger-container>*:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.stagger-container>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stagger-container>*:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.stagger-container>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stagger-container>*:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.stagger-container>*:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.stagger-container>*:nth-child(8) {
+    animation-delay: 0.4s;
+}
+
+/* ============================================
+   PULSE ANIMATION
+   ============================================ */
+.pulse-soft {
+    animation: pulseSoft 2s ease-in-out infinite;
+}
+
+@keyframes pulseSoft {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   BOUNCE ANIMATION
+   ============================================ */
+.bounce-soft {
+    animation: bounceSoft 0.5s ease;
+}
+
+@keyframes bounceSoft {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ============================================
+   SKELETON VARIANTS
+   ============================================ */
+.skeleton-text {
+    height: 14px;
+    border-radius: 4px;
+}
+
+.skeleton-title {
+    height: 24px;
+    border-radius: 6px;
+}
+
+.skeleton-avatar {
+    border-radius: 50%;
+}
+
+.skeleton-card {
+    border-radius: 12px;
+    padding: 16px;
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
