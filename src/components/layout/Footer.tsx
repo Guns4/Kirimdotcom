@@ -1,160 +1,178 @@
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter, Mail, ArrowRight, TrendingUp } from 'lucide-react';
-import { popularRoutes } from '@/data/popular-routes';
+import { Facebook, Instagram, Twitter, Mail, ExternalLink, Heart } from 'lucide-react';
+import { footerLinks } from '@/data/footer-links';
 import { LiteModeToggle } from '../ui/LiteModeToggle';
-
-// Top 8 routes for footer
-const topRoutes = popularRoutes.slice(0, 8);
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-slate-900 border-t border-white/10">
-            {/* Popular Routes Section */}
-            <div className="container-custom py-8 border-b border-white/10">
-                <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="w-5 h-5 text-indigo-400" />
-                    <h3 className="text-lg font-semibold text-white">Rute Ongkir Populer</h3>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {topRoutes.map((route, index) => (
-                        <Link
-                            key={index}
-                            href={`/cek-ongkir/${route.originSlug}-ke-${route.destinationSlug}`}
-                            className="flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all group text-sm"
-                        >
-                            <span className="text-gray-400 group-hover:text-white truncate">
-                                {route.origin}
-                            </span>
-                            <ArrowRight className="w-3 h-3 text-gray-600 flex-shrink-0" />
-                            <span className="text-gray-400 group-hover:text-white truncate">
-                                {route.destination}
-                            </span>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+        <footer className="bg-slate-950 border-t border-white/10 pb-20 md:pb-0" id="footer">
+            {/* Top Wave Decoration (Optional) or simply border */}
 
-            {/* Main Footer */}
-            <div className="container-custom py-12">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {/* Brand */}
-                    <div className="md:col-span-2">
-                        <h3 className="font-bold text-white text-xl mb-3">CekKirim</h3>
-                        <p className="text-sm text-gray-400 mb-4 max-w-md">
-                            Solusi terpercaya untuk mengecek ongkos kirim dan melacak paket Anda di seluruh Indonesia.
-                            Bandingkan harga dari 10+ ekspedisi secara gratis.
-                        </p>
-                        <div className="flex space-x-3">
-                            <a
-                                href="https://facebook.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Kunjungi Facebook kami"
-                            >
-                                <Facebook className="w-5 h-5" aria-hidden="true" />
-                            </a>
-                            <a
-                                href="https://instagram.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Kunjungi Instagram kami"
-                            >
-                                <Instagram className="w-5 h-5" aria-hidden="true" />
-                            </a>
-                            <a
-                                href="https://twitter.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Kunjungi Twitter kami"
-                            >
-                                <Twitter className="w-5 h-5" aria-hidden="true" />
-                            </a>
-                            <a
-                                href="mailto:info@cekkirim.com"
-                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                aria-label="Kirim Email"
-                            >
-                                <Mail className="w-5 h-5" aria-hidden="true" />
-                            </a>
+            {/* Main Content */}
+            <div className="container-custom py-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+
+                    {/* Brand Section (Col Span 4) */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div>
+                            <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
+                                CekKirim
+                            </h3>
+                            <p className="text-gray-400 leading-relaxed text-sm">
+                                Platform logistik all-in-one untuk UMKM Indonesia. Cek ongkir akurat, lacak resi otomatis, dan tools jualan gratis untuk meningkatkan produktivitas bisnis online Anda.
+                            </p>
                         </div>
-                        <div className="mt-6 inline-block">
+
+                        {/* Social Signals */}
+                        <div className="flex gap-4">
+                            {[
+                                { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
+                                { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
+                                { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+                                { icon: Mail, href: "mailto:halo@cekkirim.com", label: "Email" }
+                            ].map((social, i) => (
+                                <a
+                                    key={i}
+                                    href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-2.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all hover:scale-105 border border-white/5"
+                                    title={`Kunjungi kami di ${social.label}`}
+                                    aria-label={social.label}
+                                >
+                                    <social.icon className="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
+
+                        <div className="pt-4">
                             <LiteModeToggle />
                         </div>
                     </div>
 
-                    {/* Navigation */}
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">Navigasi</h4>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Beranda
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Pricing
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/statistics" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Statistik Kurir
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/tools/kalkulator-marketplace" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Kalkulator Marketplace
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/tools/widget-generator" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Widget Cek Resi <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-1 py-0.5 rounded ml-1">NEW</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/login" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Masuk
-                                </Link>
-                            </li>
-                        </ul>
+                    {/* Silo 1: Popular Routes (Col Span 3) */}
+                    <div className="lg:col-span-3">
+                        <h4 className="text-white font-semibold mb-6 flex items-center gap-2">
+                            <span className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                            Rute Populer
+                        </h4>
+                        <nav aria-label="Rute Pengiriman Populer">
+                            <ul className="space-y-3">
+                                {footerLinks.popularRoutes.slice(0, 8).map((link, i) => (
+                                    <li key={i}>
+                                        <Link
+                                            href={`/cek-ongkir/${link.slug}`}
+                                            className="text-sm text-gray-400 hover:text-indigo-400 transition-colors flex items-center gap-2 group"
+                                            title={`Cek ongkir ${link.origin} ke ${link.destination}`}
+                                        >
+                                            <span className="w-1 h-1 bg-gray-600 rounded-full group-hover:bg-indigo-500 transition-colors" />
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
 
-                    {/* Legal */}
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">Legal</h4>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Kebijakan Privasi
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Syarat & Ketentuan
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition-colors">
-                                    Disclaimer
-                                </Link>
-                            </li>
-                        </ul>
+                    {/* Silo 2: Tools & Dictionary (Col Span 3) */}
+                    <div className="lg:col-span-3">
+                        <h4 className="text-white font-semibold mb-6 flex items-center gap-2">
+                            <span className="w-1.5 h-6 bg-purple-500 rounded-full" />
+                            Tools Seller
+                        </h4>
+                        <nav aria-label="Tools Seller & Kamus">
+                            <ul className="space-y-3 mb-8">
+                                {footerLinks.sellerTools.map((link, i) => (
+                                    <li key={i}>
+                                        <Link
+                                            href={link.href}
+                                            className="text-sm text-gray-400 hover:text-purple-400 transition-colors flex items-center gap-2 group"
+                                            title={link.title}
+                                        >
+                                            <link.icon className="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" />
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <h5 className="text-white font-medium mb-3 text-sm opacity-80">Kamus Logistik</h5>
+                            <ul className="space-y-2">
+                                {footerLinks.logisticsDictionary.slice(0, 3).map((link, i) => (
+                                    <li key={i}>
+                                        <Link
+                                            href={link.href}
+                                            className="text-xs text-gray-500 hover:text-white transition-colors"
+                                            title={link.title}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </div>
+
+                    {/* Silo 3: Legal & Support (Col Span 2) */}
+                    <div className="lg:col-span-2">
+                        <h4 className="text-white font-semibold mb-6">Informasi</h4>
+                        <nav aria-label="Legal & Bantuan">
+                            <ul className="space-y-3">
+                                <li>
+                                    <Link href="/about" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        Tentang Kami
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        Kebijakan Privasi
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        Syarat & Ketentuan
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        Hubungi Kami
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/sitemap.xml" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1">
+                                        Sitemap <ExternalLink className="w-3 h-3" />
+                                    </Link>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                {/* Tracking Links Horizontal (SEO Juice) */}
+                <div className="mt-12 pt-8 border-t border-white/5">
+                    <p className="text-xs text-gray-500 mb-4 font-medium uppercase tracking-wider">Cek Resi Kilat</p>
+                    <div className="flex flex-wrap gap-x-6 gap-y-2">
+                        {footerLinks.courierTracking.map((link, i) => (
+                            <Link
+                                key={i}
+                                href={link.href}
+                                className="text-xs text-gray-500 hover:text-indigo-400 transition-colors"
+                                title={link.title}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
                     </div>
                 </div>
 
                 {/* Copyright */}
-                <div className="mt-8 pt-8 border-t border-white/10 text-center">
-                    <p className="text-xs text-gray-500">
-                        &copy; {currentYear} CekKirim. All rights reserved.
-                    </p>
+                <div className="mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600">
+                    <p>&copy; {currentYear} CekKirim Indonesia. Dibuat dengan <Heart className="w-3 h-3 inline text-red-500 mx-0.5 animate-pulse" /> untuk UMKM.</p>
+                    <p>CekOngkir & CekResi All-in-One.</p>
                 </div>
             </div>
         </footer>
     );
 }
-

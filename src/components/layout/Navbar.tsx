@@ -68,6 +68,24 @@ export default function Navbar() {
                             Statistik
                         </Link>
                         <Link
+                            href="/tools/cek-cod"
+                            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                        >
+                            Cek COD
+                        </Link>
+                        <Link
+                            href="/tools/generator-caption"
+                            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                        >
+                            Bot Caption
+                        </Link>
+                        <Link
+                            href="/tools/kompres-foto"
+                            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                        >
+                            Kompres Foto
+                        </Link>
+                        <Link
                             href="/login"
                             className="text-sm font-medium px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg transition-all"
                         >
@@ -107,6 +125,13 @@ export default function Navbar() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Statistik
+                            </Link>
+                            <Link
+                                href="/tools/cek-cod"
+                                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Seller Tools
                             </Link>
                             <Link
                                 href="/login"

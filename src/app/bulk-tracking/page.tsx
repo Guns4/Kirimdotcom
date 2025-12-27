@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
-import { Package, Play, Download, AlertTriangle, CheckCircle, Clock, Loader2, FileSpreadsheet, Trash2 } from 'lucide-react'
+import { Package, Play, Download, AlertTriangle, CheckCircle, Clock, Loader2, FileSpreadsheet, Trash2, Copy } from 'lucide-react'
+import { copyToClipboardAsTable, exportToCSV } from '@/utils/clipboard'
 
 interface TrackingResult {
     resi: string
@@ -185,36 +186,38 @@ export default function BulkTrackingPage() {
         setIsProcessing(false)
     }
 
-    // Export to CSV
-    const exportToCSV = () => {
+    // Export & Copy Utils
+    const columns = [
+        { key: 'no', label: 'No' },
+        { key: 'resi', label: 'Nomor Resi' },
+        { key: 'courier', label: 'Kurir' },
+        { key: 'status', label: 'Status' },
+        { key: 'statusDate', label: 'Tanggal' },
+        { key: 'description', label: 'Keterangan' }
+    ]
+
+    const getFormattedData = () => results.map((r, i) => ({
+        no: i + 1,
+        resi: r.resi,
+        courier: r.courier,
+        status: r.status,
+        statusDate: r.statusDate,
+        description: r.description
+    }))
+
+    const handleExportCSV = () => {
         if (results.length === 0) return
+        exportToCSV(getFormattedData(), columns, `tracking-results-${new Date().toISOString().split('T')[0]}`)
+    }
 
-        const headers = ['No', 'Nomor Resi', 'Kurir', 'Status', 'Tanggal', 'Keterangan']
-        const rows = results.map((r, i) => [
-            i + 1,
-            r.resi,
-            r.courier,
-            r.status,
-            r.statusDate,
-            r.description.replace(/,/g, ';'), // Escape commas
-        ])
-
-        const csv = [
-            headers.join(','),
-            ...rows.map(row => row.join(','))
-        ].join('\n')
-
-        // Add BOM for Excel compatibility
-        const BOM = '\uFEFF'
-        const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' })
-        const url = URL.createObjectURL(blob)
-
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `tracking-results-${new Date().toISOString().split('T')[0]}.csv`
-        link.click()
-
-        URL.revokeObjectURL(url)
+    const handleCopyTable = async () => {
+        if (results.length === 0) return
+        const success = await copyToClipboardAsTable(getFormattedData(), columns)
+        if (success) {
+            alert('Data berhasil disalin! Silakan Paste (Ctrl+V) di Google Sheets/Excel.')
+        } else {
+            alert('Gagal menyalin data.')
+        }
     }
 
     // Clear all
@@ -339,15 +342,24 @@ export default function BulkTrackingPage() {
                             </div>
                         </div>
 
-                        {/* Export Button */}
+                        {/* Export Buttons */}
                         {results.length > 0 && (
-                            <button
-                                onClick={exportToCSV}
-                                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium flex items-center justify-center gap-2"
-                            >
-                                <FileSpreadsheet className="w-5 h-5" />
-                                Export ke Excel/CSV
-                            </button>
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={handleCopyTable}
+                                    className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
+                                >
+                                    <Copy className="w-5 h-5" />
+                                    Copy Table
+                                </button>
+                                <button
+                                    onClick={handleExportCSV}
+                                    className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
+                                >
+                                    <FileSpreadsheet className="w-5 h-5" />
+                                    Export CSV
+                                </button>
+                            </div>
                         )}
 
                         {/* Info */}
@@ -370,7 +382,7 @@ export default function BulkTrackingPage() {
                                 Hasil Tracking ({results.length})
                             </h3>
                             <button
-                                onClick={exportToCSV}
+                                onClick={handleExportCSV}
                                 className="px-4 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm flex items-center gap-2 hover:bg-green-600/30"
                             >
                                 <Download className="w-4 h-4" />
@@ -403,10 +415,10 @@ export default function BulkTrackingPage() {
                                             <td className="py-3 px-4 text-gray-300 text-sm">{result.courier}</td>
                                             <td className="py-3 px-4">
                                                 <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${result.isError
-                                                        ? 'bg-red-600/20 text-red-400'
-                                                        : result.status.toLowerCase().includes('delivered') || result.status.toLowerCase().includes('terkirim')
-                                                            ? 'bg-green-600/20 text-green-400'
-                                                            : 'bg-yellow-600/20 text-yellow-400'
+                                                    ? 'bg-red-600/20 text-red-400'
+                                                    : result.status.toLowerCase().includes('delivered') || result.status.toLowerCase().includes('terkirim')
+                                                        ? 'bg-green-600/20 text-green-400'
+                                                        : 'bg-yellow-600/20 text-yellow-400'
                                                     }`}>
                                                     {result.isError ? (
                                                         <AlertTriangle className="w-3 h-3" />

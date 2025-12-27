@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { LiteModeProvider } from "@/context/LiteModeContext";
 import { SystemStatusProvider } from "@/context/SystemStatusContext";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
@@ -72,11 +73,12 @@ export default async function RootLayout({
                 <SystemStatusProvider>
                     <LiteModeProvider>
                         {!isWidget && <Navbar />}
-                        <main className={isWidget ? "min-h-screen flex items-center justify-center p-4" : "flex-1"}>
+                        <main className={isWidget ? "min-h-screen flex items-center justify-center p-4" : "flex-1 pb-16 md:pb-0"}>
                             {children}
                         </main>
                         {!isWidget && <FeedbackWidget />}
                         {!isWidget && <Footer />}
+                        {!isWidget && <BottomNav />}
                     </LiteModeProvider>
                 </SystemStatusProvider>
             </body>

@@ -8,6 +8,7 @@ import { trackResi, type TrackResiResult } from '@/app/actions/logistics'
 import { TrackingResults } from './TrackingResults'
 import { Loader2, Search } from 'lucide-react'
 import { useSearchHistory } from '@/hooks/useSearchHistory'
+import { VoiceSearchButton } from '@/components/common/VoiceSearchButton'
 
 const courierOptions = courierList.map((courier) => ({
     value: courier.code,
@@ -135,10 +136,22 @@ export function CekResiForm() {
                             type="text"
                             value={waybill}
                             onChange={(e) => setWaybill(e.target.value.toUpperCase())}
-                            placeholder="Contoh: JNE123456789"
+                            placeholder="Contoh: JNE123456789 (atau tekan mic)"
                             aria-label="Nomor Resi"
-                            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all uppercase"
+                            className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all uppercase"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <VoiceSearchButton
+                                isCompact
+                                onResult={(detectedCourier, detectedResi) => {
+                                    if (detectedResi) setWaybill(detectedResi.toUpperCase())
+                                    if (detectedCourier) {
+                                        const match = courierOptions.find(c => c.value === detectedCourier)
+                                        if (match) setCourier(match)
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
                     <p className="text-xs text-gray-400">
                         Masukkan nomor resi paket Anda (minimal 8 karakter)
