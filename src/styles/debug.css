@@ -1,0 +1,238 @@
+/* Debug CSS - Visual Testing Tools */
+
+/* ============================================
+   CLICKABLE AREA DEBUG MODE
+   Adds red outline to all clickable elements
+   Enable with: body.debug-clickable
+   ============================================ */
+
+body.debug-clickable a,
+body.debug-clickable button,
+body.debug-clickable [role="button"],
+body.debug-clickable input[type="submit"],
+body.debug-clickable input[type="button"],
+body.debug-clickable [onclick],
+body.debug-clickable label[for] {
+    outline: 2px solid rgba(255, 0, 0, 0.5) !important;
+    outline-offset: 2px !important;
+}
+
+/* Highlight elements smaller than 44x44px (min touch target) */
+body.debug-clickable a:not([class*="min-w"]),
+body.debug-clickable button:not([class*="min-w"]) {
+    position: relative;
+}
+
+body.debug-clickable a::after,
+body.debug-clickable button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+    border: 1px dashed rgba(255, 165, 0, 0.7);
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+/* ============================================
+   Z-INDEX DEBUG MODE
+   Shows z-index values on positioned elements
+   Enable with: body.debug-zindex
+   ============================================ */
+
+body.debug-zindex *[style*="z-index"],
+body.debug-zindex .z-10,
+body.debug-zindex .z-20,
+body.debug-zindex .z-30,
+body.debug-zindex .z-40,
+body.debug-zindex .z-50 {
+    outline: 1px dotted blue !important;
+}
+
+body.debug-zindex *[style*="z-index"]::before,
+body.debug-zindex [class*="z-"]::before {
+    content: attr(class);
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: blue;
+    color: white;
+    font-size: 10px;
+    padding: 2px 4px;
+    z-index: 99999;
+}
+
+/* ============================================
+   LAYOUT DEBUG MODE
+   Shows all element boundaries
+   Enable with: body.debug-layout
+   ============================================ */
+
+body.debug-layout * {
+    outline: 1px solid rgba(0, 255, 0, 0.2) !important;
+}
+
+body.debug-layout *:hover {
+    outline: 2px solid rgba(0, 255, 0, 0.8) !important;
+}
+
+/* ============================================
+   SPACING DEBUG MODE
+   Highlights padding and margin
+   Enable with: body.debug-spacing
+   ============================================ */
+
+body.debug-spacing * {
+    background-color: rgba(255, 0, 0, 0.05);
+}
+
+body.debug-spacing *:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE DEBUG MODE
+   Shows current breakpoint
+   Enable with: body.debug-responsive
+   ============================================ */
+
+body.debug-responsive::after {
+    content: 'XS (Mobile)';
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 999999;
+}
+
+@media (min-width: 640px) {
+    body.debug-responsive::after {
+        content: 'SM (≥640px)';
+        background: #f59e0b;
+    }
+}
+
+@media (min-width: 768px) {
+    body.debug-responsive::after {
+        content: 'MD (≥768px)';
+        background: #10b981;
+    }
+}
+
+@media (min-width: 1024px) {
+    body.debug-responsive::after {
+        content: 'LG (≥1024px)';
+        background: #3b82f6;
+    }
+}
+
+@media (min-width: 1280px) {
+    body.debug-responsive::after {
+        content: 'XL (≥1280px)';
+        background: #8b5cf6;
+    }
+}
+
+@media (min-width: 1536px) {
+    body.debug-responsive::after {
+        content: '2XL (≥1536px)';
+        background: #ec4899;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY DEBUG
+   Highlights elements without proper labels
+   Enable with: body.debug-a11y
+   ============================================ */
+
+body.debug-a11y img:not([alt]),
+body.debug-a11y img[alt=""] {
+    outline: 3px solid red !important;
+    outline-offset: 2px !important;
+}
+
+body.debug-a11y a:not([href]),
+body.debug-a11y a[href=""],
+body.debug-a11y a[href="#"] {
+    outline: 3px solid orange !important;
+}
+
+body.debug-a11y button:not([aria-label]):not([aria-labelledby]):empty,
+body.debug-a11y [role="button"]:not([aria-label]):empty {
+    outline: 3px solid purple !important;
+}
+
+/* ============================================
+   DEBUG PANEL TOGGLE (Optional JS Integration)
+   ============================================ */
+
+.debug-panel {
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 999998;
+    display: none;
+}
+
+.debug-panel.visible {
+    display: block;
+}
+
+.debug-panel label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.debug-panel input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================
+   PRINT DEBUG
+   Shows non-printable elements
+   Enable with: body.debug-print
+   ============================================ */
+
+body.debug-print *[class*="no-print"],
+body.debug-print *[class*="hidden-print"] {
+    outline: 2px dashed gray !important;
+    opacity: 0.5;
+}
+
+/* ============================================
+   PRODUCTION GUARD
+   Only enable debug in development
+   ============================================ */
+
+/* These styles only apply in development */
+@media not all {
+
+    body:not([data-env="development"]) .debug-panel,
+    body:not([data-env="development"]).debug-clickable *,
+    body:not([data-env="development"]).debug-layout *,
+    body:not([data-env="development"]).debug-zindex *,
+    body:not([data-env="development"]).debug-spacing *,
+    body:not([data-env="development"]).debug-responsive::after,
+    body:not([data-env="development"]).debug-a11y * {
+        outline: none !important;
+        background: inherit !important;
+    }
+}
