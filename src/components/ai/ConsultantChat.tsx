@@ -71,7 +71,7 @@ export function ConsultantChat() {
                         )}
                         <div ref={endRef} />
                     </div>
-                </ScrollArea>
+                </div>
             </CardContent>
             <CardFooter className="p-3 border-t bg-gray-50/50">
                 <div className="flex w-full gap-2">
