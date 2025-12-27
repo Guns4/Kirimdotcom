@@ -12,6 +12,7 @@ import {
     CheckCircle2,
     User
 } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 interface UserProfile {
     id: string
@@ -167,9 +168,14 @@ export function UserManagement() {
                                 </tr>
                             ) : users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="py-8 text-center text-gray-400">
-                                        <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                                        Belum ada pengguna terdaftar
+                                    <td colSpan={5} className="py-12">
+                                        <div className="flex justify-center">
+                                            <EmptyState
+                                                title="Tidak ada pengguna"
+                                                description="Belum ada pengguna yang terdaftar di sistem."
+                                                icon="search"
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             ) : (

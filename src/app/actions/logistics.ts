@@ -16,6 +16,7 @@ import {
 } from '@/lib/cache/logistics'
 import { createClient } from '@/utils/supabase/server'
 import { getOfficialFallbackUrl } from '@/lib/courier-links'
+import { smartTrackShipment } from '@/lib/tracking-engine'
 
 // ============================================
 // SERVER ACTION: Check Shipping Rates
@@ -253,56 +254,32 @@ export async function trackResi(
             }
         }
 
-        // Step 1: Check cache first
-        const cached = await getCachedTracking(resiNumber, courierCode)
+        // USE SMART TRACKING ENGINE (DB Priority -> Freshness -> API)
+        const smartResult = await smartTrackShipment(resiNumber, courierCode)
+        const trackingData = smartResult.data
 
-        if (cached) {
-            // Cache hit - using cached data
-            return {
-                success: true,
-                data: cached.status_json,
-                fromCache: true,
-            }
+        // Helper to format history
+        const formattedHistory = trackingData?.history?.map(h => ({
+            date: h.date,
+            desc: h.desc,
+            location: h.location
+        })) || []
+
+        // Formatted Output
+        const resultData = {
+            resiNumber: trackingData?.summary?.awb || resiNumber,
+            courier: trackingData?.summary?.courier || courierCode,
+            service: trackingData?.summary?.service || '',
+            currentStatus: trackingData?.summary?.status || '',
+            statusDate: trackingData?.summary?.date || '',
+            statusDesc: trackingData?.summary?.desc || '',
+            weight: trackingData?.summary?.weight || '',
+            history: formattedHistory,
         }
 
-        // Cache miss - fetch from API
-
-        // Step 2: Fetch from API
-        const apiResponse = await trackResiAPI(resiNumber, courierCode)
-
-        if (!apiResponse.data) {
-            return {
-                success: false,
-                error: 'Data tracking tidak tersedia',
-                errorType: 'not-found',
-            }
-        }
-
-        // Transform API response to our format
-        const trackingData = {
-            resiNumber: apiResponse.data.summary.awb,
-            courier: apiResponse.data.summary.courier,
-            service: apiResponse.data.summary.service,
-            currentStatus: apiResponse.data.summary.status,
-            statusDate: apiResponse.data.summary.date,
-            statusDesc: apiResponse.data.summary.desc,
-            weight: apiResponse.data.summary.weight,
-            history: apiResponse.data.history || [],
-        }
-
-        // Step 3: Save to cache
-        await setCachedTracking(
-            resiNumber,
-            courierCode,
-            trackingData,
-            trackingData.currentStatus
-        )
-
-        // Step 4: Save to search history
+        // Step 4: Save to search history (Only for Web Users)
         const supabase = await createClient()
-        const {
-            data: { user },
-        } = await supabase.auth.getUser()
+        const { data: { user } } = await supabase.auth.getUser()
 
         if (user) {
             await supabase.from('search_history').insert({
@@ -314,9 +291,11 @@ export async function trackResi(
 
         return {
             success: true,
-            data: trackingData,
-            fromCache: false,
+            data: resultData,
+            fromCache: smartResult.source === 'db',
+            courier: courierCode
         }
+
     } catch (error: any) {
         console.error('trackResi error:', error)
 

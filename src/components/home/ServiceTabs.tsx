@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Calculator, Package } from 'lucide-react';
 
 type TabMode = 'ongkir' | 'resi';
@@ -21,8 +21,8 @@ export default function ServiceTabs() {
                         <button
                             onClick={() => setActiveTab('ongkir')}
                             className={`flex-1 relative py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'ongkir'
-                                    ? 'text-white'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                ? 'text-white'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                 }`}
                         >
                             {activeTab === 'ongkir' && (
@@ -41,8 +41,8 @@ export default function ServiceTabs() {
                         <button
                             onClick={() => setActiveTab('resi')}
                             className={`flex-1 relative py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'resi'
-                                    ? 'text-white'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                ? 'text-white'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                 }`}
                         >
                             {activeTab === 'resi' && (

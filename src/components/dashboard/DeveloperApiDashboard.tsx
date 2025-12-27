@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Key, Plus, Copy, Check, Trash2, BarChart3, ExternalLink, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { generateApiKey, getApiKeys, revokeApiKey } from '@/app/actions/api-keys'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 interface ApiKey {
     id: string
@@ -128,8 +129,16 @@ export function DeveloperApiDashboard() {
                         <Loader2 className="w-8 h-8 text-indigo-400 animate-spin mx-auto" />
                     </div>
                 ) : apiKeys.filter(k => k.is_active).length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                        Belum ada API key. Klik "Generate Key" untuk membuat.
+                    <div className="p-8 flex justify-center">
+                        <EmptyState
+                            title="Belum ada API Key"
+                            description="Buat API Key pertama Anda untuk mulai menggunakan layanan kami."
+                            icon="key"
+                            action={{
+                                label: "Generate Key",
+                                onClick: () => setShowModal(true)
+                            }}
+                        />
                     </div>
                 ) : (
                     <table className="w-full">
