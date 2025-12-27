@@ -3,132 +3,126 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { smartTrackShipment } from '@/lib/tracking-engine'
+import { safeAction } from '@/lib/safe-action'
+import { Database } from '@/types/database'
+import { ActionResponse } from '@/types'
 
-export interface Order {
-    id: string
-    user_id: string
-    customer_name: string
-    product_name: string
-    price: number
-    resi_number: string | null
-    courier: string | null
-    status: 'Unpaid' | 'Paid' | 'Shipped' | 'Done' | 'Cancelled' | 'Returned' // Simplified Business Status
-    tracking_status: string // Logistics Status
-    created_at: string
-    updated_at: string
-}
-
-export type NewOrder = Pick<Order, 'customer_name' | 'product_name' | 'price' | 'resi_number' | 'courier' | 'status'>
+// Type Definition from Database
+export type Order = Database['public']['Tables']['orders']['Row']
+export type NewOrder = Database['public']['Tables']['orders']['Insert']
+export type UpdateOrderParams = Database['public']['Tables']['orders']['Update']
 
 // ============================================
 // CRUD OPERATIONS
 // ============================================
 
-export async function createOrder(data: NewOrder) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+export async function createOrder(data: NewOrder): Promise<ActionResponse<Order>> {
+    return safeAction(async (input, user) => {
+        if (!user) throw new Error('Unauthorized')
 
-    if (!user) {
-        return { success: false, error: 'Unauthorized' }
-    }
+        const supabase = await createClient()
 
-    // Insert order
-    const { error: insertError, data: newOrder } = await supabase
-        .from('orders')
-        .insert({
-            user_id: user.id,
-            customer_name: data.customer_name,
-            product_name: data.product_name,
-            price: data.price,
-            resi_number: data.resi_number || null,
-            courier: data.courier || null,
-            status: data.status,
-            tracking_status: 'PENDING'
-        })
-        .select()
-        .single()
+        // Insert order
+        const { error: insertError, data: newOrder } = await supabase
+            .from('orders')
+            .insert({
+                ...input,
+                user_id: user.id, // Ensure user_id is set validly from auth
+                tracking_status: 'PENDING'
+            })
+            .select()
+            .single()
 
-    if (insertError) {
-        console.error('Create Order Error:', insertError)
-        return { success: false, error: 'Gagal membuat order' }
-    }
+        if (insertError) throw new Error(insertError.message)
 
-    // Auto-track if resi & courier provided
-    if (data.resi_number && data.courier) {
-        // Run in background (fire & forget, but we await for simplicity in Vercel serverless)
-        // Ideally use persistent queue, but for "Simple" feature:
-        await refreshSingleOrderTracking(newOrder.id, data.resi_number, data.courier)
-    }
+        // Auto-track if resi & courier provided
+        if (newOrder.resi_number && newOrder.courier) {
+            await refreshSingleOrderTracking(newOrder.id, newOrder.resi_number, newOrder.courier)
+        }
 
-    revalidatePath('/dashboard/orders')
-    return { success: true }
+        revalidatePath('/dashboard/orders')
+        return newOrder
+    }, data, { requireAuth: true })
 }
 
-export async function getOrders() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { data: [], stats: { revenue: 0, active: 0, returned: 0 } }
+export async function getOrders(): Promise<ActionResponse<{ data: Order[], stats: any }>> {
+    return safeAction(async (_, user) => {
+        if (!user) throw new Error('Unauthorized')
 
-    const { data } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        const supabase = await createClient()
 
-    const orders = (data || []) as Order[]
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
 
-    // Calculate Stats
-    const stats = orders.reduce((acc, order) => {
-        // Revenue (Only Paid/Shipped/Done)
-        if (['Paid', 'Shipped', 'Done'].includes(order.status)) {
-            acc.revenue += Number(order.price)
-        }
-        // Active Shipments (Using Tracking Status)
-        if (order.tracking_status !== 'DELIVERED' && order.tracking_status !== 'PENDING' && order.status === 'Shipped') {
-            acc.active += 1
-        }
-        // Returned
-        if (order.status === 'Returned' || order.tracking_status.includes('RETUR')) {
-            acc.returned += 1
-        }
-        return acc
-    }, { revenue: 0, active: 0, returned: 0 })
+        if (error) throw new Error(error.message)
 
-    return { data: orders, stats }
+        const orders = data as Order[]
+
+        // Calculate Stats
+        const stats = orders.reduce((acc, order) => {
+            // Revenue (Only Paid/Shipped/Done)
+            // Need to match the string literal types strictly, or casting
+            const status = order.status
+            if (status === 'Paid' || status === 'Shipped' || status === 'Done') {
+                acc.revenue += Number(order.price)
+            }
+            // Active Shipments
+            if (order.tracking_status !== 'DELIVERED' && order.tracking_status !== 'PENDING' && status === 'Shipped') {
+                acc.active += 1
+            }
+            // Returned
+            if (status === 'Returned' || order.tracking_status.includes('RETUR')) {
+                acc.returned += 1
+            }
+            return acc
+        }, { revenue: 0, active: 0, returned: 0 })
+
+        return { data: orders, stats }
+    }, null, { requireAuth: true })
 }
 
-export async function updateOrder(id: string, updates: Partial<Order>) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { success: false, error: 'Unauthorized' }
+export async function updateOrder(id: string, updates: UpdateOrderParams): Promise<ActionResponse<null>> {
+    return safeAction(async (input, user) => {
+        if (!user) throw new Error('Unauthorized')
+        const supabase = await createClient()
 
-    const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
+        const { error } = await supabase
+            .from('orders')
+            .update(input)
+            .eq('id', id)
+            .eq('user_id', user.id)
 
-    if (error) return { success: false, error: 'Update failed' }
+        if (error) throw new Error(error.message)
 
-    // If updating resi, trigger re-track
-    if (updates.resi_number && updates.courier) {
-        await refreshSingleOrderTracking(id, updates.resi_number, updates.courier)
-    }
+        // If updating resi, trigger re-track
+        if (input.resi_number && input.courier) {
+            await refreshSingleOrderTracking(id, input.resi_number, input.courier)
+        }
 
-    revalidatePath('/dashboard/orders')
-    return { success: true }
+        revalidatePath('/dashboard/orders')
+        return null
+    }, updates, { requireAuth: true })
 }
 
-export async function deleteOrder(id: string) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { success: false, error: 'Unauthorized' }
+export async function deleteOrder(id: string): Promise<ActionResponse<null>> {
+    return safeAction(async (_, user) => {
+        if (!user) throw new Error('Unauthorized')
+        const supabase = await createClient()
 
-    const { error } = await supabase.from('orders').delete().eq('id', id).eq('user_id', user.id)
-    if (error) return { success: false, error: 'Delete failed' }
+        const { error } = await supabase
+            .from('orders')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id)
 
-    revalidatePath('/dashboard/orders')
-    return { success: true }
+        if (error) throw new Error(error.message)
+
+        revalidatePath('/dashboard/orders')
+        return null
+    }, null, { requireAuth: true })
 }
 
 // ============================================
@@ -144,7 +138,11 @@ async function refreshSingleOrderTracking(orderId: string, resi: string, courier
             const isDelivered = status === 'DELIVERED'
 
             // Auto-update business status if Delivered
-            const updates: any = { tracking_status: status, last_tracking_check: new Date().toISOString() }
+            const updates: UpdateOrderParams = {
+                tracking_status: status,
+                last_tracking_check: new Date().toISOString()
+            }
+
             if (isDelivered) {
                 updates.status = 'Done' // Auto-close order
             }
@@ -159,30 +157,31 @@ async function refreshSingleOrderTracking(orderId: string, resi: string, courier
     }
 }
 
-export async function refreshActiveOrders() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+export async function refreshActiveOrders(): Promise<ActionResponse<{ count: number }>> {
+    return safeAction(async (_, user) => {
+        if (!user) throw new Error('Unauthorized')
+        const supabase = await createClient()
 
-    // Fetch active orders (Shipped but not Done/Returned)
-    // Limit to 5 to prevent timeout on Vercel Free
-    const { data: orders } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'Shipped')
-        .neq('tracking_status', 'DELIVERED')
-        .not('resi_number', 'is', null)
-        .not('courier', 'is', null)
-        .limit(5)
+        // Fetch active orders (Shipped but not Done/Returned)
+        // Limit to 5 to prevent timeout on Vercel Free
+        const { data: orders } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('status', 'Shipped')
+            .neq('tracking_status', 'DELIVERED')
+            .not('resi_number', 'is', null)
+            .not('courier', 'is', null)
+            .limit(5)
 
-    if (!orders) return
+        if (!orders || orders.length === 0) return { count: 0 }
 
-    // Parallel processing
-    await Promise.all(orders.map(order =>
-        refreshSingleOrderTracking(order.id, order.resi_number!, order.courier!)
-    ))
+        // Parallel processing
+        await Promise.all(orders.map(order =>
+            refreshSingleOrderTracking(order.id, order.resi_number!, order.courier!)
+        ))
 
-    revalidatePath('/dashboard/orders')
-    return { success: true, count: orders.length }
+        revalidatePath('/dashboard/orders')
+        return { count: orders.length }
+    }, null, { requireAuth: true })
 }

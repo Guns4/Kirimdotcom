@@ -1,3 +1,5 @@
+-- Reset table to ensure schema matches
+drop table if exists cached_resi cascade;
 -- Create cached_resi table for Smart Tracking Engine
 create table if not exists cached_resi (
     id uuid default gen_random_uuid() primary key,

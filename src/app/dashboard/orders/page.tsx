@@ -7,7 +7,8 @@ import { DollarSign, Package, AlertTriangle } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default async function OrderDashboard() {
-    const { data: orders, stats } = await getOrders()
+    const response = await getOrders()
+    const { data: orders = [], stats = { revenue: 0, active: 0, returned: 0 } } = response.data || {}
 
     return (
         <div className="container max-w-6xl py-10 space-y-8">

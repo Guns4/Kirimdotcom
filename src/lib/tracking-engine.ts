@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { trackResi as fetchExternalAPI, BinderByteTrackingResponse } from '@/lib/api/logistics'
+import { Database } from '@/types/database'
 
 // Types
 export interface SmartTrackingResult {

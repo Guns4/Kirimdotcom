@@ -1,3 +1,5 @@
+-- Reset table to ensure schema matches
+drop table if exists orders cascade;
 -- Create orders table
 create table if not exists orders (
     id uuid default gen_random_uuid() primary key,

@@ -28,7 +28,7 @@ export function OrderList({ orders }: OrderListProps) {
         const res = await refreshActiveOrders()
         setRefreshing(false)
         if (res?.success) {
-            toast.success(`Berhasil memperbarui ${res.count} paket!`)
+            toast.success(`Berhasil memperbarui ${res.data?.count || 0} paket!`)
         } else {
             toast.info('Tidak ada paket aktif untuk diperbarui.')
         }
