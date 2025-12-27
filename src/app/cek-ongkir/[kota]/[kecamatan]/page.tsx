@@ -3,6 +3,23 @@ import { notFound } from 'next/navigation';
 import { MapPin, Package, Clock, TrendingDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
+// Type for kecamatan data with cities relation
+interface KecamatanData {
+    id: string;
+    kecamatan_name: string;
+    kecamatan_slug: string;
+    postal_code: string | null;
+    avg_delivery_days: number | null;
+    available_couriers: string[] | null;
+    search_count: number | null;
+    city_id: string;
+    cities: {
+        city_name: string;
+        city_slug: string;
+        province: string;
+    };
+}
+
 interface PageProps {
     params: Promise<{
         kota: string;
@@ -37,7 +54,7 @@ export async function generateMetadata({ params }: PageProps) {
         .select('*, cities(*)')
         .eq('kecamatan_slug', kecamatanSlug)
         .eq('cities.city_slug', kota)
-        .single();
+        .single() as { data: KecamatanData | null };
 
     if (!kecamatan) {
         return {
@@ -75,7 +92,7 @@ export default async function KecamatanPage({ params }: PageProps) {
         .select('*, cities(*)')
         .eq('kecamatan_slug', kecamatanSlug)
         .eq('cities.city_slug', kota)
-        .single();
+        .single() as { data: KecamatanData | null };
 
     if (!kecamatan) {
         notFound();
