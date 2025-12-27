@@ -28,7 +28,7 @@ export default function PPOBPage() {
                     <div className="bg-white rounded-xl p-4 text-center shadow-md">
                         <Zap className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
                         <p className="font-semibold text-gray-900">Proses Instan</p>
-                        <p className="text-sm text-gray-600">< 5 detik</p>
+                        <p className="text-sm text-gray-600">&lt; 5 detik</p>
                     </div>
                     <div className="bg-white rounded-xl p-4 text-center shadow-md">
                         <Shield className="w-8 h-8 text-green-600 mx-auto mb-2" />
