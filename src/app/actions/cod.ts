@@ -12,7 +12,7 @@ export interface CheckPostalCodeResult {
 }
 
 export async function checkPostalCode(postalCode: string): Promise<CheckPostalCodeResult> {
-    const supabase = await createClient()
+    const supabase = await createClient() as any
 
     try {
         const { data, error } = await supabase
@@ -43,14 +43,14 @@ export async function checkPostalCode(postalCode: string): Promise<CheckPostalCo
 
 export interface CheckPhoneResult {
     success: boolean
-    reportCount: number
+    reportCount?: number
     lastReportedAt?: string
     isClean?: boolean
     error?: string
 }
 
 export async function checkPhone(phoneHash: string): Promise<CheckPhoneResult> {
-    const supabase = await createClient()
+    const supabase = await createClient() as any
 
     try {
         const { data, error } = await supabase
@@ -86,7 +86,7 @@ export interface ReportBuyerResult {
 }
 
 export async function reportBuyer(phoneHash: string, reason: string): Promise<ReportBuyerResult> {
-    const supabase = await createClient()
+    const supabase = await createClient() as any
 
     try {
         // Get IP for audit

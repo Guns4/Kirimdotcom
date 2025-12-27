@@ -6,6 +6,7 @@ import { Search, MapPin, Phone, ShieldAlert, BadgeInfo, TriangleAlert, CheckCirc
 import { toast } from 'sonner'
 import { sha256, normalizePhone } from '@/lib/hash'
 import { checkPostalCode, checkPhone, reportBuyer } from '@/app/actions/cod'
+import { DisputeWizard } from './DisputeWizard'
 
 type Tab = 'postal' | 'phone'
 
@@ -26,6 +27,7 @@ export function CODRiskChecker() {
     const [showReportForm, setShowReportForm] = useState(false)
     const [reportReason, setReportReason] = useState('Menolak Bayar (RTS)')
     const [reportLoading, setReportLoading] = useState(false)
+    const [showDisputeWizard, setShowDisputeWizard] = useState(false)
 
     // Handlers
     const handleCheckPostal = async (e: React.FormEvent) => {
@@ -66,7 +68,7 @@ export function CODRiskChecker() {
             const hash = await sha256(normalized)
             const res = await checkPhone(hash)
             if (res.success) {
-                setPhoneResult({ ...res, original: phoneNumber })
+                setPhoneResult({ ...res, original: phoneNumber, hash }) // Store hash for dispute
             } else {
                 toast.error(res.error)
             }
@@ -120,8 +122,8 @@ export function CODRiskChecker() {
                 <button
                     onClick={() => setActiveTab('postal')}
                     className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-all ${activeTab === 'postal'
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
                         }`}
                 >
                     <MapPin className="w-4 h-4" />
@@ -130,8 +132,8 @@ export function CODRiskChecker() {
                 <button
                     onClick={() => setActiveTab('phone')}
                     className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-all ${activeTab === 'phone'
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
                         }`}
                 >
                     <Phone className="w-4 h-4" />
@@ -179,8 +181,8 @@ export function CODRiskChecker() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className={`p-6 rounded-xl border-2 text-center ${postalResult.error
-                                            ? 'bg-red-500/10 border-red-500/30'
-                                            : getRiskColor(postalResult.riskLevel)
+                                        ? 'bg-red-500/10 border-red-500/30'
+                                        : getRiskColor(postalResult.riskLevel)
                                         }`}
                                 >
                                     {postalResult.error ? (
@@ -244,8 +246,8 @@ export function CODRiskChecker() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className={`p-6 rounded-xl border text-center relative overflow-hidden ${phoneResult.isClean
-                                            ? 'bg-green-500/10 border-green-500/30'
-                                            : 'bg-red-500/10 border-red-500/30'
+                                        ? 'bg-green-500/10 border-green-500/30'
+                                        : 'bg-red-500/10 border-red-500/30'
                                         }`}
                                 >
                                     {phoneResult.isClean ? (
@@ -271,8 +273,20 @@ export function CODRiskChecker() {
                                         </div>
                                     )}
 
+                                    {/* Dispute Trigger */}
+                                    {!phoneResult.isClean && (
+                                        <div className="mt-4 pb-2">
+                                            <button
+                                                onClick={() => setShowDisputeWizard(true)}
+                                                className="text-xs text-gray-500 hover:text-white underline decoration-dashed underline-offset-4 transition-colors"
+                                            >
+                                                Ini nomor Anda? Ajukan Sanggahan
+                                            </button>
+                                        </div>
+                                    )}
+
                                     {/* Report Trigger */}
-                                    <div className="mt-6 pt-4 border-t border-white/5">
+                                    <div className="mt-2 pt-4 border-t border-white/5">
                                         <button
                                             onClick={() => setShowReportForm(!showReportForm)}
                                             className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center justify-center gap-1 mx-auto"
@@ -320,6 +334,16 @@ export function CODRiskChecker() {
                                 </motion.div>
                             )}
                         </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Dispute Wizard Modal */}
+                <AnimatePresence>
+                    {showDisputeWizard && (
+                        <DisputeWizard
+                            phoneHash={phoneResult?.hash || ''} // We need to ensure we have the hash in phoneResult state
+                            onClose={() => setShowDisputeWizard(false)}
+                        />
                     )}
                 </AnimatePresence>
             </div>
