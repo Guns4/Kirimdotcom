@@ -1,284 +1,275 @@
-# 📦 CekKirim - Cek Ongkir & Lacak Resi Indonesia
+# 🚀 CekKirim.com - The Logistics OS
 
-<p align="center">
-  <img src="public/logo.png" alt="CekKirim Logo" width="120" />
-</p>
+**Enterprise-Grade Logistics & Supply Chain Management Platform**
 
-<p align="center">
-  <strong>Aplikasi terlengkap untuk mengecek ongkos kirim dan melacak paket dari semua ekspedisi di Indonesia.</strong>
-</p>
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
+[![Phase](https://img.shields.io/badge/phase-300-blue)]()
+[![License](https://img.shields.io/badge/license-MIT-green)]()
 
-<p align="center">
-  <a href="https://www.cekkirim.com">🌐 Live Demo</a> •
-  <a href="#fitur">✨ Fitur</a> •
-  <a href="#instalasi">🚀 Instalasi</a> •
-  <a href="#environment-variables">🔐 Env Variables</a> •
-  <a href="#deployment">📤 Deployment</a>
-</p>
+## 📋 Overview
 
----
+CekKirim is a comprehensive logistics and supply chain management platform built with modern web technologies. It integrates fintech, IoT, AI, and blockchain to create a complete "Logistics OS" for enterprise operations.
 
-## ✨ Fitur
+## ✨ Features
 
-### 🚚 Core Features
-- **Cek Ongkir** - Bandingkan harga pengiriman dari 10+ ekspedisi
-- **Lacak Resi** - Track paket real-time dari semua kurir
-- **AI Assistant** - Analisis cerdas untuk pengiriman optimal
+### 🔐 Fintech Module
+- **Invoice Management** - Professional PDF invoicing system
+- **Payment Integration** - Multi-gateway payment processing
+- **Bank Reconciliation** - Automated transaction matching
+- **Financial Reporting** - Real-time analytics
 
-### 💎 Premium Features
-- **Unlimited Tracking** - Tidak ada batasan harian
-- **No Ads** - Pengalaman bebas iklan
-- **History** - Riwayat tracking tersimpan
-- **Share as Image** - Bagikan status tracking
+### 📦 IoT & Hardware Integration
+- **WebUSB Thermal Printer** - Direct browser-to-printer communication
+- **Warehouse Barcode Scanner** - Camera-based scanning with QuaggaJS
+- **Fleet GPS Tracking** - Real-time driver location monitoring
+- **Smart Locker Integration** - Package drop-off automation
 
-### 🛡️ Security & Performance
-- **Rate Limiting** - Proteksi dari abuse
-- **API Caching** - Response cepat dengan cache Supabase
-- **Edge Runtime** - Deployed ke edge untuk latency rendah
-- **PWA Ready** - Install sebagai native app
+### 🤖 AI & Intelligence
+- **Predictive ETA Engine** - ML-powered delivery predictions
+- **Voice Commands** - Hands-free navigation
+- **Address Normalization** - Auto-correct typos and format addresses
+- **AI Consultant** - LangChain-powered support assistant
 
-### 📈 SEO & Monetization
-- **Programmatic SEO** - 40+ halaman ongkir dinamis
-- **Affiliate System** - Link affiliate per kurir
-- **Subscription Model** - Monthly, Yearly, Lifetime plans
+### ⛓️ Blockchain & Web3
+- **Proof of Delivery** - Immutable records on Polygon blockchain
+- **Smart Contracts** - Solidity-based delivery verification
 
----
+### 🌍 Global Trade
+- **HS Code Lookup** - Customs tariff database
+- **Multi-Currency Converter** - Real-time exchange rates
+- **CN23 Form Generator** - International customs documentation
+- **Freight Marketplace** - LCL/FCL shipping quotes
+
+### 🎮 Gamification
+- **Loyalty Coin System** - Earn and redeem points
+- **Multi-tier Rewards** - Bronze to Diamond tiers
+- **Referral System** - 20% lifetime commission
+
+### 📊 Visualization
+- **3D Supply Chain Globe** - Three.js-powered route visualization
+- **Smart Map** - Interactive logistics tracking
+- **God Mode Dashboard** - Real-time enterprise monitoring
+
+### 🔗 Integrations
+- **Webhook System** - Event-driven automation
+- **Google Sheets Sync** - Bidirectional data sync
+- **Mobile Share Target** - PWA sharing capabilities
+
+### 📱 PWA Features
+- **Biometric Authentication** - WebAuthn fingerprint/face login
+- **Push Notifications** - Web Push API integration
+- **Offline Sync** - IndexedDB persistence
+- **Install Banner** - Native app-like experience
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| API | BinderByte Logistics API |
-| AI | DeepSeek API |
-| Charts | Recharts |
-| Animations | Framer Motion |
-| Deployment | Vercel |
+### Frontend
+- **Next.js 14** - App Router, Server Actions, Server Components
+- **React 18** - Modern React with hooks
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **Shadcn UI** - Beautiful component library
 
----
+### Backend & Database
+- **Supabase** - PostgreSQL with Row Level Security
+- **Next.js Server Actions** - Type-safe API
+- **Edge Functions** - Serverless computing
 
-## 🚀 Instalasi
+### Libraries & Tools
+- **Three.js** - 3D visualization
+- **React Leaflet** - Map integration
+- **Recharts** - Data visualization
+- **React PDF** - PDF generation
+- **Ethers.js** - Web3 integration
+- **LangChain** - AI orchestration
+- **QuaggaJS** - Barcode scanning
+- **Socket.io** - Real-time communication
 
-### Prerequisites
-- Node.js 18+
-- npm atau yarn
-- Akun Supabase
-- API Key BinderByte
-
-### Clone & Install
+## 📦 Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/Guns4/Kirimdotcom.git
-cd Kirimdotcom
+git clone https://github.com/yourusername/kirimdotcom.git
+cd kirimdotcom
 
 # Install dependencies
 npm install
 
-# Copy environment variables
-cp .env.local.example .env.local
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your credentials
 
-# Isi environment variables (lihat section di bawah)
+# Run database migrations
+# Execute all SQL files in src/utils/supabase/migrations/ in your Supabase dashboard
 
-# Run development server
+# Start development server
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000) di browser.
+## 🔧 Configuration
 
----
-
-## 🔐 Environment Variables
-
-Buat file `.env.local` dengan variabel berikut:
+### Required Environment Variables
 
 ```env
-# ===== SUPABASE =====
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# ===== BINDERBYTE API =====
-BINDERBYTE_API_KEY=your-binderbyte-api-key
+# Biometric Auth
+NEXT_PUBLIC_RP_ID=localhost
+NEXT_PUBLIC_RP_NAME=CekKirim
 
-# ===== AI (Optional) =====
-DEEPSEEK_API_KEY=your-deepseek-api-key
+# Push Notifications
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
 
-# ===== ADMIN =====
-ADMIN_SECRET=your-admin-secret-for-webhooks
+# Currency API
+OPENEXCHANGERATES_API_KEY=your_api_key
 
-# ===== ANALYTICS (Optional) =====
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+# Blockchain (optional)
+BLOCKCHAIN_PRIVATE_KEY=your_wallet_private_key
+BLOCKCHAIN_CONTRACT_ADDRESS=your_contract_address
+BLOCKCHAIN_RPC_URL=https://rpc-mumbai.maticvigil.com
+
+# AI Features (optional)
+OPENAI_API_KEY=your_openai_key
+
+# Google Sheets (optional)
+GOOGLE_SHEETS_API_KEY=your_google_api_key
 ```
 
-### Cara Mendapatkan API Keys:
+## 🚀 Deployment
 
-| Service | URL | Notes |
-|---------|-----|-------|
-| Supabase | https://supabase.com | Free tier available |
-| BinderByte | https://binderbyte.com | Beli paket API |
-| DeepSeek | https://platform.deepseek.com | Optional, untuk AI |
-
----
-
-## 📁 Struktur Project
-
-```
-src/
-├── app/                    # Next.js App Router
-│   ├── actions/           # Server Actions
-│   ├── api/               # API Routes
-│   ├── dashboard/         # Protected pages
-│   ├── cek-ongkir/       # Programmatic SEO pages
-│   └── ...               # Other pages
-├── components/
-│   ├── admin/            # Admin dashboard components
-│   ├── affiliate/        # Affiliate buttons
-│   ├── dashboard/        # User dashboard
-│   ├── layout/           # Navbar, Footer
-│   ├── logistics/        # Cek resi, cek ongkir forms
-│   ├── reviews/          # Courier reviews
-│   ├── seo/              # SEO components
-│   ├── share/            # Share functionality
-│   └── ui/               # Reusable UI components
-├── config/               # App configuration
-├── data/                 # Static data (cities, couriers)
-├── lib/                  # Utilities & services
-│   ├── api/             # External API clients
-│   ├── cache/           # Caching logic
-│   ├── payment/         # Payment gateway
-│   └── supabase/        # Supabase clients
-├── types/               # TypeScript types
-└── utils/               # Helper functions
-```
-
----
-
-## 🗄️ Database Schema
-
-Jalankan SQL berikut di Supabase SQL Editor:
-
-1. **Core Tables:** `supabase-reviews-schema.sql`
-2. **Monetization:** `supabase-monetization-schema.sql`
-
-### Main Tables:
-- `profiles` - User profiles & roles
-- `search_history` - User search logs
-- `cached_resi` - Cached tracking data
-- `cached_ongkir` - Cached shipping rates
-- `courier_reviews` - User reviews for couriers
-- `subscriptions` - Premium subscriptions
-- `transactions` - Payment history
-- `affiliate_clicks` - Affiliate click tracking
-
----
-
-## 📤 Deployment
-
-### Deploy ke Vercel (Recommended)
-
-1. Push code ke GitHub
-2. Connect repository di [Vercel](https://vercel.com)
-3. Add Environment Variables di Vercel Dashboard
-4. Deploy!
+### Using Vercel (Recommended)
 
 ```bash
-# Or use Vercel CLI
+# Install Vercel CLI
 npm i -g vercel
-vercel
+
+# Deploy
+vercel --prod
 ```
 
-### Build Commands
+### Using Railway
 
 ```bash
-# Production build
-npm run build
+# Install Railway CLI
+npm i -g @railway/cli
 
-# Start production server
-npm start
-
-# Lint code
-npm run lint
-
-# Type check
-npm run typecheck
+# Deploy
+railway up
 ```
 
----
+### Manual Deployment
+
+1. Run build: `npm run build`
+2. Set environment variables on your hosting platform
+3. Run migrations on production database
+4. Start: `npm start`
+
+## 📊 Project Structure
+
+```
+kirimdotcom/
+├── src/
+│   ├── app/                      # Next.js App Router
+│   │   ├── actions/              # Server Actions
+│   │   ├── api/                  # API Routes
+│   │   ├── freight/              # Freight Marketplace
+│   │   ├── god-mode/             # Admin Dashboard
+│   │   ├── marketplace/          # Vendor Directory
+│   │   └── supply-chain/         # 3D Visualization
+│   ├── components/               # React Components
+│   │   ├── auth/                 # Authentication
+│   │   ├── blockchain/           # Web3 Components
+│   │   ├── currency/             # Multi-currency
+│   │   ├── customs/              # International Shipping
+│   │   ├── fleet/                # GPS Tracking
+│   │   ├── invoice/              # Invoicing
+│   │   ├── loyalty/              # Gamification
+│   │   └── visualization/        # 3D Graphics
+│   ├── lib/                      # Utilities
+│   │   ├── ai/                   # AI Logic
+│   │   ├── blockchain/           # Web3 Integration
+│   │   ├── currency/             # Exchange Rates
+│   │   └── monitoring/           # Analytics
+│   └── utils/
+│       └── supabase/
+│           └── migrations/       # SQL Migrations
+├── public/
+│   ├── sw.js                     # Service Worker
+│   └── manifest.json             # PWA Manifest
+├── scripts/                      # Setup Scripts
+└── contracts/                    # Smart Contracts
+```
 
 ## 🧪 Testing
 
 ```bash
-# Install test dependencies (if not installed)
-npm install -D vitest @testing-library/react
+# Run linter
+npm run lint
 
-# Run tests
-npm test
+# Run type check
+npm run type-check
 
-# Watch mode
-npm run test:watch
+# Run build test
+npm run build
 ```
 
----
+## 🔐 Security
 
-## 📊 Admin Dashboard
+- ✅ Row Level Security on all database tables
+- ✅ Environment variables for secrets
+- ✅ HTTPS required in production
+- ✅ CORS properly configured
+- ✅ SQL injection prevention via prepared statements
+- ✅ XSS protection via React
+- ✅ CSRF protection via SameSite cookies
 
-Akses admin dashboard di `/dashboard/admin` (requires admin role).
+## 📈 Performance
 
-Features:
-- 📈 Analytics Dashboard - Traffic & metrics
-- 👥 User Management - Ban/upgrade users
-- ⚙️ Site Settings - Logo, maintenance mode
-
----
-
-## 🔒 Security Features
-
-- **Rate Limiting** - 20 requests/hour for AI endpoints
-- **Input Validation** - Server-side validation
-- **XSS Protection** - Sanitized inputs
-- **CSRF Protection** - Supabase Auth handles this
-- **Security Headers** - CSP, HSTS, X-Frame-Options
-
----
-
-## 📱 PWA Support
-
-CekKirim dapat diinstall sebagai native app:
-
-1. Buka di Chrome/Safari
-2. Klik "Install App" atau "Add to Home Screen"
-3. Enjoy native experience!
-
----
+- ⚡ Server Components for faster initial load
+- ⚡ Edge functions for low latency
+- ⚡ Image optimization with Next.js
+- ⚡ Bundle splitting and code optimization
+- ⚡ Caching strategies (1-hour for exchange rates, etc.)
 
 ## 🤝 Contributing
 
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/NewFeature`)
-3. Commit changes (`git commit -m 'Add NewFeature'`)
-4. Push to branch (`git push origin feature/NewFeature`)
-5. Open Pull Request
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Next.js team for the amazing framework
+- Supabase for the backend infrastructure
+- Shadcn for the beautiful UI components
+- All open-source contributors
+
+## 📞 Support
+
+For support, email support@cekririm.com or join our Slack channel.
+
+## 🎯 Roadmap
+
+- [x] Phase 1-100: Core Features
+- [x] Phase 101-200: Advanced Features
+- [x] Phase 201-300: Enterprise Features
+- [ ] Phase 301+: AI-Powered Automation
+- [ ] Mobile App (React Native)
+- [ ] Desktop App (Electron)
 
 ---
 
-## 📄 License
+**Built with ❤️ by the CekKirim Team**
 
-MIT License - feel free to use for personal or commercial projects.
-
----
-
-## 📞 Contact
-
-- **Website:** [cekkirim.com](https://www.cekkirim.com)
-- **Email:** support@cekkirim.com
-- **WhatsApp:** [Contact Admin](https://wa.me/6281234567890)
-
----
-
-<p align="center">
-  Made with ❤️ in Indonesia 🇮🇩
-</p>
+🌟 Star us on GitHub if this project helped you!

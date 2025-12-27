@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Bot, User, Send, Sparkles, Loader2 } from 'lucide-react'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 export function ConsultantChat() {
     const [messages, setMessages] = useState<any[]>([
@@ -48,7 +47,7 @@ export function ConsultantChat() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 p-0 overflow-hidden">
-                <ScrollArea className="h-full p-4">
+                <div className="h-full overflow-y-auto p-4">
                     <div className="space-y-4">
                         {messages.map((m, i) => (
                             <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
