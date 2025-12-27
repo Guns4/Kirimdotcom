@@ -83,9 +83,45 @@ setInterval(() => {
     }
 }, RATE_LIMIT_WINDOW) // Run cleanup every hour
 
+// Affiliate tracking constants
+const AFFILIATE_COOKIE_NAME = 'cekkirim_ref';
+const COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
+
 export async function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl
+    const { pathname, searchParams } = request.nextUrl
     const response = NextResponse.next()
+
+    // AFFILIATE TRACKING: Check for referral parameter
+    const refCode = searchParams.get('ref');
+
+    if (refCode) {
+        // Store affiliate code in cookie
+        response.cookies.set({
+            name: AFFILIATE_COOKIE_NAME,
+            value: refCode,
+            maxAge: COOKIE_MAX_AGE,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+        });
+
+        console.log(`[Affiliate] Referral tracked: ${refCode} on ${pathname}`);
+    }
+
+    // Extend existing affiliate cookie expiration
+    const existingRef = request.cookies.get(AFFILIATE_COOKIE_NAME);
+    if (existingRef && !refCode) {
+        response.cookies.set({
+            name: AFFILIATE_COOKIE_NAME,
+            value: existingRef.value,
+            maxAge: COOKIE_MAX_AGE,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+        });
+    }
 
     // 0. Maintenance Mode Check (Specific paths only to save performance, or global)
     // NOTE: For extreme performance, use Edge Config. For now, we skip DB check on static assets.
