@@ -1,0 +1,23 @@
+{
+    "jne": {
+        "name": "JNE Express",
+        "call_center": "(021) 2927 8888",
+        "email": "customercare@jne.co.id",
+        "operational_hours": "Senin - Sabtu (08:00 - 19:30), Minggu (08:00 - 14:00) untuk agen utama.",
+        "claim_terms": "Maksimal 14 hari setelah barang diterima. Wajib video unboxing untuk klaim asuransi."
+    },
+    "jnt": {
+        "name": "J&T Express",
+        "call_center": "021-8066-1888",
+        "email": "jntcare@jet.co.id",
+        "operational_hours": "Setiap Hari (08:00 - 20:00), termasuk hari libur nasional.",
+        "claim_terms": "Klaim kerusakan maksimal 3 hari setelah status delivered."
+    },
+    "sicepat": {
+        "name": "SiCepat Ekspres",
+        "call_center": "021-5020-0050",
+        "email": "social.media@sicepat.com",
+        "operational_hours": "Setiap Hari (07:00 - 23:00) untuk operasional pengantaran.",
+        "claim_terms": "Asuransi wajib untuk barang > 10x ongkir. Klaim via aplikasi SiCepat."
+    }
+}

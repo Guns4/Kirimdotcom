@@ -14,6 +14,8 @@ import ClarityAnalytics from "@/components/analytics/ClarityAnalytics";
 import ErrorMonitor from "@/components/analytics/ErrorMonitor";
 import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
 import NPSSurvey from "@/components/ui/NPSSurvey";
+import { getPublicFlags } from "@/app/actions/flagActions";
+import { FeatureFlagProvider } from "@/components/providers/FeatureFlagProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -73,6 +75,8 @@ export default async function RootLayout({
     const pathname = headersList.get("x-pathname") || "";
     const isWidget = pathname.startsWith("/widget");
 
+    const flags = await getPublicFlags();
+
     return (
         <html lang="id" className={inter.variable}>
             <head>
@@ -85,20 +89,22 @@ export default async function RootLayout({
             </head>
             <body className={`font-sans antialiased min-h-screen flex flex-col ${isWidget ? 'bg-transparent' : 'bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30'}`}>
                 <SystemStatusProvider>
-                    <LiteModeProvider>
-                        {!isWidget && <Navbar />}
-                        <main className={isWidget ? "min-h-screen flex items-center justify-center p-4" : "flex-1 pb-16 md:pb-0"}>
-                            {children}
-                        </main>
-                        {!isWidget && <FeedbackWidget />}
-                        {!isWidget && <FeedbackWidget />}
-                        <ClarityAnalytics />
-                        <ErrorMonitor />
-                        <WebVitalsReporter />
-                        <NPSSurvey />
-                        {!isWidget && <Footer />}
-                        {!isWidget && <BottomNav />}
-                    </LiteModeProvider>
+                    <FeatureFlagProvider initialFlags={flags}>
+                        <LiteModeProvider>
+                            {!isWidget && <Navbar />}
+                            <main className={isWidget ? "min-h-screen flex items-center justify-center p-4" : "flex-1 pb-16 md:pb-0"}>
+                                {children}
+                            </main>
+                            {!isWidget && <FeedbackWidget />}
+                            {!isWidget && <FeedbackWidget />}
+                            <ClarityAnalytics />
+                            <ErrorMonitor />
+                            <WebVitalsReporter />
+                            <NPSSurvey />
+                            {!isWidget && <Footer />}
+                            {!isWidget && <BottomNav />}
+                        </LiteModeProvider>
+                    </FeatureFlagProvider>
                 </SystemStatusProvider>
             </body>
         </html>
