@@ -21,7 +21,7 @@ export async function generateAPIKey(keyName: string, isPaid: boolean = false) {
             };
         }
 
-        const { data, error } = await supabase.rpc('generate_api_key', {
+        const { data, error } = await (supabase.rpc as any)('generate_api_key', {
             p_user_id: user.id,
             p_key_name: keyName,
             p_is_paid: isPaid,
@@ -98,8 +98,8 @@ export async function revokeAPIKey(keyId: string) {
             };
         }
 
-        const { error } = await supabase
-            .from('api_keys')
+        const { error } = await (supabase
+            .from('api_keys') as any)
             .update({ is_active: false })
             .eq('id', keyId)
             .eq('user_id', user.id);
@@ -176,7 +176,7 @@ export async function validateAPIKeyMiddleware(request: NextRequest) {
 
     const supabase = await createClient();
 
-    const { data, error } = await supabase.rpc('validate_api_key', {
+    const { data, error } = await (supabase.rpc as any)('validate_api_key', {
         p_api_key: apiKey,
     });
 

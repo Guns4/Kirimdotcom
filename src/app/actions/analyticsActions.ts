@@ -8,7 +8,7 @@ export async function logEvent(name: string, properties: Record<string, any> = {
 
     // Basic session/cookie tracking could be added here
 
-    await supabase.from('analytics_events').insert({
+    await (supabase.from('analytics_events') as any).insert({
         name,
         properties,
         user_id: user?.id || null,

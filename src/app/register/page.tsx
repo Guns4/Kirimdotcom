@@ -9,9 +9,6 @@ import { Mail, Lock, User, Loader2, Chrome } from 'lucide-react'
 import { trackEvent } from '@/lib/tracking'
 import { useEffect } from 'react'
 
-import { useEffect } from 'react'
-import { trackEvent } from '@/lib/tracking'
-
 export default function RegisterPage() {
     const router = useRouter()
     // ...

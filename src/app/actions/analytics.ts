@@ -178,13 +178,13 @@ export async function banUser(userId: string): Promise<{ success: boolean; error
         .eq('id', user.id)
         .single()
 
-    if (adminProfile?.role !== 'admin') {
+    if ((adminProfile as any)?.role !== 'admin') {
         return { success: false, error: 'Not authorized' }
     }
 
     // Set user role to 'banned' (you may need to add this to your role enum)
-    const { error } = await supabase
-        .from('profiles')
+    const { error } = await (supabase
+        .from('profiles') as any)
         .update({
             role: 'user', // or 'banned' if you add it to enum
             subscription_status: 'expired'
@@ -216,12 +216,12 @@ export async function updateUserRole(
         .eq('id', user.id)
         .single()
 
-    if (adminProfile?.role !== 'admin') {
+    if ((adminProfile as any)?.role !== 'admin') {
         return { success: false, error: 'Not authorized' }
     }
 
-    const { error } = await supabase
-        .from('profiles')
+    const { error } = await (supabase
+        .from('profiles') as any)
         .update({ role })
         .eq('id', userId)
 

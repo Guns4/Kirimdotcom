@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 test.describe('Critical Path: Tracking', () => {
 
-    test('User can search receipt and see results without crashing', async ({ page }) => {
+    test('User can search receipt and see results without crashing', async ({ page }: { page: Page }) => {
         // 1. Open Homepage
         await page.goto('/');
 

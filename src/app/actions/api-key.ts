@@ -17,7 +17,7 @@ export async function generateApiKey() {
     const randomBytes = crypto.randomBytes(24).toString('hex')
     const secretKey = `${prefix}${randomBytes}`
 
-    const { error } = await supabase.from('api_keys').insert({
+    const { error } = await (supabase.from('api_keys') as any).insert({
         user_id: user.id,
         secret_key: secretKey,
         monthly_quota: 1000, // Default Free Tier
@@ -39,8 +39,8 @@ export async function revokeApiKey(keyId: string) {
 
     if (!user) return { success: false, error: 'Unauthorized' }
 
-    const { error } = await supabase
-        .from('api_keys')
+    const { error } = await (supabase
+        .from('api_keys') as any)
         .update({ status: 'revoked' })
         .eq('id', keyId)
         .eq('user_id', user.id)

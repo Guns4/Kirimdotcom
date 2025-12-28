@@ -28,20 +28,12 @@ interface PageProps {
 }
 
 // Generate static params for SSG
+// Note: Returns empty array to use ISR instead of full SSG
+// This avoids the "cookies called outside request scope" error at build time
 export async function generateStaticParams() {
-    const supabase = await createClient();
-
-    const { data: kecamatanList } = await supabase
-        .from('kecamatan')
-        .select('kecamatan_slug, cities(city_slug)')
-        .limit(100); // Limit for build time
-
-    if (!kecamatanList) return [];
-
-    return kecamatanList.map((k: any) => ({
-        kota: k.cities.city_slug,
-        kecamatan: k.kecamatan_slug,
-    }));
+    // For full SSG, you'd need a service role client here instead of server client
+    // which uses cookies. Returning empty array enables ISR/on-demand rendering.
+    return [];
 }
 
 // Generate metadata for SEO

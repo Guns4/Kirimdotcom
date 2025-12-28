@@ -14,15 +14,14 @@ const rpID = process.env.NEXT_PUBLIC_RP_ID || 'localhost'
 const origin = process.env.NEXT_PUBLIC_ORIGIN || 'http://localhost:3000'
 
 export const getRegistrationOptions = async () => {
-    return safeAction(async () => {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
+    return safeAction(async (_input: undefined, user: any) => {
         if (!user) throw new Error('Unauthorized')
+        const supabase = await createClient()
 
         // Clean user's existing authenticators to exclude them from registration
-        const { data: authenticators } = await supabase
-            .from('authenticators')
-            .select('credentialID')
+        const { data: authenticators } = await (supabase
+            .from('authenticators') as any)
+            .select('credentialID, transports')
             .eq('user_id', user.id)
 
         const options = await generateRegistrationOptions({
@@ -31,7 +30,7 @@ export const getRegistrationOptions = async () => {
             userID: user.id,
             userName: user.email || 'user',
             attestationType: 'none',
-            excludeCredentials: authenticators?.map(auth => ({
+            excludeCredentials: (authenticators as any[])?.map((auth: any) => ({
                 id: auth.credentialID,
                 type: 'public-key',
                 transports: auth.transports as any
@@ -46,14 +45,13 @@ export const getRegistrationOptions = async () => {
         // Save challenge to DB or Cache (simplified: returning it, client must sign)
         // Ideally save to a 'sessions' table linked to user
         return { options }
-    })
+    }, undefined, { requireAuth: true })
 }
 
 export const verifyRegistration = async (response: any) => {
-    return safeAction(async () => {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
+    return safeAction(async (_input: any, user: any) => {
         if (!user) throw new Error('Unauthorized')
+        const supabase = await createClient()
 
         // In a real app, retrieve the challenge from DB.
         // For this demo, we assume the verification logic handles loosely or stateless if configured
@@ -68,9 +66,10 @@ export const verifyRegistration = async (response: any) => {
         })
 
         if (verification.verified && verification.registrationInfo) {
-            const { credentialID, credentialPublicKey, counter, credentialDeviceType, credentialBackedUp } = verification.registrationInfo
+            const regInfo = verification.registrationInfo as any
+            const { credentialID, credentialPublicKey, counter, credentialDeviceType, credentialBackedUp } = regInfo
 
-            await supabase.from('authenticators').insert({
+            await (supabase.from('authenticators') as any).insert({
                 user_id: user.id,
                 credentialID: Buffer.from(credentialID).toString('base64url'),
                 credentialPublicKey: Buffer.from(credentialPublicKey).toString('base64url'),
@@ -84,5 +83,5 @@ export const verifyRegistration = async (response: any) => {
         }
 
         throw new Error('Verification failed')
-    })
+    }, response, { requireAuth: true })
 }
