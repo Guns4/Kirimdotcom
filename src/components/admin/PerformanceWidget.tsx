@@ -60,3 +60,6 @@ export function PerformanceWidget() {
         </div>
     );
 }
+
+// Add default export for import compatibility
+export default PerformanceWidget;

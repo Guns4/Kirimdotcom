@@ -33,3 +33,6 @@ export default function MagicTrackingHeader({ shopName }: Props) {
         </div>
     );
 }
+
+// Add named export for compatibility
+export { MagicTrackingHeader };

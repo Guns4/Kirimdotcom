@@ -321,3 +321,43 @@ export async function testWAConnection(apiKey: string, testPhone: string) {
 
     return result;
 }
+
+/**
+ * Send WhatsApp message directly
+ * Use this for system notifications (e.g., renewal reminders)
+ */
+export async function sendWhatsAppMessage(
+    phone: string,
+    message: string,
+    userId?: string
+): Promise<SendWAResult> {
+    try {
+        const supabase = await createClient();
+
+        let apiKey: string | undefined;
+
+        // If userId provided, get user's API key
+        if (userId) {
+            const { data: settings } = await supabase
+                .from('wa_user_settings')
+                .select('wa_api_key')
+                .eq('user_id', userId)
+                .single();
+            apiKey = settings?.wa_api_key;
+        }
+
+        // Fallback to system API key
+        if (!apiKey) {
+            apiKey = process.env.FONNTE_API_KEY;
+        }
+
+        if (!apiKey) {
+            return { success: false, error: 'No WhatsApp API key configured' };
+        }
+
+        return await sendViaFonnte(apiKey, phone, message);
+    } catch (error) {
+        console.error('Error in sendWhatsAppMessage:', error);
+        return { success: false, error: 'Failed to send message' };
+    }
+}
