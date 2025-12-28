@@ -101,6 +101,7 @@ export default async function KecamatanPage({ params }: PageProps) {
     // Increment search count
     await supabase
         .from('kecamatan')
+        // @ts-expect-error - Supabase type inference issue with update
         .update({
             search_count: (kecamatan.search_count || 0) + 1,
             last_searched_at: new Date().toISOString()
