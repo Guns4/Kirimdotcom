@@ -6,7 +6,8 @@ interface Props {
     shopName?: string;
 }
 
-export default function MagicTrackingHeader({ shopName }: Props) {
+// Named export only (not default + re-export to avoid circular reference error)
+export function MagicTrackingHeader({ shopName }: Props) {
     if (!shopName) return null; // Don't show if no shop name
 
     return (
@@ -34,5 +35,5 @@ export default function MagicTrackingHeader({ shopName }: Props) {
     );
 }
 
-// Add named export for compatibility
-export { MagicTrackingHeader };
+// Default export for backward compatibility
+export default MagicTrackingHeader;
