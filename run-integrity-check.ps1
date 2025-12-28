@@ -18,7 +18,8 @@ Write-Host "📄 Checking Sitemap..."
 if (Test-Path "src/app/sitemap.ts") {
     Write-Host "✓ sitemap.ts exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ sitemap.ts missing" -ForegroundColor Red
     $FAIL++
 }
@@ -31,7 +32,8 @@ Write-Host "🍞 Checking Breadcrumbs..."
 if (Test-Path "src/components/AutoBreadcrumbs.tsx") {
     Write-Host "✓ AutoBreadcrumbs.tsx exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ AutoBreadcrumbs.tsx missing" -ForegroundColor Red
     $FAIL++
 }
@@ -44,7 +46,8 @@ Write-Host "🐛 Checking Debug Mode..."
 if (Test-Path "src/components/DebugMode.tsx") {
     Write-Host "✓ DebugMode.tsx exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ DebugMode.tsx missing" -ForegroundColor Red
     $FAIL++
 }
@@ -59,7 +62,8 @@ Write-Host "🧭 Checking Navigation..."
 if (Test-Path "src/components/navigation/NavbarDesktop.tsx") {
     Write-Host "✓ NavbarDesktop.tsx exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ NavbarDesktop.tsx missing" -ForegroundColor Red
     $FAIL++
 }
@@ -68,7 +72,8 @@ if (Test-Path "src/components/navigation/NavbarDesktop.tsx") {
 if (Test-Path "src/components/navigation/NavbarMobile.tsx") {
     Write-Host "✓ NavbarMobile.tsx exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ NavbarMobile.tsx missing" -ForegroundColor Red
     $FAIL++
 }
@@ -77,7 +82,8 @@ if (Test-Path "src/components/navigation/NavbarMobile.tsx") {
 if (Test-Path "src/components/FloatingActionButton.tsx") {
     Write-Host "✓ FloatingActionButton.tsx exists" -ForegroundColor Green
     $PASS++
-} else {
+}
+else {
     Write-Host "✗ FloatingActionButton.tsx missing" -ForegroundColor Red
     $FAIL++
 }
@@ -88,18 +94,19 @@ if (Test-Path "src/components/FloatingActionButton.tsx") {
 Write-Host ""
 Write-Host "📄 Checking Critical Pages..."
 $PAGES = @(
-    "src/app/page.tsx",
-    "src/app/cek-ongkir/page.tsx",
-    "src/app/cek-resi/page.tsx",
-    "src/app/blacklist/page.tsx"
+    @{Path = "src/app/page.tsx"; Name = "Home Page" },
+    @{Path = "src/app/cek-ongkir/[...route]/page.tsx"; Name = "Cek Ongkir" },
+    @{Path = "src/app/cek-resi/[...slug]/page.tsx"; Name = "Cek Resi" },
+    @{Path = "src/app/blacklist/page.tsx"; Name = "Blacklist" }
 )
 
 foreach ($page in $PAGES) {
-    if (Test-Path $page) {
-        Write-Host "✓ $(Split-Path $page -Leaf) exists" -ForegroundColor Green
+    if (Test-Path $page.Path) {
+        Write-Host "✓ $($page.Name) exists" -ForegroundColor Green
         $PASS++
-    } else {
-        Write-Host "✗ $(Split-Path $page -Leaf) missing" -ForegroundColor Red
+    }
+    else {
+        Write-Host "✗ $($page.Name) missing" -ForegroundColor Red
         $FAIL++
     }
 }
@@ -119,7 +126,8 @@ foreach ($comp in $UI_COMPONENTS) {
     if (Test-Path $comp) {
         Write-Host "✓ $(Split-Path $comp -Leaf) exists" -ForegroundColor Green
         $PASS++
-    } else {
+    }
+    else {
         Write-Host "✗ $(Split-Path $comp -Leaf) missing" -ForegroundColor Red
         $FAIL++
     }
@@ -136,11 +144,13 @@ if (Get-Command npx -ErrorAction SilentlyContinue) {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✓ TypeScript: No errors" -ForegroundColor Green
         $PASS++
-    } else {
+    }
+    else {
         Write-Host "⚠ TypeScript: Some warnings (non-blocking)" -ForegroundColor Yellow
         $PASS++
     }
-} else {
+}
+else {
     Write-Host "⚠ npx not found, skipping TS check" -ForegroundColor Yellow
 }
 
@@ -175,7 +185,8 @@ if ($FAIL -eq 0) {
     Write-Host "✓ All integrity checks passed!" -ForegroundColor Green
     Write-Host "🚀 Ready for deployment" -ForegroundColor Green
     exit 0
-} else {
+}
+else {
     Write-Host "✗ Some checks failed" -ForegroundColor Red
     Write-Host "⚠️  Please fix the issues above" -ForegroundColor Yellow
     exit 1
