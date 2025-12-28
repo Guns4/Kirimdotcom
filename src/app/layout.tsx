@@ -72,11 +72,23 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const headersList = await headers();
-    const pathname = headersList.get("x-pathname") || "";
-    const isWidget = pathname.startsWith("/widget");
+    // Wrap in try-catch to handle cases where request context is not available
+    let isWidget = false;
+    let flags = {};
 
-    const flags = await getPublicFlags();
+    try {
+        const headersList = await headers();
+        const pathname = headersList.get("x-pathname") || "";
+        isWidget = pathname.startsWith("/widget");
+    } catch (error) {
+        // Headers not available during static generation
+    }
+
+    try {
+        flags = await getPublicFlags();
+    } catch (error) {
+        // Flags not available during static generation
+    }
 
     return (
         <html lang="id" className={inter.variable}>

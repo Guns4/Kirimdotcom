@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
 
 // This page handles incoming shares from Android Intent
-export default function ShareTargetPage() {
+function ShareTargetContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [status, setStatus] = useState('Processing shared data...')
@@ -56,5 +56,25 @@ export default function ShareTargetPage() {
                 </CardContent>
             </Card>
         </div>
+    )
+}
+
+// Wrap with Suspense for useSearchParams (required in Next.js 14+)
+export default function ShareTargetPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                <Card className="w-full max-w-sm">
+                    <CardHeader>
+                        <CardTitle className="text-center flex flex-col items-center gap-4">
+                            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                            Loading...
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
+            </div>
+        }>
+            <ShareTargetContent />
+        </Suspense>
     )
 }
