@@ -27,7 +27,7 @@ export async function createProduct(
 
         const supabase = await createClient();
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('digital_products')
             .insert({
                 title,
@@ -95,7 +95,7 @@ export async function updateProduct(
         if (updates.productFileUrl) updateData.product_file_url = updates.productFileUrl;
         if (updates.category) updateData.category = updates.category;
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('digital_products')
             .update(updateData)
             .eq('id', productId)
@@ -138,7 +138,7 @@ export async function deleteProduct(productId: string): Promise<ProductResult> {
 
         const supabase = await createClient();
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('digital_products')
             .update({ is_active: false })
             .eq('id', productId)

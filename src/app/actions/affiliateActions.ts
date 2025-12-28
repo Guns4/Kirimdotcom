@@ -36,7 +36,7 @@ export async function registerAffiliate(
         }
 
         // Check if already registered
-        const { data: existing } = await supabase
+        const { data: existing } = await (supabase as any)
             .from('affiliate_users')
             .select('id, affiliate_code')
             .eq('user_id', user.id)
@@ -54,13 +54,13 @@ export async function registerAffiliate(
         // Generate affiliate code
         let affiliateCode = customCode;
         if (!affiliateCode) {
-            const { data: generatedCode } = await supabase
+            const { data: generatedCode } = await (supabase as any)
                 .rpc('generate_affiliate_code', { user_email: user.email || '' });
             affiliateCode = generatedCode;
         }
 
         // Create affiliate record
-        const { data: affiliate, error: createError } = await supabase
+        const { data: affiliate, error: createError } = await (supabase as any)
             .from('affiliate_users')
             .insert({
                 user_id: user.id,
@@ -110,7 +110,7 @@ export async function trackAffiliateClick(
         const supabase = await createClient();
 
         // Get affiliate user
-        const { data: affiliate } = await supabase
+        const { data: affiliate } = await (supabase as any)
             .from('affiliate_users')
             .select('id')
             .eq('affiliate_code', affiliateCode)
@@ -123,7 +123,7 @@ export async function trackAffiliateClick(
         }
 
         // Record click
-        await supabase.from('affiliate_clicks').insert({
+        await (supabase as any).from('affiliate_clicks').insert({
             affiliate_user_id: affiliate.id,
             affiliate_code: affiliateCode,
             product_type: productType,
@@ -157,7 +157,7 @@ export async function recordAffiliateCommission(
         }
 
         // Get affiliate user
-        const { data: affiliate } = await supabase
+        const { data: affiliate } = await (supabase as any)
             .from('affiliate_users')
             .select('id, affiliate_code')
             .eq('affiliate_code', affiliateCode)
@@ -173,7 +173,7 @@ export async function recordAffiliateCommission(
         }
 
         // Get commission rate from program
-        const { data: program } = await supabase
+        const { data: program } = await (supabase as any)
             .from('affiliate_programs')
             .select('commission_rate')
             .eq('program_slug', 'digital-products-affiliate')
@@ -184,7 +184,7 @@ export async function recordAffiliateCommission(
         const commissionAmount = Math.round((purchaseAmount * commissionRate / 100) * 100) / 100;
 
         // Record earning
-        const { data: earning, error: earningError } = await supabase
+        const { data: earning, error: earningError } = await (supabase as any)
             .from('affiliate_earnings')
             .insert({
                 affiliate_user_id: affiliate.id,
@@ -239,7 +239,7 @@ export async function getAffiliateDashboardStats() {
         }
 
         // Get affiliate profile
-        const { data: affiliate } = await supabase
+        const { data: affiliate } = await (supabase as any)
             .from('affiliate_users')
             .select('*')
             .eq('user_id', user.id)
@@ -250,7 +250,7 @@ export async function getAffiliateDashboardStats() {
         }
 
         // Get earnings summary
-        const { data: earnings } = await supabase
+        const { data: earnings } = await (supabase as any)
             .from('affiliate_earnings')
             .select('*')
             .eq('affiliate_user_id', affiliate.id)
@@ -262,8 +262,8 @@ export async function getAffiliateDashboardStats() {
             totalEarnings: affiliate.total_earnings || 0,
             availableBalance: affiliate.available_balance || 0,
             totalWithdrawn: affiliate.total_withdrawn || 0,
-            pendingEarnings: earnings?.filter(e => e.status === 'pending').reduce((sum, e) => sum + parseFloat(e.commission_amount), 0) || 0,
-            approvedEarnings: earnings?.filter(e => e.status === 'approved').reduce((sum, e) => sum + parseFloat(e.commission_amount), 0) || 0,
+            pendingEarnings: earnings?.filter((e: any) => e.status === 'pending').reduce((sum: number, e: any) => sum + parseFloat(e.commission_amount), 0) || 0,
+            approvedEarnings: earnings?.filter((e: any) => e.status === 'approved').reduce((sum: number, e: any) => sum + parseFloat(e.commission_amount), 0) || 0,
             recentEarnings: earnings?.slice(0, 10) || [],
         };
 
@@ -298,7 +298,7 @@ export async function requestWithdrawal(
         }
 
         // Get affiliate profile
-        const { data: affiliate } = await supabase
+        const { data: affiliate } = await (supabase as any)
             .from('affiliate_users')
             .select('*')
             .eq('user_id', user.id)
@@ -331,7 +331,7 @@ export async function requestWithdrawal(
         }
 
         // Create withdrawal request
-        const { data: withdrawal, error: withdrawalError } = await supabase
+        const { data: withdrawal, error: withdrawalError } = await (supabase as any)
             .from('affiliate_withdrawals')
             .insert({
                 affiliate_user_id: affiliate.id,

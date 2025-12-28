@@ -38,7 +38,7 @@ export async function createAdCampaign(
         }
 
         // Create campaign (pending approval)
-        const { data: campaign, error } = await supabase
+        const { data: campaign, error } = await (supabase as any)
             .from('ad_campaigns')
             .insert({
                 advertiser_id: user.id,
@@ -98,7 +98,7 @@ export async function getMyCampaigns() {
             return { data: null, error: 'Not authenticated' };
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('ad_campaigns')
             .select('*')
             .eq('advertiser_id', user.id)
@@ -127,7 +127,7 @@ export async function getCampaignAnalytics(campaignId: string) {
         }
 
         // Get campaign details
-        const { data: campaign } = await supabase
+        const { data: campaign } = await (supabase as any)
             .from('ad_campaigns')
             .select('*')
             .eq('id', campaignId)
@@ -189,7 +189,7 @@ export async function approveCampaign(campaignId: string): Promise<AdResult> {
 
         // TODO: Add admin role check here
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('ad_campaigns')
             .update({
                 status: 'active',
@@ -249,7 +249,7 @@ export async function toggleCampaignStatus(
             };
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('ad_campaigns')
             .update({ status: newStatus })
             .eq('id', campaignId)

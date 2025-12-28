@@ -51,7 +51,7 @@ export async function approvePayment(
         const supabase = await createClient();
 
         // Get payment details
-        const { data: payment } = await supabase
+        const { data: payment } = await (supabase as any)
             .from('payment_history')
             .select('*')
             .eq('id', paymentId)
@@ -66,7 +66,7 @@ export async function approvePayment(
         }
 
         // Update payment status
-        await supabase
+        await (supabase as any)
             .from('payment_history')
             .update({
                 status: 'confirmed',
@@ -76,7 +76,7 @@ export async function approvePayment(
             .eq('id', paymentId);
 
         // Create/update subscription
-        const { error: subError } = await supabase
+        const { error: subError } = await (supabase as any)
             .rpc('upsert_user_subscription', {
                 p_user_id: payment.user_id,
                 p_plan_code: planCode,
@@ -117,7 +117,7 @@ export async function rejectPayment(paymentId: string, reason: string): Promise<
         const admin = await requireAdmin();
         const supabase = await createClient();
 
-        const { error } = await supabase
+        const { error } = await (supabase as any)
             .from('payment_history')
             .update({
                 status: 'rejected',
@@ -190,7 +190,7 @@ export async function grantPremiumManual(
         await requireAdmin();
         const supabase = await createClient();
 
-        const { error } = await supabase
+        const { error } = await (supabase as any)
             .rpc('upsert_user_subscription', {
                 p_user_id: userId,
                 p_plan_code: planCode,
@@ -231,7 +231,7 @@ export async function toggleUserBan(userId: string, ban: boolean): Promise<Admin
         await requireAdmin();
         const supabase = await createClient();
 
-        const { error } = await supabase
+        const { error } = await (supabase as any)
             .from('profiles')
             .update({ is_banned: ban })
             .eq('id', userId);

@@ -9,7 +9,7 @@ export async function searchFAQ(query: string) {
     try {
         const supabase = await createClient();
 
-        const { data, error } = await supabase.rpc('search_faq', {
+        const { data, error } = await (supabase as any).rpc('search_faq', {
             p_query: query,
         });
 
@@ -19,7 +19,7 @@ export async function searchFAQ(query: string) {
 
         // Update times_shown for top result
         if (data[0]?.id) {
-            await supabase.rpc('increment', {
+            await (supabase as any).rpc('increment', {
                 table_name: 'faq_items',
                 column_name: 'times_shown',
                 row_id: data[0].id,
@@ -42,10 +42,10 @@ export async function markFAQHelpful(faqId: string, isHelpful: boolean) {
 
         const column = isHelpful ? 'helpful_count' : 'not_helpful_count';
 
-        await supabase
+        await (supabase as any)
             .from('faq_items')
             .update({
-                [column]: supabase.rpc('increment_value', { val: 1 }),
+                [column]: (supabase as any).rpc('increment_value', { val: 1 }),
             })
             .eq('id', faqId);
 
@@ -73,7 +73,7 @@ export async function createSupportTicket(ticket: {
             data: { user },
         } = await supabase.auth.getUser();
 
-        const { data, error } = await supabase.rpc('create_support_ticket', {
+        const { data, error } = await (supabase as any).rpc('create_support_ticket', {
             p_email: ticket.email,
             p_name: ticket.name,
             p_category: ticket.category,
@@ -143,7 +143,7 @@ export async function logHealthCheck(check: {
     try {
         const supabase = await createClient();
 
-        await supabase.from('system_health_logs').insert({
+        await (supabase as any).from('system_health_logs').insert({
             check_type: check.checkType,
             target_url: check.targetUrl,
             target_name: check.targetName,

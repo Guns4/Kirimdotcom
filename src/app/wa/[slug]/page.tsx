@@ -8,13 +8,13 @@ export const metadata = {
 };
 
 interface WARedirectPageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 export default async function WARedirectPage({ params }: WARedirectPageProps) {
-    const { slug } = params;
+    const { slug } = await params;
 
     // Get next CS number using round-robin
     const result = await getNextCSNumber(slug);

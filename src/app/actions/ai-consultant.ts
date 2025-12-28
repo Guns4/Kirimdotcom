@@ -9,15 +9,8 @@ import { createClient } from '@/utils/supabase/server'
 // import { ChatOpenAI } from "@langchain/openai";
 
 export const askBusinessConsultant = async (question: string) => {
-    return safeAction(async () => {
-        const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error('Unauthorized')
-
-        // 0. Check for API Key
-        // if (!process.env.OPENAI_API_KEY) {
-        //     return { answer: "AI is not configured (Missing OPENAI_API_KEY).", sql: null }
-        // }
+    return safeAction(async (inputQuestion: string, user: any) => {
+        // safeAction with requireAuth=true guarantees user is present or returns error before this
 
         // MOCKED LOGIC FOR DEMO:
         // We simulate what the AI would do: Parse question -> Generate SQL -> Result
@@ -25,7 +18,7 @@ export const askBusinessConsultant = async (question: string) => {
         let answer = "I couldn't find specific data for that."
         let simulatedSQL = ""
 
-        const lowerQ = question.toLowerCase()
+        const lowerQ = inputQuestion.toLowerCase()
 
         if (lowerQ.includes('return') || lowerQ.includes('retur')) {
             simulatedSQL = `SELECT product_name, count(*) as returns FROM orders WHERE status = 'RETURNED' AND user_id = '${user.id}' GROUP BY product_name ORDER BY returns DESC LIMIT 1;`
@@ -48,5 +41,5 @@ export const askBusinessConsultant = async (question: string) => {
             sql: simulatedSQL,
             timestamp: new Date().toISOString()
         }
-    })
+    }, question, { requireAuth: true })
 }
