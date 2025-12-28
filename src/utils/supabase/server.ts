@@ -6,7 +6,16 @@ import type { Database } from '@/types/database'
 export { createSupabaseServerClient as createServerClient }
 
 export async function createClient() {
-    const cookieStore = await cookies()
+    // Try to get cookieStore - may fail during static generation or when no request context
+    let cookieStore: Awaited<ReturnType<typeof cookies>> | null = null;
+
+    try {
+        cookieStore = await cookies();
+    } catch (error) {
+        // Cookies not available - this can happen during static generation
+        // Return a client with empty cookie handlers
+        console.warn('createClient: cookies() not available, using anonymous client');
+    }
 
     return createSupabaseServerClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,11 +23,11 @@ export async function createClient() {
         {
             cookies: {
                 get(name: string) {
-                    return cookieStore.get(name)?.value
+                    return cookieStore?.get(name)?.value
                 },
                 set(name: string, value: string, options: CookieOptions) {
                     try {
-                        cookieStore.set({ name, value, ...options })
+                        cookieStore?.set({ name, value, ...options })
                     } catch (error) {
                         // The `set` method was called from a Server Component.
                         // This can be ignored if you have middleware refreshing
@@ -27,7 +36,7 @@ export async function createClient() {
                 },
                 remove(name: string, options: CookieOptions) {
                     try {
-                        cookieStore.set({ name, value: '', ...options })
+                        cookieStore?.set({ name, value: '', ...options })
                     } catch (error) {
                         // The `delete` method was called from a Server Component.
                         // This can be ignored if you have middleware refreshing
@@ -38,4 +47,3 @@ export async function createClient() {
         }
     )
 }
-

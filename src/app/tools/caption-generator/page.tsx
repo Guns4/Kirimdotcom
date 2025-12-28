@@ -1,6 +1,10 @@
 import { createClient } from '@/utils/supabase/server';
 import CaptionGenerator from '@/components/caption-gen/CaptionGenerator';
+import { ScrollToTopButton } from '@/components/caption-gen/ScrollToTopButton';
 import { MessageSquare, Sparkles, TrendingUp } from 'lucide-react';
+
+// Force dynamic rendering to avoid cookies error
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'Caption Generator - AI Pembuat Caption | CekKirim',
@@ -135,12 +139,7 @@ export default async function CaptionGeneratorPage() {
                             Tool ini 100% GRATIS dan bisa digunakan tanpa batas.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <button
-                                onClick={() => window.scroll({ top: 0, behavior: 'smooth' })}
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 rounded-lg transition-colors"
-                            >
-                                Lihat Semua Caption
-                            </button>
+                            <ScrollToTopButton />
                             <a
                                 href="/tools"
                                 className="bg-gray-600 hover:bg-gray-700 text-white font-bold px-8 py-3 rounded-lg transition-colors"

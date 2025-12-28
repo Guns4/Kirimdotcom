@@ -2,6 +2,10 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import LabelMakerCanvas from '@/components/label-maker/LabelMakerCanvas';
 import { Printer, Star } from 'lucide-react';
+import { ScrollToButton } from '@/components/ui/ScrollToButton';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'Label Maker - Buat Label Pengiriman | CekKirim',
@@ -146,12 +150,9 @@ export default async function LabelMakerPage() {
                     <p className="text-lg mb-6 opacity-90">
                         Tool ini 100% GRATIS. Buat label sebanyak yang Anda mau!
                     </p>
-                    <button
-                        onClick={() => window.scrollTo({ top: 200, behavior: 'smooth' })}
-                        className="bg-white text-purple-600 font-bold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
+                    <ScrollToButton targetY={200}>
                         Mulai Buat Label →
-                    </button>
+                    </ScrollToButton>
                 </div>
             </div>
         </main>

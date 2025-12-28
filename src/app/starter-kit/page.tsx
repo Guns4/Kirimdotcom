@@ -1,7 +1,11 @@
 import { createClient } from '@/utils/supabase/server';
 import BundlePricingCard from '@/components/starter-kit/BundlePricingCard';
 import TestimonialSection from '@/components/starter-kit/TestimonialSection';
+import { PurchaseButton } from '@/components/starter-kit/PurchaseButton';
 import { redirect } from 'next/navigation';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'Paket Siap Jualan - Starter Kit Pemula | CekKirim',
@@ -206,12 +210,7 @@ export default async function StarterKitPage() {
                         Jangan tunda lagi! Ribuan seller sudah membuktikan hasilnya.
                         Sekarang giliran Anda!
                     </p>
-                    <button
-                        onClick={handlePurchase}
-                        className="bg-white text-blue-600 font-bold px-12 py-4 rounded-full text-lg hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
-                    >
-                        🚀 Ambil Paket Sekarang - Hemat 30%!
-                    </button>
+                    <PurchaseButton />
                     <p className="mt-6 text-blue-100">
                         ⏰ Promo terbatas! Stok tersisa hanya untuk 50 pembeli pertama
                     </p>

@@ -2,7 +2,10 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { createWARotator, getUserRotators } from '@/app/actions/waRotatorActions';
 import WARotatorForm from '@/components/wa-rotator/WARotatorForm';
-import { Copy, ExternalLink, Trash2, TrendingUp } from 'lucide-react';
+import { RotatorCard } from '@/components/wa-rotator/RotatorCard';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'WhatsApp CS Rotator - Free Tool | CekKirim',
@@ -39,10 +42,6 @@ export default async function WARotatorToolPage() {
         } else {
             throw new Error(result.message);
         }
-    };
-
-    const formatNumber = (num: number) => {
-        return new Intl.NumberFormat('id-ID').format(num);
     };
 
     return (
@@ -95,80 +94,7 @@ export default async function WARotatorToolPage() {
 
                         <div className="grid gap-6">
                             {rotators.map((rotator: any) => (
-                                <div key={rotator.id} className="bg-white rounded-xl shadow-md p-6">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-1">
-                                                {rotator.link_name}
-                                            </h3>
-                                            <div className="flex items-center gap-2 text-blue-600 font-mono text-sm">
-                                                <span>cekkirim.com/wa/{rotator.slug}</span>
-                                                <button
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(`${window.location.origin}/wa/${rotator.slug}`);
-                                                    }}
-                                                    className="p-1 hover:bg-blue-50 rounded"
-                                                >
-                                                    <Copy className="w-4 h-4" />
-                                                </button>
-                                                <a
-                                                    href={`/wa/${rotator.slug}`}
-                                                    target="_blank"
-                                                    className="p-1 hover:bg-blue-50 rounded"
-                                                >
-                                                    <ExternalLink className="w-4 h-4" />
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <button className="text-red-500 hover:bg-red-50 p-2 rounded-lg">
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                    </div>
-
-                                    {/* Stats */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                                        <div className="bg-blue-50 rounded-lg p-3">
-                                            <p className="text-xs text-blue-600 font-semibold">Total Klik</p>
-                                            <p className="text-2xl font-bold text-blue-900">
-                                                {formatNumber(rotator.total_clicks)}
-                                            </p>
-                                        </div>
-                                        <div className="bg-green-50 rounded-lg p-3">
-                                            <p className="text-xs text-green-600 font-semibold">Konversi WA</p>
-                                            <p className="text-2xl font-bold text-green-900">
-                                                {formatNumber(rotator.total_conversions)}
-                                            </p>
-                                        </div>
-                                        <div className="bg-purple-50 rounded-lg p-3">
-                                            <p className="text-xs text-purple-600 font-semibold">Jumlah CS</p>
-                                            <p className="text-2xl font-bold text-purple-900">
-                                                {rotator.cs_count}
-                                            </p>
-                                        </div>
-                                        <div className="bg-yellow-50 rounded-lg p-3">
-                                            <p className="text-xs text-yellow-600 font-semibold">Conv. Rate</p>
-                                            <p className="text-2xl font-bold text-yellow-900">
-                                                {rotator.conversion_rate}%
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* CS List */}
-                                    <div>
-                                        <p className="text-sm font-semibold text-gray-700 mb-2">Customer Service:</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {JSON.parse(rotator.cs_numbers || '[]').map((cs: any, idx: number) => (
-                                                <span
-                                                    key={idx}
-                                                    className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-                                                >
-                                                    📱 {cs.name}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+                                <RotatorCard key={rotator.id} rotator={rotator} />
                             ))}
                         </div>
                     </div>
