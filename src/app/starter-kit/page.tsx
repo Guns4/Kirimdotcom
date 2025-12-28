@@ -42,6 +42,9 @@ export default async function StarterKitPage() {
         redirect('/shop');
     }
 
+    // Type assertion - bundle is guaranteed to exist after redirect
+    const bundleData = bundle as any;
+
     const handlePurchase = async () => {
         'use server';
         // TODO: Implement purchase flow
@@ -145,14 +148,14 @@ export default async function StarterKitPage() {
                     </div>
 
                     <BundlePricingCard
-                        bundleName={bundle.bundle_name}
-                        description={bundle.description}
-                        originalPrice={bundle.original_price}
-                        bundlePrice={bundle.bundle_price}
-                        discountPercentage={bundle.discount_percentage}
-                        items={bundle.items}
-                        features={bundle.features}
-                        badgeText={bundle.badge_text}
+                        bundleName={bundleData.bundle_name}
+                        description={bundleData.description}
+                        originalPrice={bundleData.original_price}
+                        bundlePrice={bundleData.bundle_price}
+                        discountPercentage={bundleData.discount_percentage}
+                        items={bundleData.items}
+                        features={bundleData.features}
+                        badgeText={bundleData.badge_text}
                         onPurchase={handlePurchase}
                     />
                 </div>
