@@ -2,6 +2,9 @@ import { getForumCategories, getThreadsByCategory } from '@/app/actions/forumAct
 import { MessageSquare, TrendingUp, Users, Plus } from 'lucide-react';
 import Link from 'next/link';
 
+// Force dynamic rendering to avoid cookies warning at build time
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: 'Forum Seller Indonesia - Diskusi & Tips Jualan | CekKirim',
     description: 'Forum komunitas seller Indonesia. Curhat ekspedisi, tips jualan, info marketplace, dan diskusi bisnis online.',

@@ -7,6 +7,9 @@ import { OngkirComparisonTable } from '@/components/logistics/OngkirComparisonTa
 import { ArrowRight, MapPin, Package, TrendingDown, Clock } from 'lucide-react'
 import { JsonLd } from '@/components/seo/JsonLd'
 
+// Force dynamic rendering to avoid cookies warning at build time
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         route: string[]
