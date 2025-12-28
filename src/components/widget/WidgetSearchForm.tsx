@@ -20,11 +20,10 @@ export function WidgetSearchForm({ color = 'blue' }: WidgetSearchFormProps) {
         setIsSubmitting(true)
 
         // Tracking
-        // We assume default 'jne' for now as per code logic, but ideally we detect it.
-        // Or if the widget just sends to search page, we log what we know.
         trackEvent('click_cek_resi', {
             waybill: waybill.trim(),
-            source: 'widget_home'
+            source: 'widget_home',
+            courier: 'jne' // Default assumption for MVP until auto-detect is active
         })
 
         // Construct URL for main site

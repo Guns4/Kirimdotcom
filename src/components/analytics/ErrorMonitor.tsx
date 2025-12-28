@@ -5,25 +5,20 @@ import { logClientError } from '@/app/actions/errorLoggingActions';
 
 export default function ErrorMonitor() {
     useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        // Handler for window.onerror (Global JS errors)
         const handleError = (event: ErrorEvent) => {
             logClientError({
-                message: event.message || 'Unknown Error',
+                message: event.message,
                 stack: event.error?.stack,
                 url: window.location.href,
-                userAgent: navigator.userAgent
+                ua: navigator.userAgent
             });
         };
 
-        // Handler for Unhandled Promise Rejections
         const handleRejection = (event: PromiseRejectionEvent) => {
             logClientError({
-                message: `Unhandled Rejection: ${event.reason?.message || event.reason}`,
-                stack: event.reason?.stack,
+                message: `Unhandled Rejection: ${event.reason}`,
                 url: window.location.href,
-                userAgent: navigator.userAgent
+                ua: navigator.userAgent
             });
         };
 
@@ -36,5 +31,5 @@ export default function ErrorMonitor() {
         };
     }, []);
 
-    return null; // Render nothing
+    return null;
 }

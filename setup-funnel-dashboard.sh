@@ -9,27 +9,27 @@ echo "Setting up Funnel Dashboard..."
 echo "================================================="
 echo ""
 
-# 1. Backend Logic
-echo "1. Created Action: src/app/actions/funnelActions.ts"
-echo "   - getFunnelStats(): Aggregates (Visitor -> Registered -> Paid)"
-echo ""
+# 1. Database Schema
+echo "1. Database Schema: funnel_schema.sql"
+echo "   - Please run this SQL in Supabase SQL Editor"
 
-# 2. Tracking
-echo "2. Instrumented Tracking:"
-echo "   - Register Page: 'view_register_page', 'complete_registration'"
-echo "   - Payment: 'complete_purchase' (in Payment Webhook)"
-echo ""
+# 2. Backend Logic
+echo "2. Created Action: src/app/actions/funnelActions.ts"
+# (File created via tool)
 
 # 3. Admin Widget
 echo "3. Created Widget: src/components/admin/FunnelAnalysisWidget.tsx"
-echo "   - Visualizes drop-off rates"
-echo "   - Shows total conversion %"
-echo ""
+# (File created via tool)
 
 # Instructions
 echo "Next Steps:"
-echo "1. Add <FunnelAnalysisWidget /> to your Admin Dashboard"
-echo "2. Watch as users move through the funnel!"
+echo "1. Run 'funnel_schema.sql' in Supabase"
+echo "2. Add <FunnelAnalysisWidget /> to your Admin Dashboard"
+echo "3. Instrument your pages (Example calls):"
+echo "   - trackFunnelEvent('view_landing_page')"
+echo "   - trackFunnelEvent('view_register_page')"
+echo "   - trackFunnelEvent('complete_registration')"
+echo "   - trackFunnelEvent('complete_purchase')"
 echo ""
 
 echo "================================================="

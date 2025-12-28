@@ -5,20 +5,10 @@
         ],
         "target": {
             "namespace": "android_app",
-            "package_name": "com.cekkirim.app",
+            "package_name": "com.kirimdotcom.twa",
             "sha256_cert_fingerprints": [
-                "// TODO: FILL THIS FROM ANDROID STUDIO",
-                "// Steps to get SHA-256 fingerprint:",
-                "// 1. Open your Android project in Android Studio",
-                "// 2. Click Build > Generate Signed Bundle / APK",
-                "// 3. Choose 'Android App Bundle' and click Next",
-                "// 4. Create or select your keystore",
-                "// 5. After building, go to 'Build' > 'Analyze APK'",
-                "// 6. Or use command: keytool -list -v -keystore your-keystore.jks",
-                "// 7. Copy the SHA-256 fingerprint (format: AB:CD:EF:...)",
-                "// 8. Paste it here, then remove these comments",
-                "",
-                "PASTE_YOUR_SHA256_FINGERPRINT_HERE"
+                "REPLACE_WITH_YOUR_DEBUG_KEY_SHA256",
+                "REPLACE_WITH_YOUR_PLAY_STORE_SHA256"
             ]
         }
     }

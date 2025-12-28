@@ -11,26 +11,19 @@ echo ""
 
 # 1. Backend
 echo "1. Updated Actions: src/app/actions/feedback.ts"
-echo "   - submitFeedback(): Handles Bug, Feature, and NPS (0-10)"
-echo "   - getNPSStats(): Calculates Net Promoter Score"
-echo ""
+# (File created via tool)
 
 # 2. Frontend
 echo "2. Created Survey: src/components/ui/NPSSurvey.tsx"
-echo "   - Pops up after 30s (once per 30 days)"
-echo "   - Asks 'Recommendation Likelihood' (0-10)"
-echo ""
+# (File created via tool)
 
 # 3. Integration
 echo "3. Integrated into: src/app/layout.tsx"
 echo "   - <NPSSurvey /> runs globally"
-echo ""
 
 # 4. Admin Widget
 echo "4. Created Widget: src/components/admin/FeedbackFeedWidget.tsx"
-echo "   - Shows live feed of feedback"
-echo "   - Displays current NPS Score (+/-)"
-echo ""
+# (File created via tool)
 
 # Instructions
 echo "Next Steps:"

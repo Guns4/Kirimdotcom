@@ -1,101 +1,97 @@
-'use server'
+'use server';
 
-import { createClient } from '@/utils/supabase/server'
-import { headers } from 'next/headers'
+import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
-export type FeedbackType = 'bug' | 'feature' | 'general' | 'nps' | 'other'
+export type FeedbackType = 'bug' | 'feature' | 'nps' | 'general';
 
-export interface FeedbackData {
-    type: FeedbackType
-    rating?: number // 1-5 for general, 0-10 for NPS
-    message?: string
-    pageUrl?: string
-    userAgent?: string
-}
+export async function submitFeedback(
+    type: FeedbackType,
+    message: string,
+    rating?: number, // 0-10 for NPS
+    path?: string
+) {
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
-export async function submitFeedback(data: FeedbackData) {
-    try {
-        const supabase = await createClient()
-        const headersList = headers()
-        const ip = (await headersList).get('x-forwarded-for') || 'unknown'
-
-        // Log to console in dev
-        console.log('[Feedback]', data)
-
-        // Insert into app_feedback
-        const { error } = await (supabase.from('app_feedback' as any)).insert({
-            type: data.type,
-            // Map rating to appropriate column if needed, or just use 'rating'
-            // For NPS (0-10), we can reuse 'rating' or add 'nps_score'
-            // Keep it simple: reuse 'rating' column
-            rating: data.rating,
-            message: data.message || '',
-            page_url: data.pageUrl,
-            user_agent: data.userAgent,
-            ip_address: ip,
-        })
-
-        if (error) {
-            console.error('Feedback submission error:', error)
-            return { success: false, error: 'Gagal mengirim feedback' }
+    // 1. Validate NPS
+    if (type === 'nps') {
+        if (typeof rating === 'undefined' || rating < 0 || rating > 10) {
+            return { error: 'Invalid NPS rating' };
         }
-
-        return { success: true }
-    } catch (error) {
-        console.error('Feedback error:', error)
-        return { success: false, error: 'Terjadi kesalahan sistem' }
     }
-}
 
-export async function getFeedbackFeed(limit = 10) {
-    try {
-        const supabase = await createClient()
+    // 2. Insert into DB (Assuming 'feedback' table exists)
+    // Structure: id, user_id, type, message, rating, path, created_at
+    const { error } = await supabase.from('feedback').insert({
+        user_id: user?.id || null, // Allow anonymous if needed, or enforce auth
+        type,
+        message,
+        rating,
+        path: path || '/',
+        metadata: {
+            ua: 'server-action', // You could grab real UA from headers if needed
+        },
+    });
 
-        const { data, error } = await (supabase as any)
-            .from('app_feedback')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(limit)
-
-        if (error) throw error
-
-        return { data: data || [] }
-    } catch (error) {
-        console.error('Error fetching feedback:', error)
-        return { data: [] }
+    if (error) {
+        console.error('Submit feedback error:', error);
+        return { error: 'Failed to submit feedback' };
     }
+
+    return { success: true };
 }
 
 export async function getNPSStats() {
-    try {
-        const supabase = await createClient()
+    const supabase = await createClient();
 
-        // Fetch only NPS type
-        const { data } = await (supabase as any)
-            .from('app_feedback')
-            .select('rating')
-            .eq('type', 'nps')
-            .limit(1000)
+    // Calculate NPS: % Promoters (9-10) - % Detractors (0-6)
+    // Passives (7-8) are ignored in calculation but counted in total
 
-        if (!data || data.length === 0) return { score: 0, promoters: 0, passives: 0, detractors: 0, total: 0 }
+    const { data, error } = await supabase
+        .from('feedback')
+        .select('rating')
+        .eq('type', 'nps');
 
-        let promoters = 0
-        let passives = 0
-        let detractors = 0
-
-        data.forEach((item: any) => {
-            const score = item.rating || 0
-            if (score >= 9) promoters++
-            else if (score >= 7) passives++
-            else detractors++
-        })
-
-        const total = data.length
-        const score = Math.round(((promoters - detractors) / total) * 100)
-
-        return { score, promoters, passives, detractors, total }
-
-    } catch (error) {
-        return { score: 0, promoters: 0, passives: 0, detractors: 0, total: 0 }
+    if (error || !data || data.length === 0) {
+        return { score: 0, total: 0, breakdown: { promoters: 0, passives: 0, detractors: 0 } };
     }
+
+    let promoters = 0;
+    let detractors = 0;
+    let passives = 0;
+
+    data.forEach((f) => {
+        const r = f.rating;
+        if (r >= 9) promoters++;
+        else if (r >= 7) passives++;
+        else detractors++;
+    });
+
+    const total = data.length;
+    const score = Math.round(((promoters - detractors) / total) * 100);
+
+    return {
+        score,
+        total,
+        breakdown: {
+            promoters,
+            passives,
+            detractors,
+        },
+    };
+}
+
+export async function getRecentFeedback(limit = 10) {
+    const supabase = await createClient();
+
+    const { data } = await supabase
+        .from('feedback')
+        .select('*, profiles(full_name, email)')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+    return data || [];
 }

@@ -1,54 +1,35 @@
-'use server'
+'use server';
 
-import { createClient } from '@/utils/supabase/server'
-import { headers } from 'next/headers'
+import { createClient } from '@/utils/supabase/server';
 
-interface ClientErrorLog {
+export async function logClientError(error: {
     message: string;
     stack?: string;
     url: string;
-    userAgent: string;
+    ua: string;
+}) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // @ts-ignore: Types not generated yet
+    await supabase.from('system_health_logs').insert({
+        error_message: error.message,
+        stack_trace: error.stack,
+        url: error.url,
+        user_agent: error.ua,
+        user_id: user?.id || null,
+    });
 }
 
-export async function logClientError(error: ClientErrorLog) {
-    try {
-        const supabase = await createClient()
+export async function getRecentErrors() {
+    const supabase = await createClient();
 
-        // Use system_health_logs table (assumed existing from Phase 75 or similar)
-        // If not, we might need to create it, but aiAdminActions.ts used it, so it should exist.
-        // Structure might be (id, created_at, level, message, meta)
+    // @ts-ignore: Types not generated yet
+    const { data } = await supabase
+        .from('system_health_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-        await (supabase as any).from('system_health_logs').insert({
-            level: 'error',
-            source: 'client_browser',
-            message: error.message.substring(0, 500), // Truncate
-            meta: {
-                stack: error.stack,
-                url: error.url,
-                user_agent: error.userAgent,
-                timestamp: new Date().toISOString()
-            }
-        });
-
-    } catch (e) {
-        // Fail silently
-        console.error('Failed to log client error:', e)
-    }
-}
-
-export async function getRecentErrors(limit = 10) {
-    try {
-        const supabase = await createClient()
-
-        const { data } = await (supabase as any)
-            .from('system_health_logs')
-            .select('*')
-            .eq('source', 'client_browser')
-            .order('created_at', { ascending: false })
-            .limit(limit)
-
-        return { data: data || [] }
-    } catch (e) {
-        return { data: [] }
-    }
+    return data || [];
 }

@@ -2,75 +2,52 @@
 
 import { useEffect, useState } from 'react';
 import { getTopCouriers } from '@/app/actions/analyticsActions';
-import { Loader2, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { BarChart3 } from 'lucide-react';
 
 export default function TopCouriersWidget() {
-    const [couriers, setCouriers] = useState<{ name: string; count: number }[]>([]);
+    const [data, setData] = useState<{ name: string, count: number }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const { data } = await getTopCouriers(5);
-                setCouriers(data || []);
-            } catch (error) {
-                console.error('Failed to fetch top couriers:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        getTopCouriers().then(res => {
+            setData(res);
+            setLoading(false);
+        });
     }, []);
 
+    if (loading) return <div className="p-6 bg-white rounded-xl shadow-sm h-64 animate-pulse bg-gray-100" />
+
+    const maxCount = Math.max(...data.map(d => d.count), 1);
+
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-blue-600" />
-                    Top Kurir Dicari
-                </h3>
+        <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                    <BarChart3 className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-zinc-900 dark:text-white">Top Couriers</h3>
             </div>
 
-            {loading ? (
-                <div className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
-                </div>
-            ) : couriers.length === 0 ? (
-                <div className="text-center py-8 text-gray-400">
-                    Belum ada data tracking
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    {couriers.map((item, index) => {
-                        const max = couriers[0].count;
-                        const percentage = (item.count / max) * 100;
-
-                        return (
-                            <motion.div
-                                key={item.name}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                            >
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span className="font-medium text-gray-700 uppercase">{item.name}</span>
-                                    <span className="text-gray-500">{item.count} cek</span>
-                                </div>
-                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <motion.div
-                                        className="h-full bg-blue-600 rounded-full"
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${percentage}%` }}
-                                        transition={{ duration: 1, ease: 'easeOut' }}
-                                    />
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-            )}
+            <div className="space-y-4">
+                {data.length === 0 ? (
+                    <p className="text-zinc-500 text-sm">No data recorded yet.</p>
+                ) : (
+                    data.map((item) => (
+                        <div key={item.name} className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                                <span className="font-medium text-zinc-700 dark:text-zinc-300 capitalize">{item.name}</span>
+                                <span className="text-zinc-500">{item.count} searches</span>
+                            </div>
+                            <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                                    style={{ width: `${(item.count / maxCount) * 100}%` }}
+                                />
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 }

@@ -1,0 +1,80 @@
+[
+    {
+        "keywords": [
+            "powerbank",
+            "baterai",
+            "battery",
+            "accu",
+            "aki"
+        ],
+        "status": "danger",
+        "message": "❌ DILARANG via Udara! Powerbank/Baterai berisiko meledak. Wajib gunakan jalur Darat/Laut (Cargo).",
+        "couriers": [
+            "JNE Trucking",
+            "J&T Cargo",
+            "SiCepat Gokil"
+        ]
+    },
+    {
+        "keywords": [
+            "aerosol",
+            "gas",
+            "parfum",
+            "spray",
+            "pilox"
+        ],
+        "status": "danger",
+        "message": "❌ DILARANG via Udara! Barang mudah meledak/terbakar (Flammable Gas). Gunakan jalur Darat.",
+        "couriers": [
+            "JNE Trucking",
+            "SiCepat Gokil"
+        ]
+    },
+    {
+        "keywords": [
+            "cair",
+            "minyak",
+            "oli",
+            "madu",
+            "sirup",
+            "liquid"
+        ],
+        "status": "warning",
+        "message": "⚠️ Cairan berisiko bocor/ditolak bandara. Disarankan jalur Darat & Packing Kayu.",
+        "couriers": [
+            "JNE Trucking",
+            "J&T Cargo",
+            "Wahana"
+        ]
+    },
+    {
+        "keywords": [
+            "makanan",
+            "kue",
+            "basah",
+            "frozen",
+            "durian",
+            "buah"
+        ],
+        "status": "warning",
+        "message": "⚠️ Makanan mudah basi wajib layanan Kilat/Next Day (1 Hari Sampai) atau Frozen Friendly.",
+        "couriers": [
+            "JNE YES",
+            "SiCepat BEST",
+            "PAXEL (Frozen Friendly)"
+        ]
+    },
+    {
+        "keywords": [
+            "tanaman",
+            "hewan",
+            "ikan"
+        ],
+        "status": "warning",
+        "message": "⚠️ Kirim makhluk hidup butuh surat karantina & layanan khusus. Cek kebijakan kurir.",
+        "couriers": [
+            "JNE (with Permit)",
+            "Kalog (Kereta Api)"
+        ]
+    }
+]

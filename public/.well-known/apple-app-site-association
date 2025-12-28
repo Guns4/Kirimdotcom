@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAM_ID.com.kirimdotcom.ios",
+        "paths": [ "/tracking/*", "/cek-ongkir/*", "/" ]
+      }
+    ]
+  }
+}

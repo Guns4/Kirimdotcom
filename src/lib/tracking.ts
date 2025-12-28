@@ -1,25 +1,11 @@
-import { logEvent } from "@/app/actions/analyticsActions";
+'use client';
 
-/**
- * Track a user event (Client Side)
- * @param eventName Name of the event (e.g., 'click_cek_resi')
- * @param properties Additional data (e.g., { courier: 'jne' })
- */
-export const trackEvent = async (eventName: string, properties: Record<string, any> = {}) => {
-    try {
-        // 1. Log to Supabase (Server Action)
-        await logEvent(eventName, properties);
+import { logEvent } from '@/app/actions/analyticsActions';
 
-        // 2. Optional: Log to Console in Dev
-        if (process.env.NODE_ENV === 'development') {
-            console.log(`[Tracking] ${eventName}`, properties);
-        }
-
-        // 3. Optional: Forward to GA4/Clarity/Pixel if exists
-        // if (window.gtag) window.gtag('event', eventName, properties);
-
-    } catch (error) {
-        // tracking should never crash the app
-        console.warn('Tracking failed:', error);
-    }
-};
+export function trackEvent(name: string, properties: Record<string, any> = {}) {
+    // Fire and forget server action
+    // Use setTimeout to not block main thread
+    setTimeout(() => {
+        logEvent(name, properties).catch(err => console.error('Tracking Error:', err));
+    }, 0);
+}

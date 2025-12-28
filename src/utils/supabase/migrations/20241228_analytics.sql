@@ -1,31 +1,27 @@
+-- Drop table if exists to ensure clean schema (avoid column mismatch errors)
+DROP TABLE IF EXISTS public.analytics_events CASCADE;
+
 -- Analytics Events Table
-CREATE TABLE IF NOT EXISTS analytics_events (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    event_name TEXT NOT NULL,
-    properties JSONB DEFAULT '{}'::jsonb,
-    user_id UUID REFERENCES auth.users(id),
-    session_id TEXT,
-    -- For guest tracking
-    page_url TEXT,
-    user_agent TEXT
+CREATE TABLE public.analytics_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text NOT NULL,
+  properties jsonb DEFAULT '{}'::jsonb,
+  user_id uuid REFERENCES auth.users(id),
+  session_id text,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
--- Indexes for faster querying
-CREATE INDEX IF NOT EXISTS idx_analytics_event_name ON analytics_events(event_name);
-CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at);
+
+-- Indexes for Analytics
+CREATE INDEX idx_analytics_name ON public.analytics_events(name);
+CREATE INDEX idx_analytics_created_at ON public.analytics_events(created_at);
+
 -- RLS Policies
-ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
--- Allow insert by anyone (anon + auth)
-CREATE POLICY "Allow public insert" ON analytics_events FOR
-INSERT TO public WITH CHECK (true);
--- Allow viewing only by admins (you might need to adjust this depending on your admin role logic)
--- Assuming 'admins' table or similar logic exists, or just manually restricted for now
-CREATE POLICY "Allow view by admins only" ON analytics_events FOR
-SELECT TO authenticated USING (
-        auth.uid() IN (
-            SELECT id
-            FROM users
-            WHERE role = 'admin'
-        )
-    );
--- Adjust 'users' table logic if different
+ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
+
+-- Allow insert by everyone (public analytics)
+CREATE POLICY "Enable insert for everyone" ON public.analytics_events
+    FOR INSERT WITH CHECK (true);
+
+-- Allow select only by admins
+CREATE POLICY "Enable select for authenticated users" ON public.analytics_events
+    FOR SELECT USING (auth.role() = 'authenticated');

@@ -2,98 +2,89 @@
 
 import { useEffect, useState } from 'react';
 import { getFunnelStats } from '@/app/actions/funnelActions';
-import { ArrowRight, Filter, Users, UserCheck, CreditCard } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Users, UserPlus, CreditCard, ArrowRight, Eye } from 'lucide-react';
 
 export default function FunnelAnalysisWidget() {
-    const [stats, setStats] = useState({ visitors: 0, registered: 0, paid: 0 });
-    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<any>(null);
 
     useEffect(() => {
-        const loadStats = async () => {
-            try {
-                const { data } = await getFunnelStats();
-                setStats(data);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadStats();
+        getFunnelStats().then(setStats);
     }, []);
 
-    const conversion1 = stats.visitors > 0 ? ((stats.registered / stats.visitors) * 100).toFixed(1) : '0';
-    const conversion2 = stats.registered > 0 ? ((stats.paid / stats.registered) * 100).toFixed(1) : '0';
-    const totalConversion = stats.visitors > 0 ? ((stats.paid / stats.visitors) * 100).toFixed(1) : '0';
+    if (!stats) return <div className="p-6 bg-white rounded-xl border animate-pulse h-64"></div>;
+
+    const funnel = [
+        { label: 'Visitors', value: stats.view_landing_page || 0, icon: Eye, color: 'bg-blue-100 text-blue-600' },
+        { label: 'Interest', value: stats.view_register_page || 0, icon: Users, color: 'bg-indigo-100 text-indigo-600' },
+        { label: 'Registered', value: stats.complete_registration || 0, icon: UserPlus, color: 'bg-purple-100 text-purple-600' },
+        { label: 'Paid Users', value: stats.complete_purchase || 0, icon: CreditCard, color: 'bg-green-100 text-green-600' },
+    ];
+
+    const calculateConversion = (curr: number, prev: number) => {
+        if (prev === 0) return 0;
+        return ((curr / prev) * 100).toFixed(1);
+    };
+
+    const totalConversion = calculateConversion(stats.complete_purchase, stats.view_landing_page);
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm col-span-2">
-            <div className="flex items-center justify-between mb-8">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-indigo-600" />
-                    Conversion Funnel (Sales)
-                </h3>
-            </div>
+        <div className="bg-white border rounded-xl p-6 shadow-sm">
+            <h3 className="font-bold text-gray-800 mb-6 flex items-center justify-between">
+                <span>Conversion Funnel</span>
+                <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200">
+                    Total Conv: {totalConversion}%
+                </span>
+            </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
-                {/* Connecting Line (Desktop) */}
-                <div className="hidden md:block absolute top-[40%] left-[16%] right-[16%] h-1 bg-gray-100 -z-0"></div>
+            <div className="space-y-2">
+                {funnel.map((step, i) => {
+                    const prevValue = i > 0 ? funnel[i - 1].value : step.value; // For first item, ratio is 100% relative to self
+                    const ratio = i === 0 ? 100 : parseFloat(calculateConversion(step.value, prevValue));
 
-                {/* Step 1: Visitor */}
-                <StepCard
-                    label="Register Page"
-                    count={stats.visitors}
-                    icon={Users}
-                    color="bg-blue-100 text-blue-600"
-                    isFirst
-                />
+                    // Width relative to max (visitors)
+                    const widthPercent = (step.value / funnel[0].value) * 100;
 
-                {/* Step 2: Registered */}
-                <StepCard
-                    label="Registered User"
-                    count={stats.registered}
-                    icon={UserCheck}
-                    color="bg-purple-100 text-purple-600"
-                    conversion={conversion1}
-                />
+                    return (
+                        <div key={step.label} className="relative group">
+                            {/* Bar Background */}
+                            <div className="absolute inset-0 bg-gray-50 rounded-lg -z-10 w-full h-full"></div>
 
-                {/* Step 3: Paid */}
-                <StepCard
-                    label="Paid Subscriber"
-                    count={stats.paid}
-                    icon={CreditCard}
-                    color="bg-green-100 text-green-600"
-                    conversion={conversion2}
-                />
-            </div>
+                            {/* Colored Bar */}
+                            <div
+                                className={`absolute inset-y-0 left-0 rounded-lg opacity-20 -z-10 transition-all duration-1000 ${step.color.split(' ')[0]}`}
+                                style={{ width: `${Math.max(widthPercent, 5)}%` }} // Min width so text is readable
+                            ></div>
 
-            <div className="mt-6 text-center">
-                <p className="text-sm text-gray-500">
-                    Total Conversion Rate: <span className="font-semibold text-gray-900">{totalConversion}%</span>
-                </p>
+                            <div className="flex items-center justify-between p-3">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.color}`}>
+                                        <step.icon className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-gray-800">{step.label}</div>
+                                        <div className="text-xs text-gray-500">
+                                            {i > 0 && (
+                                                <span className="flex items-center gap-1">
+                                                    drop-off: <span className="text-red-500 font-semibold">{(100 - ratio).toFixed(1)}%</span>
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="text-right">
+                                    <div className="font-bold text-lg">{step.value.toLocaleString()}</div>
+                                    {i > 0 && (
+                                        <div className="text-xs font-semibold text-gray-400 bg-white/50 px-1 rounded inline-flex items-center">
+                                            {ratio}% <ArrowRight className="w-3 h-3 ml-0.5 rotate-45" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
-}
-
-function StepCard({ label, count, icon: Icon, color, conversion, isFirst }: any) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center relative z-10"
-        >
-            {!isFirst && (
-                <div className="mb-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 flex items-center gap-1">
-                    {conversion}% <ArrowRight className="w-3 h-3" />
-                </div>
-            )}
-
-            <div className={`w-16 h-16 rounded-2xl ${color} flex items-center justify-center mb-4 shadow-sm`}>
-                <Icon className="w-8 h-8" />
-            </div>
-
-            <h4 className="font-medium text-gray-900 text-lg">{count.toLocaleString()}</h4>
-            <p className="text-sm text-gray-500">{label}</p>
-        </motion.div>
-    )
 }

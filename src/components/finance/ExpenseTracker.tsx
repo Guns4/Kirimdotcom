@@ -1,17 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Plus, X, Receipt, TrendingUp, TrendingDown, Download, Calendar } from 'lucide-react';
-
-export interface Expense {
-    id: string;
-    user_id: string;
-    amount: number;
-    category: 'operasional' | 'bahan' | 'marketing' | 'lainnya';
-    description: string;
-    date: string;
-    created_at?: string;
-}
+import { useState } from 'react';
+import { Plus, X, FileText } from 'lucide-react';
 
 interface ExpenseFormProps {
     onSubmit: (data: { amount: number; category: string; description: string }) => Promise<void>;
@@ -19,115 +9,98 @@ interface ExpenseFormProps {
 }
 
 const CATEGORIES = [
-    { id: 'operasional', label: 'Operasional', icon: '🚗', examples: 'Bensin, Parkir, Pulsa' },
-    { id: 'bahan', label: 'Bahan', icon: '📦', examples: 'Lakban, Kardus, Bubble wrap' },
-    { id: 'marketing', label: 'Marketing', icon: '📢', examples: 'Iklan, Promo, Endorse' },
-    { id: 'lainnya', label: 'Lainnya', icon: '💰', examples: 'Lain-lain' },
+    { id: 'Operasional', label: 'Operasional', icon: '⛽' },
+    { id: 'Bahan', label: 'Bahan Packing', icon: '📦' },
+    { id: 'Marketing', label: 'Marketing', icon: '📢' },
+    { id: 'Lainnya', label: 'Lainnya', icon: '📝' },
 ];
 
-/**
- * Quick Expense Input Form (Modal)
- */
 export function ExpenseForm({ onSubmit, onClose }: ExpenseFormProps) {
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState('operasional');
+    const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
-    const [isPending, startTransition] = useTransition();
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!amount) return;
+        if (!amount || !category) return;
 
-        startTransition(async () => {
+        setLoading(true);
+        try {
             await onSubmit({
-                amount: Number(amount),
+                amount: parseInt(amount.replace(/\D/g, '')),
                 category,
-                description,
+                description
             });
             onClose();
-        });
+        } catch (error) {
+            console.error(error);
+            alert('Gagal menyimpan pengeluaran');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md animate-slide-up">
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h2 className="text-lg font-bold flex items-center gap-2">
-                        <Receipt className="w-5 h-5 text-red-500" />
-                        Input Pengeluaran
-                    </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-surface-100 rounded-lg">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+            <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-xl animate-in slide-in-from-bottom-10">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-bold">Catat Pengeluaran</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-4 space-y-4">
-                    {/* Amount */}
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="text-sm font-medium text-surface-700 mb-1 block">
-                            Nominal
-                        </label>
+                        <label className="block text-sm font-medium mb-2 text-zinc-500">Nominal</label>
                         <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-500">Rp</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-medium">Rp</span>
                             <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 text-2xl font-bold bg-zinc-50 dark:bg-zinc-800 rounded-xl border-none focus:ring-2 focus:ring-red-500"
                                 placeholder="0"
-                                className="w-full pl-12 pr-4 py-3 text-2xl font-bold border-2 border-surface-200 rounded-xl focus:border-primary-500 focus:ring-0"
                                 autoFocus
                             />
                         </div>
                     </div>
 
-                    {/* Category */}
-                    <div>
-                        <label className="text-sm font-medium text-surface-700 mb-2 block">
-                            Kategori
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                            {CATEGORIES.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    type="button"
-                                    onClick={() => setCategory(cat.id)}
-                                    className={`p-3 rounded-xl border-2 text-left transition ${category === cat.id
-                                            ? 'border-primary-500 bg-primary-50'
-                                            : 'border-surface-200 hover:border-surface-300'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xl">{cat.icon}</span>
-                                        <span className="font-medium">{cat.label}</span>
-                                    </div>
-                                    <p className="text-xs text-surface-500 mt-1">{cat.examples}</p>
-                                </button>
-                            ))}
-                        </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        {CATEGORIES.map((cat) => (
+                            <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => setCategory(cat.id)}
+                                className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all ${category === cat.id
+                                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-600'
+                                        : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                                    }`}
+                            >
+                                <span className="text-xl">{cat.icon}</span>
+                                <span className="text-xs font-medium">{cat.label}</span>
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Description */}
                     <div>
-                        <label className="text-sm font-medium text-surface-700 mb-1 block">
-                            Keterangan (opsional)
-                        </label>
                         <input
                             type="text"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Contoh: Beli lakban 5 roll"
-                            className="w-full px-4 py-3 border-2 border-surface-200 rounded-xl focus:border-primary-500 focus:ring-0"
+                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 rounded-xl border-none focus:ring-2 focus:ring-red-500 text-sm"
+                            placeholder="Catatan (opsional)..."
                         />
                     </div>
 
-                    {/* Submit */}
                     <button
                         type="submit"
-                        disabled={!amount || isPending}
-                        className="w-full py-4 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        disabled={loading || !amount || !category}
+                        className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                        {isPending ? 'Menyimpan...' : 'Simpan Pengeluaran'}
+                        {loading ? 'Menyimpan...' : 'Simpan Pengeluaran'}
                     </button>
                 </form>
             </div>
@@ -135,24 +108,17 @@ export function ExpenseForm({ onSubmit, onClose }: ExpenseFormProps) {
     );
 }
 
-/**
- * Expense FAB Button
- */
 export function ExpenseFAB({ onClick }: { onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className="fixed bottom-24 right-4 w-14 h-14 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition flex items-center justify-center z-40"
-            title="Input Pengeluaran"
+            className="fixed bottom-24 right-6 w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg flex items-center justify-center z-40 transition-transform active:scale-95"
         >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-8 h-8" />
         </button>
     );
 }
 
-/**
- * Net Profit Report Card
- */
 interface NetProfitReportProps {
     totalSales: number;
     totalExpenses: number;
@@ -162,75 +128,63 @@ interface NetProfitReportProps {
 
 export function NetProfitReport({ totalSales, totalExpenses, period, onExportPDF }: NetProfitReportProps) {
     const netProfit = totalSales - totalExpenses;
-    const profitMargin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
-    const isProfit = netProfit >= 0;
+    const margin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
 
     return (
-        <div className="bg-white rounded-xl border border-surface-200 overflow-hidden">
-            {/* Header */}
-            <div className="p-4 border-b bg-surface-50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-surface-500" />
-                    <span className="font-medium">{period}</span>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-zinc-100 dark:border-zinc-800">
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <h3 className="text-zinc-500 text-sm font-medium mb-1">Laporan Laba Bersih</h3>
+                    <p className="text-zinc-900 dark:text-zinc-100 font-semibold">{period}</p>
                 </div>
                 {onExportPDF && (
                     <button
                         onClick={onExportPDF}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition"
+                        className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200"
                     >
-                        <Download className="w-4 h-4" />
-                        Export PDF
+                        <FileText className="w-3 h-3" />
+                        PDF
                     </button>
                 )}
             </div>
 
-            {/* Stats */}
-            <div className="p-4 space-y-4">
-                {/* Sales */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-green-500" />
-                        <span className="text-surface-600">Total Penjualan</span>
+            <div className="flex flex-col gap-4">
+                {/* Waterfall Chart Equivalent */}
+                <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                        <span className="text-zinc-500 text-sm">Total Penjualan</span>
+                        <span className="font-medium text-emerald-600">Rp {totalSales.toLocaleString()}</span>
                     </div>
-                    <span className="font-semibold text-green-600">
-                        Rp {totalSales.toLocaleString('id-ID')}
-                    </span>
-                </div>
 
-                {/* Expenses */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <TrendingDown className="w-5 h-5 text-red-500" />
-                        <span className="text-surface-600">Total Pengeluaran</span>
+                    <div className="flex justify-between items-center">
+                        <span className="text-zinc-500 text-sm">Total Pengeluaran</span>
+                        <span className="font-medium text-red-600">- Rp {totalExpenses.toLocaleString()}</span>
                     </div>
-                    <span className="font-semibold text-red-600">
-                        Rp {totalExpenses.toLocaleString('id-ID')}
-                    </span>
+
+                    <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-2" />
+
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-zinc-900 dark:text-white">Laba Bersih</span>
+                        <div className="text-right">
+                            <span className="font-bold text-xl block text-zinc-900 dark:text-white">
+                                Rp {netProfit.toLocaleString()}
+                            </span>
+                            <span className={`text-xs font-medium ${margin >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                Margin {margin.toFixed(1)}%
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Divider */}
-                <hr className="border-surface-200" />
-
-                {/* Net Profit */}
-                <div className="flex items-center justify-between">
-                    <span className="font-bold text-surface-900">Laba Bersih Sejati</span>
-                    <span className={`text-2xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
-                        {isProfit ? '+' : '-'} Rp {Math.abs(netProfit).toLocaleString('id-ID')}
-                    </span>
-                </div>
-
-                {/* Margin */}
-                <div className="text-right text-sm text-surface-500">
-                    Margin: {profitMargin.toFixed(1)}%
+                {/* Visual Bar */}
+                <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden flex">
+                    <div
+                        className="h-full bg-emerald-500"
+                        style={{ width: `${Math.min(100, (netProfit / totalSales) * 100)}%` }}
+                    />
+                    {/* Remaining space represents cost ratio if we think about it simply */}
                 </div>
             </div>
         </div>
     );
 }
-
-export default {
-    ExpenseForm,
-    ExpenseFAB,
-    NetProfitReport,
-    CATEGORIES,
-};

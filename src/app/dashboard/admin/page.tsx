@@ -5,6 +5,12 @@ import AdminTabs from '@/components/admin/AdminTabs'
 import { getBusinessMetrics, getSystemStatus } from '@/app/actions/admin-metrics'
 import { BusinessHealthCard } from '@/components/admin/BusinessHealthCard'
 import { MaintenanceSwitch } from '@/components/admin/MaintenanceSwitch'
+import FunnelAnalysisWidget from '@/components/admin/FunnelAnalysisWidget'
+import PerformanceWidget from '@/components/admin/PerformanceWidget'
+import TopCouriersWidget from '@/components/admin/TopCouriersWidget'
+import FeedbackFeedWidget from '@/components/admin/FeedbackFeedWidget'
+import RecentErrorsWidget from '@/components/admin/RecentErrorsWidget'
+import FeatureManager from '@/components/admin/FeatureManager'
 
 export default async function AdminPage() {
     const supabase = await createClient()
@@ -25,7 +31,8 @@ export default async function AdminPage() {
         .single()
 
     // Check if user is admin
-    if (profile?.role !== 'admin') {
+    const profileData = profile as any
+    if (profileData?.role !== 'admin') {
         redirect('/dashboard')
     }
 
@@ -56,6 +63,26 @@ export default async function AdminPage() {
 
                 {/* Business Health */}
                 <BusinessHealthCard metrics={metrics} />
+
+                {/* Analytics Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Row 1: Funnel (2) + Performance (1) */}
+                    <FunnelAnalysisWidget />
+                    <PerformanceWidget />
+
+                    {/* Row 2: Stats & Feedback */}
+                    <div className="col-span-3 lg:col-span-1">
+                        <TopCouriersWidget />
+                    </div>
+                    <FeedbackFeedWidget />
+                    <div className="col-span-3 lg:col-span-1">
+                        <RecentErrorsWidget />
+                    </div>
+
+                    <div className="col-span-3 lg:col-span-1">
+                        <FeatureManager />
+                    </div>
+                </div>
 
                 <AdminTabs settings={settings} />
             </div>

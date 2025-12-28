@@ -2,51 +2,48 @@
 
 import { useEffect, useState } from 'react';
 import { getRecentErrors } from '@/app/actions/errorLoggingActions';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
 
 export default function RecentErrorsWidget() {
     const [errors, setErrors] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadErrors = async () => {
-            try {
-                const { data } = await getRecentErrors(5);
-                setErrors(data || []);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadErrors();
+        getRecentErrors().then(data => {
+            setErrors(data);
+            setLoading(false);
+        });
     }, []);
 
-    if (loading) return <Loader2 className="w-6 h-6 animate-spin text-gray-400" />;
-
-    if (errors.length === 0) {
-        return (
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center text-gray-500 min-h-[150px]">
-                <AlertTriangle className="w-8 h-8 mb-2 text-green-500" />
-                <p>Tidak ada error terbaru</p>
-            </div>
-        );
-    }
+    if (loading) return <div className="h-64 bg-zinc-100 dark:bg-zinc-800 rounded-xl animate-pulse" />;
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
-                Recent Errors (Client)
-            </h3>
-            <div className="space-y-4">
-                {errors.map((err) => (
-                    <div key={err.id} className="text-sm border-b border-gray-100 pb-2 last:border-0">
-                        <p className="font-medium text-red-600 line-clamp-1">{err.message}</p>
-                        <div className="flex justify-between mt-1 text-xs text-gray-500">
-                            <span>{new Date(err.created_at).toLocaleString('id-ID')}</span>
-                            <span className="max-w-[150px] truncate">{err.meta?.url}</span>
+        <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2 mb-6">
+                <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400">
+                    <AlertTriangle className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-zinc-900 dark:text-white">Recent Errors</h3>
+            </div>
+
+            <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                {errors.length === 0 ? (
+                    <p className="text-zinc-500 text-sm">System healthy. No errors reported.</p>
+                ) : (
+                    errors.map((err) => (
+                        <div key={err.id} className="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-100 dark:border-red-900/20">
+                            <p className="text-sm font-medium text-red-700 dark:text-red-300 break-words mb-1">
+                                {err.error_message}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs text-red-500/70">
+                                <Clock className="w-3 h-3" />
+                                {new Date(err.created_at).toLocaleString()}
+                                <span className="w-1 h-1 bg-red-400 rounded-full" />
+                                <span className="truncate max-w-[200px]">{err.url}</span>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
         </div>
     );
