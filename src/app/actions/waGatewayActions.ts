@@ -106,8 +106,8 @@ export async function saveWASettings(settings: {
             return { success: false, error: 'Not authenticated' };
         }
 
-        const { error } = await supabase
-            .from('wa_user_settings')
+        const { error } = await (supabase
+            .from('wa_user_settings') as any)
             .upsert({
                 user_id: user.id,
                 ...settings,
@@ -120,7 +120,7 @@ export async function saveWASettings(settings: {
         }
 
         // Create default templates if not exist
-        await supabase.rpc('create_default_wa_templates', {
+        await (supabase.rpc as any)('create_default_wa_templates', {
             p_user_id: user.id,
         });
 
@@ -179,8 +179,8 @@ export async function updateWATemplate(
             return { success: false, error: 'Not authenticated' };
         }
 
-        const { error } = await supabase
-            .from('wa_templates')
+        const { error } = await (supabase
+            .from('wa_templates') as any)
             .update({
                 message_template: messageTemplate,
                 updated_at: new Date().toISOString(),
@@ -218,7 +218,7 @@ export async function sendWANotification(
         const supabase = await createClient();
 
         // Queue notification in database
-        const { data: logId, error: queueError } = await supabase.rpc(
+        const { data: logId, error: queueError } = await (supabase.rpc as any)(
             'queue_wa_notification',
             {
                 p_user_id: userId,
@@ -235,8 +235,8 @@ export async function sendWANotification(
         }
 
         // Get settings to send
-        const { data: settings } = await supabase
-            .from('wa_user_settings')
+        const { data: settings } = await (supabase
+            .from('wa_user_settings') as any)
             .select('wa_api_key, wa_provider')
             .eq('user_id', userId)
             .single();
@@ -246,8 +246,8 @@ export async function sendWANotification(
         }
 
         // Get the queued message
-        const { data: log } = await supabase
-            .from('wa_notification_log')
+        const { data: log } = await (supabase
+            .from('wa_notification_log') as any)
             .select('message_sent')
             .eq('id', logId)
             .single();
@@ -264,8 +264,8 @@ export async function sendWANotification(
         );
 
         // Update log with result
-        await supabase
-            .from('wa_notification_log')
+        await (supabase
+            .from('wa_notification_log') as any)
             .update({
                 status: result.success ? 'sent' : 'failed',
                 message_id: result.messageId,
@@ -338,8 +338,8 @@ export async function sendWhatsAppMessage(
 
         // If userId provided, get user's API key
         if (userId) {
-            const { data: settings } = await supabase
-                .from('wa_user_settings')
+            const { data: settings } = await (supabase
+                .from('wa_user_settings') as any)
                 .select('wa_api_key')
                 .eq('user_id', userId)
                 .single();
