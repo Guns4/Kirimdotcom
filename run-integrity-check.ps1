@@ -101,7 +101,7 @@ $PAGES = @(
 )
 
 foreach ($page in $PAGES) {
-    if (Test-Path $page.Path) {
+    if (Test-Path -LiteralPath $page.Path) {
         Write-Host "✓ $($page.Name) exists" -ForegroundColor Green
         $PASS++
     }
