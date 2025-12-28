@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Search, Loader2 } from 'lucide-react'
 import { courierList } from '@/data/couriers'
+import { trackEvent } from '@/lib/tracking'
 
 interface WidgetSearchFormProps {
     color?: string
@@ -17,6 +18,14 @@ export function WidgetSearchForm({ color = 'blue' }: WidgetSearchFormProps) {
         if (!waybill.trim()) return
 
         setIsSubmitting(true)
+
+        // Tracking
+        // We assume default 'jne' for now as per code logic, but ideally we detect it.
+        // Or if the widget just sends to search page, we log what we know.
+        trackEvent('click_cek_resi', {
+            waybill: waybill.trim(),
+            source: 'widget_home'
+        })
 
         // Construct URL for main site
         const courier = 'jne' // Default or auto-detect? 

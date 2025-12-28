@@ -10,6 +10,10 @@ import { SystemStatusProvider } from "@/context/SystemStatusContext";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
 import { siteConfig } from "@/config/site";
 import { headers } from "next/headers";
+import ClarityAnalytics from "@/components/analytics/ClarityAnalytics";
+import ErrorMonitor from "@/components/analytics/ErrorMonitor";
+import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
+import NPSSurvey from "@/components/ui/NPSSurvey";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -87,6 +91,11 @@ export default async function RootLayout({
                             {children}
                         </main>
                         {!isWidget && <FeedbackWidget />}
+                        {!isWidget && <FeedbackWidget />}
+                        <ClarityAnalytics />
+                        <ErrorMonitor />
+                        <WebVitalsReporter />
+                        <NPSSurvey />
                         {!isWidget && <Footer />}
                         {!isWidget && <BottomNav />}
                     </LiteModeProvider>

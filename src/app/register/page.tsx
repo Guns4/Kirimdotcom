@@ -6,70 +6,46 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { createClient } from '@/utils/supabase/client'
 import { Mail, Lock, User, Loader2, Chrome } from 'lucide-react'
+import { trackEvent } from '@/lib/tracking'
+import { useEffect } from 'react'
+
+import { useEffect } from 'react'
+import { trackEvent } from '@/lib/tracking'
 
 export default function RegisterPage() {
     const router = useRouter()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState(false)
-    const supabase = createClient()
+    // ...
 
+    // Track View
+    useEffect(() => {
+        trackEvent('view_register_page')
+    }, [])
+
+    // ...
     const handleRegister = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError('')
-        setSuccess(false)
+        // ...
+        if (error) throw error
 
-        if (password !== confirmPassword) {
-            setError('Password tidak cocok')
-            return
-        }
+        // Track Success
+        trackEvent('complete_registration', { method: 'email' })
 
-        if (password.length < 6) {
-            setError('Password minimal 6 karakter')
-            return
-        }
-
-        setIsLoading(true)
-
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
-                },
-            })
-
-            if (error) throw error
-
-            setSuccess(true)
-            setTimeout(() => {
-                router.push('/login')
-            }, 2000)
-        } catch (error: any) {
-            setError(error.message || 'Registrasi gagal')
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    const handleGoogleSignup = async () => {
-        setIsLoading(true)
-        try {
+        setSuccess(true)
+        setTimeout(() => {
+            router.push('/login')
+        }, 2000)
+        // ...
+        const handleGoogleSignup = async () => {
+            // ...
             const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: `${window.location.origin}/auth/callback`,
-                },
+                // ...
             })
 
             if (error) throw error
-        } catch (error: any) {
-            setError(error.message || 'Daftar dengan Google gagal')
-            setIsLoading(false)
+
+            // Note: OAuth success often redirects immediately, so tracking might need to be on the callback page.
+            // But for click intent:
+            trackEvent('click_social_signup', { provider: 'google' })
+            // ...
         }
     }
 

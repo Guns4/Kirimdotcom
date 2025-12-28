@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { logEvent } from '@/app/actions/analyticsActions'
 
 // ============================================
 // PAYMENT WEBHOOK HANDLER
@@ -197,6 +198,14 @@ async function activateSubscription(
         console.error('Subscription activation error:', error)
         throw error
     }
+
+    // Log tracking event
+    // Using server-side logEvent since this is background API
+    await logEvent('complete_purchase', {
+        planId,
+        gateway: gateway || 'manual',
+        transactionId
+    })
 
     return true
 }

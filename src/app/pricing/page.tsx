@@ -3,12 +3,28 @@
 import { motion } from 'framer-motion'
 import { Check, X, Zap, Crown, Sparkles, MessageCircle } from 'lucide-react'
 import { pricingPlans, getPlanById, generateWhatsAppUpgradeUrl } from '@/lib/payment'
+import { useEffect } from 'react'
+import { trackEvent } from '@/lib/tracking'
+import { useExperiment } from '@/lib/ab-testing'
 
 export default function PricingPage() {
     const freePlan = getPlanById('free')
     const monthlyPlan = getPlanById('pro-monthly')
     const yearlyPlan = getPlanById('pro-yearly')
     const lifetimePlan = getPlanById('pro-lifetime')
+
+    // Tracking
+    useEffect(() => {
+        trackEvent('view_pricing_page')
+    }, [])
+
+    const handleUpgrade = (plan: string) => {
+        trackEvent('click_register_premium', { plan })
+    }
+
+    // A/B Test for CTA Text
+    const ctaVariant = useExperiment('pricing_cta_text_v1', ['original', 'action_focused'])
+    const ctaText = ctaVariant === 'action_focused' ? 'Mulai Sekarang' : 'Upgrade via WA'
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20 px-4">
@@ -103,10 +119,11 @@ export default function PricingPage() {
                             href={monthlyPlan ? generateWhatsAppUpgradeUrl(monthlyPlan) : '#'}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => handleUpgrade('monthly')}
                             className="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl transition-all font-semibold shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2"
                         >
                             <MessageCircle className="w-5 h-5" />
-                            Upgrade via WA
+                            {ctaText}
                         </a>
                     </motion.div>
 
@@ -147,10 +164,11 @@ export default function PricingPage() {
                             href={yearlyPlan ? generateWhatsAppUpgradeUrl(yearlyPlan) : '#'}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => handleUpgrade('yearly')}
                             className="w-full py-3 px-6 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-xl transition-all font-semibold shadow-lg shadow-yellow-500/30 flex items-center justify-center gap-2"
                         >
                             <MessageCircle className="w-5 h-5" />
-                            Upgrade via WA
+                            {ctaText}
                         </a>
                     </motion.div>
 
@@ -197,10 +215,11 @@ export default function PricingPage() {
                             href={lifetimePlan ? generateWhatsAppUpgradeUrl(lifetimePlan) : '#'}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => handleUpgrade('lifetime')}
                             className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl transition-all font-semibold shadow-lg shadow-purple-500/30 flex items-center justify-center gap-2"
                         >
                             <MessageCircle className="w-5 h-5" />
-                            Upgrade via WA
+                            {ctaText}
                         </a>
                     </motion.div>
                 </div>
