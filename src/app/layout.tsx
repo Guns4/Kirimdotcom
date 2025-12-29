@@ -18,6 +18,7 @@ import NPSSurvey from "@/components/ui/NPSSurvey";
 import { getPublicFlags } from "@/app/actions/flagActions";
 import { FeatureFlagProvider } from "@/components/providers/FeatureFlagProvider";
 import { ThirdPartyScripts } from "@/components/ThirdPartyScripts";
+import { VercelInsights } from "@/components/monitoring/VercelInsights";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -130,6 +131,9 @@ export default async function RootLayout({
                     gaId={process.env.NEXT_PUBLIC_GA_ID}
                     adsenseId="ca-pub-5099892029462046"
                 />
+
+                {/* Vercel Analytics & Speed Insights */}
+                <VercelInsights />
             </body>
         </html>
     );
