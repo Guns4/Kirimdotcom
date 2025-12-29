@@ -1,65 +1,71 @@
 #!/bin/bash
 
 # =============================================================================
-# Setup Database Archiving (Phase 126)
-# Performance Optimization & Auto-Maintenance
+# Database Hygiene & Archiving Automation
 # =============================================================================
 
-echo "Setting up Database Archiving..."
+echo "Initializing Database Archiving System..."
 echo "================================================="
-echo ""
 
-# 1. SQL Schema
-echo "1. Generating SQL Schema..."
-echo "   [!] Run this in Supabase SQL Editor:"
-
+# 1. Database Schema & Logic
+echo "1. Generating SQL Schema: archiving_schema.sql"
 cat <<EOF > archiving_schema.sql
--- 1. Create Archive Table (Clone of structure)
--- We use 'w/o indexes' initially for faster inserts, but good to have user_id index for history lookups.
-CREATE TABLE public.orders_archive (
-    LIKE public.orders INCLUDING ALL
-);
+-- 1. Create Archive Table
+-- We use 'LIKE' to copy the structure. We exclude indexes initially for faster inserts,
+-- but typically you want at least the PK.
+CREATE TABLE IF NOT EXISTS public.orders_archive (LIKE public.orders INCLUDING DEFAULTS);
+
+-- Add a column to track when it was archived
+ALTER TABLE public.orders_archive ADD COLUMN IF NOT EXISTS archived_at timestamp with time zone DEFAULT now();
 
 -- 2. Archiving Function
+-- Moves data older than 1 year in a single transaction
 CREATE OR REPLACE FUNCTION public.archive_old_orders()
-RETURNS integer
-LANGUAGE plpgsql
-AS \$\$
+RETURNS void AS \$\$
 DECLARE
-    moved_rows integer;
+    row_count int;
 BEGIN
-    -- Move data older than 6 months
-    WITH moved AS (
+    -- Optional: If you have dependent tables (like order_items), you must handle them first
+    -- or ensure your Foreign Keys are set to ON DELETE CASCADE.
+    -- If CASCADE is set, deleting the order deletes the items (which effectively deletes them, NOT archive them).
+    -- To archive items properly, you would need a similar logic for 'order_items' -> 'order_items_archive'.
+    -- For this script, we focus on the 'orders' table as requested.
+
+    WITH moved_rows AS (
         DELETE FROM public.orders
-        WHERE created_at < NOW() - INTERVAL '6 months'
+        WHERE created_at < (now() - INTERVAL '1 year')
         RETURNING *
     )
-    INSERT INTO public.orders_archive
-    SELECT * FROM moved;
-    
-    GET DIAGNOSTICS moved_rows = ROW_COUNT;
-    
-    RETURN moved_rows;
+    INSERT INTO public.orders_archive 
+    SELECT *, now() FROM moved_rows;
+
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+    RAISE NOTICE 'Archived % orders.', row_count;
 END;
-\$\$;
+\$\$ LANGUAGE plpgsql;
 
--- 3. Unified View (For History Page)
-CREATE OR REPLACE VIEW public.all_orders_view AS
-SELECT *, 'active' as storage_type FROM public.orders
-UNION ALL
-SELECT *, 'archive' as storage_type FROM public.orders_archive;
+-- 3. Scheduling (Requires pg_cron extension)
+-- Enable the extension if not already enabled (Supabase supports this)
+CREATE EXTENSION IF NOT EXISTS pg_cron;
 
--- 4. Enable pg_cron (If available on your Supabase plan)
--- CREATE EXTENSION IF NOT EXISTS pg_cron;
+-- Schedule to run at 00:00 on the 1st of every month
+-- Syntax: cron.schedule(job_name, schedule, command)
+SELECT cron.schedule(
+    'archive_monthly', 
+    '0 0 1 * *', 
+    'SELECT public.archive_old_orders()'
+);
 
--- 5. Schedule Job (Monthly on the 1st at 3am)
--- SELECT cron.schedule('0 3 1 * *', 'SELECT archive_old_orders()');
+-- Check Scheduled Jobs
+-- SELECT * FROM cron.job;
 EOF
-echo "   [✓] archiving_schema.sql created."
-echo ""
+echo "   [?] Schema created."
 
-# Instructions
+echo ""
 echo "================================================="
-echo "Setup Complete!"
-echo "1. Run the SQL in Supabase."
-echo "2. If 'pg_cron' is not enabled/available, use a GitHub Action or Vercel Cron to call a Supabase RPC function monthly."
+echo "Archiving Setup Complete!"
+echo "1. Run 'archiving_schema.sql' in Supabase SQL Editor."
+echo "2. NOTE: Ensure your Foreign Keys on 'orders' (e.g., from 'order_items') are handled."
+echo "   - If they are ON DELETE RESTRICT (default), this function will fail."
+echo "   - Recommend changing to ON DELETE CASCADE if you don't need to archive items,"
+echo "   - OR extend the script to archive 'order_items' into 'order_items_archive' first."

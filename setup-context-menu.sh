@@ -1,89 +1,79 @@
 #!/bin/bash
 
 # =============================================================================
-# Setup Context Menu (Phase 123)
-# Seamless UX for Chrome Extension
+# Chrome Extension Upgrade: Context Menu (Right Click Tracking)
 # =============================================================================
 
-echo "Setting up Context Menu..."
+echo "Upgrading Chrome Extension with Context Menu..."
 echo "================================================="
-echo ""
 
-# 1. Update Manifest
-echo "1. Updating Manifest (Adding Context Menus part)..."
+EXT_DIR="chrome-extension"
+mkdir -p "$EXT_DIR"
 
-cat <<EOF > update-manifest-ctx.js
-const fs = require('fs');
-const path = 'extension/manifest.json';
-
-try {
-    const data = fs.readFileSync(path, 'utf8');
-    const manifest = JSON.parse(data);
-
-    // Add Permissions
-    if (!manifest.permissions.includes('contextMenus')) {
-        manifest.permissions.push('contextMenus');
+# 1. Update Manifest V3 (Adding background & contextMenus)
+echo "1. Updating manifest.json..."
+cat <<EOF > "$EXT_DIR/manifest.json"
+{
+  "manifest_version": 3,
+  "name": "CekKirim - Cek Resi Cepat",
+  "version": "1.1.0",
+  "description": "Ekstensi browser untuk cek resi dan ongkir instan.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     }
-
-    // Add Background Service Worker
-    manifest.background = {
-        "service_worker": "background/background.js"
-    };
-
-    fs.writeFileSync(path, JSON.stringify(manifest, null, 2));
-    console.log('Manifest updated successfully.');
-} catch (err) {
-    console.error('Error updating manifest:', err);
-    process.exit(1);
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "storage", "contextMenus"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
 }
 EOF
 
-if node update-manifest-ctx.js; then
-    rm update-manifest-ctx.js
-    echo "   [✓] Manifest updated."
-else
-    echo "   [!] Error: Node.js required to update manifest."
-fi
-echo ""
-
-# 2. Create Directory
-mkdir -p extension/background
-
-# 3. Background Script
-echo "3. Creating Background Worker: extension/background/background.js"
-
-cat <<EOF > extension/background/background.js
-// Initialize Context Menu
+# 2. Create Background Worker
+echo "2. Creating background.js..."
+cat <<EOF > "$EXT_DIR/background.js"
+// 1. Create Context Menu on Install
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "cekkirim-track",
-    title: "Cek Resi \"%s\" via CekKirim", 
-    contexts: ["selection"] // Only show when text is selected
+    title: "Lacak \"%s\" di CekKirim", 
+    contexts: ["selection"]
   });
 });
 
-// Handle Click
+// 2. Handle Click Events
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "cekkirim-track" && info.selectionText) {
+    // Sanitize and encode the selection
+    const resi = encodeURIComponent(info.selectionText.trim());
     
-    // 1. Sanitize Text (Remove non-alphanumeric except dashes)
-    let rawText = info.selectionText.trim();
-    // Regex logic can be expanded here. For now, we take the raw selection.
-    
-    // 2. Open New Tab
-    const trackingUrl = \`https://cekkirim.com/cek-resi?q=\${encodeURIComponent(rawText)}\`;
+    // Open Tracking Page
+    // Make sure this route matches your Next.js app structure
+    const targetUrl = \`https://cekkirim.com/cek-resi?resi=\${resi}&auto=true\`;
     
     chrome.tabs.create({
-        url: trackingUrl
+      url: targetUrl
     });
   }
 });
 EOF
-echo "   [✓] Background script created."
-echo ""
 
+echo ""
 echo "================================================="
-echo "Setup Complete!"
-echo "1. Reload extension in chrome://extensions"
-echo "2. Select any text on a webpage -> Right Click"
-echo "3. You should see 'Cek Resi ... via CekKirim'"
+echo "Context Menu Feature Added!"
+echo "Folder: $EXT_DIR/"
+echo ""
+echo "Installation Update:"
+echo "1. Go to chrome://extensions/"
+echo "2. Click the 'Reload' (circular arrow) button on your CekKirim extension card."
+echo "   (Or 'Load Unpacked' if not installed yet)."
+echo "3. Test it: Highlight any text on a webpage -> Right Click -> Select 'Lacak di CekKirim'."

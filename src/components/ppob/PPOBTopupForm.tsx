@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Smartphone, Zap, ChevronRight } from 'lucide-react';
 
 // Operator detection based on prefix
@@ -61,11 +61,24 @@ const products = {
     ],
 };
 
+import { useSearchParams } from 'next/navigation';
+
 export default function PPOBTopupForm() {
+    const searchParams = useSearchParams();
     const [phoneNumber, setPhoneNumber] = useState('');
     const [operator, setOperator] = useState<string | null>(null);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const [showCheckout, setShowCheckout] = useState(false);
+
+    useEffect(() => {
+        const paramNumber = searchParams.get('number');
+        if (paramNumber) {
+            setPhoneNumber(paramNumber);
+            const detected = detectOperator(paramNumber);
+            setOperator(detected);
+            // Optional: Auto-select product if passed (requires more complex logic to match product IDs/names)
+        }
+    }, [searchParams]);
 
     const handlePhoneChange = (value: string) => {
         setPhoneNumber(value);
@@ -136,8 +149,8 @@ export default function PPOBTopupForm() {
                                         key={product.id}
                                         onClick={() => handleProductSelect(product)}
                                         className={`p-4 rounded-lg border-2 transition-all hover:border-blue-500 ${selectedProduct?.id === product.id
-                                                ? 'border-blue-600 bg-blue-50'
-                                                : 'border-gray-200'
+                                            ? 'border-blue-600 bg-blue-50'
+                                            : 'border-gray-200'
                                             }`}
                                     >
                                         <p className="font-bold text-gray-900 text-lg">{product.label}</p>

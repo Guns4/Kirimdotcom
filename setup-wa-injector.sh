@@ -1,308 +1,164 @@
 #!/bin/bash
 
 # =============================================================================
-# Setup WA Sidebar Injector (Phase 122)
-# High Utility Feature for Sellers
+# WhatsApp Web Injector (Seller Productivity Tool)
 # =============================================================================
 
-echo "Setting up WA Sidebar Injector..."
+echo "Initializing WA Injector Project..."
 echo "================================================="
-echo ""
 
-# 1. Update Manifest
-echo "1. Updating Manifest (Injecting Content Script)..."
+PROJECT_DIR="wa-injector"
+mkdir -p "$PROJECT_DIR"
 
-# We use a temporary node script to safely edit the JSON
-cat <<EOF > update-manifest-wa.js
-const fs = require('fs');
-const path = 'extension/manifest.json';
+# 1. Manifest V3
+echo "1. Creating manifest.json..."
+cat <<EOF > "$PROJECT_DIR/manifest.json"
+{
+  "manifest_version": 3,
+  "name": "CekKirim for WhatsApp Web",
+  "version": "1.0.0",
+  "description": "Widget Cek Ongkir & Resi langsung di samping chat WhatsApp.",
+  "icons": {
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "permissions": []
+}
+EOF
 
-try {
-    const data = fs.readFileSync(path, 'utf8');
-    const manifest = JSON.parse(data);
+# 2. Content Script (Injection Logic)
+echo "2. Creating content.js..."
+cat <<EOF > "$PROJECT_DIR/content.js"
+// Flag to prevent double injection
+if (!document.getElementById('cekkirim-sidebar-root')) {
+    initInjector();
+}
 
-    // Add Content Script for WA
-    manifest.content_scripts = [
-        {
-            "matches": ["https://web.whatsapp.com/*"],
-            "js": ["content/wa-injector.js"],
-            "run_at": "document_idle"
-        }
-    ];
+function initInjector() {
+    console.log('CekKirim Injector Started');
+
+    // 1. Create Toggle Button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'cekkirim-toggle';
+    toggleBtn.innerHTML = '📦'; // Simple icon, replace with SVG if needed
+    toggleBtn.title = 'Open CekKirim';
     
-    // Add Web Accessible Resources (Sidebar)
-    manifest.web_accessible_resources = [
-        {
-            "resources": ["sidebar/sidebar.html", "sidebar/sidebar.css", "sidebar/sidebar.js"],
-            "matches": ["https://web.whatsapp.com/*"]
-        }
-    ];
+    // 2. Create Iframe Container (Sidebar)
+    const sidebar = document.createElement('div');
+    sidebar.id = 'cekkirim-sidebar';
+    sidebar.classList.add('hidden'); // Default hidden
 
-    fs.writeFileSync(path, JSON.stringify(manifest, null, 2));
-    console.log('Manifest updated successfully.');
-} catch (err) {
-    console.error('Error updating manifest:', err);
-    process.exit(1);
-}
-EOF
+    // 3. Create Iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://cekkirim.com/embed/widget'; // Ensure this route exists in your Next.js app
+    iframe.title = 'CekKirim Widget';
+    
+    sidebar.appendChild(iframe);
 
-if node update-manifest-wa.js; then
-    rm update-manifest-wa.js
-    echo "   [✓] Manifest updated."
-else
-    echo "   [!] Error: Node.js required to update manifest safely."
-fi
-echo ""
-
-# 2. Create Directories
-mkdir -p extension/content
-mkdir -p extension/sidebar
-
-# 3. Content Script (The Injector)
-echo "3. Creating Injector: extension/content/wa-injector.js"
-
-cat <<EOF > extension/content/wa-injector.js
-console.log('[CekKirim] WA Injector Loaded');
-
-function injectSidebar() {
-    // Prevent double injection
-    if (document.getElementById('cekkirim-sidebar-frame')) return;
-
-    // 1. Resize WA Main Container to make space
-    const waApp = document.getElementById('app');
-    if (waApp) {
-        waApp.style.width = 'calc(100% - 300px)'; // Shrink WA
-        waApp.style.transition = 'width 0.3s ease';
-    } else {
-        // Retry if #app not found (maybe loading)
-        setTimeout(injectSidebar, 1000);
-        return;
-    }
-
-    // 2. Create Iframe Container
-    const sidebar = document.createElement('iframe');
-    sidebar.id = 'cekkirim-sidebar-frame';
-    sidebar.src = chrome.runtime.getURL('sidebar/sidebar.html');
-    sidebar.style.position = 'fixed';
-    sidebar.style.top = '0';
-    sidebar.style.right = '0';
-    sidebar.style.width = '300px';
-    sidebar.style.height = '100vh';
-    sidebar.style.border = 'none';
-    sidebar.style.zIndex = '9999';
-    sidebar.style.boxShadow = '-2px 0 5px rgba(0,0,0,0.1)';
-    sidebar.style.background = '#f0f2f5';
-
+    // 4. Append to Body
+    document.body.appendChild(toggleBtn);
     document.body.appendChild(sidebar);
-    console.log('[CekKirim] Sidebar Injected');
-}
 
-// Wait for DOM
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectSidebar);
-} else {
-    // Wait a bit for WA to fully render dynamic elements
-    setTimeout(injectSidebar, 2000);
+    // 5. Toggle Logic
+    let isOpen = false;
+    toggleBtn.addEventListener('click', () => {
+        isOpen = !isOpen;
+        if (isOpen) {
+            sidebar.classList.remove('hidden');
+            toggleBtn.classList.add('active');
+            // Optional: Adjust WA main container width if needed
+            // document.getElementById('app').style.width = 'calc(100% - 350px)';
+        } else {
+            sidebar.classList.add('hidden');
+            toggleBtn.classList.remove('active');
+            // document.getElementById('app').style.width = '100%';
+        }
+    });
 }
 EOF
-echo "   [✓] Injector script created."
+
+# 3. CSS Styles
+echo "3. Creating styles.css..."
+cat <<EOF > "$PROJECT_DIR/styles.css"
+/* Toggle Button (Floating) */
+#cekkirim-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s, right 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cekkirim-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Sidebar Container */
+#cekkirim-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px; /* Mobile width usually fits well */
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    z-index: 99998;
+    transition: transform 0.3s ease-in-out;
+}
+
+#cekkirim-sidebar.hidden {
+    transform: translateX(100%);
+}
+
+/* Iframe Styling */
+#cekkirim-sidebar iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Push toggle button when sidebar is open */
+#cekkirim-toggle.active {
+    right: 370px; /* 350px width + 20px margin */
+    background: #ef4444; /* Change to close button color */
+    transform: rotate(45deg); /* Turn icon into X */
+}
+#cekkirim-toggle.active::before {
+    content: '+'; /* Trick to show X if using text/icon logic */
+}
+EOF
+
+# 4. Dummy Icon
+echo "4. Creating Icon..."
+touch "$PROJECT_DIR/icon.png"
+
 echo ""
-
-# 4. Sidebar UI (The Tool)
-echo "4. Creating Sidebar: extension/sidebar/sidebar.html"
-
-cat <<EOF > extension/sidebar/sidebar.html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="sidebar.css">
-</head>
-<body>
-  <div class="header">
-    <h3>Cek Ongkir Cepat</h3>
-  </div>
-  
-  <div class="content">
-    <div class="form-group">
-      <label>Asal (Kota)</label>
-      <input type="text" id="origin" placeholder="Cth: Jakarta" value="Jakarta">
-    </div>
-
-    <div class="form-group">
-      <label>Tujuan (Kecamatan/Kota)</label>
-      <input type="text" id="destination" placeholder="Cth: Bandung" autofocus>
-    </div>
-
-    <div class="form-group">
-      <label>Berat (Gram)</label>
-      <input type="number" id="weight" value="1000">
-    </div>
-
-    <button id="checkBtn">Cek Harga</button>
-
-    <div id="results" class="results-area">
-       <!-- Results will appear here -->
-       <div class="placeholder">
-          Hasil cek ongkir akan muncul di sini.
-       </div>
-    </div>
-  </div>
-
-  <script src="sidebar.js"></script>
-</body>
-</html>
-EOF
-
-# Sidebar CSS
-cat <<EOF > extension/sidebar/sidebar.css
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f0f2f5;
-  color: #111b21;
-}
-
-.header {
-  background-color: #008069; /* WA Green */
-  color: white;
-  padding: 16px;
-  text-align: center;
-}
-
-.header h3 { margin: 0; font-size: 16px; }
-
-.content { padding: 16px; }
-
-.form-group { margin-bottom: 12px; }
-
-label {
-  display: block;
-  font-size: 12px;
-  color: #54656f;
-  margin-bottom: 4px;
-}
-
-input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #dfe1e5;
-  border-radius: 6px;
-  box-sizing: border-box;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #008069;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 8px;
-}
-
-button:hover { background-color: #006d59; }
-
-.results-area {
-  margin-top: 20px;
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  min-height: 100px;
-}
-
-.placeholder {
-  color: #8696a0;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 30px;
-}
-
-.result-item {
-  border-bottom: 1px solid #f0f2f5;
-  padding: 8px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.courier { font-weight: bold; font-size: 13px; }
-.service { font-size: 11px; color: #54656f; }
-.price { color: #008069; font-weight: bold; }
-.copy-btn {
-  background: none;
-  border: 1px solid #dfe1e5;
-  color: #54656f;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  width: auto;
-  margin-top: 0;
-}
-.copy-btn:hover { background: #f0f2f5; }
-EOF
-
-# Sidebar JS (Mock Logic for now)
-cat <<EOF > extension/sidebar/sidebar.js
-document.getElementById('checkBtn').addEventListener('click', function() {
-    const dest = document.getElementById('destination').value;
-    const weight = document.getElementById('weight').value;
-    const resultsDiv = document.getElementById('results');
-
-    if (!dest) {
-        alert('Mohon isi tujuan');
-        return;
-    }
-
-    // Mock API Call (In real world, fetch from https://cekkirim.com/api/v1/cost)
-    resultsDiv.innerHTML = '<div style="text-align:center">Loading...</div>';
-
-    setTimeout(() => {
-        // Mock Data
-        const data = [
-            { code: 'JNE', service: 'REG', price: 10000, etd: '1-2 Hari' },
-            { code: 'J&T', service: 'EZ', price: 11000, etd: '2 Hari' },
-            { code: 'SiCepat', service: 'REG', price: 9500, etd: '1-2 Hari' }
-        ];
-
-        let html = '';
-        data.forEach(item => {
-            const textToCopy = \`Ongkir \${item.code} \${item.service}: Rp \${item.price.toLocaleString('id-ID')}\`;
-            html += \`
-                <div class="result-item">
-                    <div>
-                        <div class="courier">\${item.code} - \${item.service}</div>
-                        <div class="service">\${item.etd}</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div class="price">Rp \${item.price.toLocaleString('id-ID')}</div>
-                        <button class="copy-btn" data-text="\${textToCopy}">Copy</button>
-                    </div>
-                </div>
-            \`;
-        });
-        resultsDiv.innerHTML = html;
-
-        // Add Copy Listeners
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                navigator.clipboard.writeText(e.target.dataset.text);
-                e.target.innerText = 'Copied!';
-                setTimeout(() => e.target.innerText = 'Copy', 1000);
-            });
-        });
-
-    }, 800);
-});
-EOF
-echo "   [✓] Sidebar UI created."
-echo ""
-
 echo "================================================="
-echo "Setup Complete!"
-echo "1. Reload extension in chrome://extensions"
-echo "2. Open https://web.whatsapp.com"
-echo "3. You should see CekKirim Sidebar on the right!"
+echo "WA Injector Setup Complete!"
+echo "Folder: $PROJECT_DIR/"
+echo ""
+echo "Installation:"
+echo "1. Chrome > Extensions > Developer Mode > Load Unpacked > Select '$PROJECT_DIR'"
+echo "2. Open web.whatsapp.com"
+echo "3. Look for the floating 📦 button on the top right."
+echo ""
+echo "Backend Requirement:"
+echo "Make sure you create a simplified page at 'https://cekkirim.com/embed/widget' designed to fit in 350px width."

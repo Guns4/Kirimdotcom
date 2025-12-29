@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import PPOBTopupForm from '@/components/ppob/PPOBTopupForm';
 import { Smartphone, Zap, Shield, Clock } from 'lucide-react';
 
@@ -48,7 +49,9 @@ export default function PPOBPage() {
                 </div>
 
                 {/* Main Form */}
-                <PPOBTopupForm />
+                <Suspense fallback={<div className="text-center p-8">Loading PPOB Form...</div>}>
+                    <PPOBTopupForm />
+                </Suspense>
 
                 {/* Supported Operators */}
                 <div className="mt-12 bg-white rounded-xl shadow-lg p-8">

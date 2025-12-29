@@ -1,344 +1,228 @@
 #!/bin/bash
 
 # =============================================================================
-# Setup Chrome Extension (Phase 121)
-# CekKirim Helper (Manifest V3)
+# Chrome Extension Generator (CekKirim Mini Helper)
 # =============================================================================
 
-echo "Setting up Chrome Extension Base..."
+echo "Initializing Chrome Extension Project..."
 echo "================================================="
-echo ""
 
-# 1. Directory Structure
-echo "1. Creating Directory: extension/"
-mkdir -p extension/icons
-mkdir -p extension/popup
+EXT_DIR="chrome-extension"
+mkdir -p "$EXT_DIR"
 
-# 2. Manifest V3
-echo "2. Creating Manifest: extension/manifest.json"
-
-cat <<EOF > extension/manifest.json
+# 1. Manifest V3
+echo "1. Creating manifest.json..."
+cat <<EOF > "$EXT_DIR/manifest.json"
 {
   "manifest_version": 3,
-  "name": "CekKirim Helper",
+  "name": "CekKirim - Cek Resi Cepat",
   "version": "1.0.0",
-  "description": "Cek Ongkir & Resi Instan untuk Seller.",
-  "permissions": ["activeTab", "storage", "scripting"],
+  "description": "Ekstensi browser untuk cek resi dan ongkir instan tanpa membuka website berulang kali.",
   "action": {
-    "default_popup": "popup/popup.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
+  "permissions": ["activeTab", "storage"],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  },
-  "host_permissions": [
-    "https://cekkirim.com/*"
-  ]
+  }
 }
 EOF
-echo "   [✓] manifest.json created."
-echo ""
 
-# 3. Popup UI (HTML/CSS/JS)
-echo "3. Creating Popup: extension/popup/"
-
-# HTML
-cat <<EOF > extension/popup/popup.html
+# 2. Popup UI (HTML)
+echo "2. Creating popup.html..."
+cat <<EOF > "$EXT_DIR/popup.html"
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <div class="logo">
-        <span class="logo-box">CK</span>
-        <h1>CekKirim</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        width: 320px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+        background-color: #f8fafc;
+      }
+      .container {
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .header h1 {
+        font-size: 18px;
+        color: #0f172a;
+        margin: 0;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box; /* Fix padding issue */
+        outline: none;
+      }
+      input:focus, select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+      .footer {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 11px;
+        color: #94a3b8;
+      }
+      .footer a {
+        color: #3b82f6;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <!-- Placeholder Icon -->
+        <div style="width: 24px; height: 24px; background: #2563eb; border-radius: 6px;"></div>
+        <h1>CekKirim Express</h1>
       </div>
-      <span class="badge">Helper</span>
-    </div>
 
-    <!-- Main Content -->
-    <div class="content">
-      <label for="resiInput">Cek Resi Instan</label>
-      <div class="input-group">
-        <input type="text" id="resiInput" placeholder="Tempel nomor resi..." autofocus>
-        <button id="clearBtn" title="Clear">✖</button>
+      <div class="form-group">
+        <label for="courier">Ekspedisi</label>
+        <select id="courier">
+          <option value="jne">JNE</option>
+          <option value="jnt">J&T</option>
+          <option value="sicepat">SiCepat</option>
+          <option value="anteraja">AnterAja</option>
+          <option value="tiki">TIKI</option>
+          <option value="pos">POS Indonesia</option>
+        </select>
       </div>
-      
-      <button id="trackBtn">Lacak Paket 🚀</button>
 
-      <div class="divider">ATAU</div>
+      <div class="form-group">
+        <label for="resi">Nomor Resi</label>
+        <input type="text" id="resi" placeholder="Contoh: JP1234567890" />
+      </div>
 
-      <button id="openWebBtn" class="secondary">Buka Dashboard Seller</button>
+      <button id="checkBtn">Lacak Paket</button>
+
+      <div class="footer">
+        Powered by <a href="https://cekkirim.com" target="_blank">CekKirim.com</a>
+      </div>
     </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p>Tips: Blok teks resi di web lalu klik kanan (Coming Soon)</p>
-    </div>
-  </div>
-  <script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>
 EOF
 
-# CSS
-cat <<EOF > extension/popup/popup.css
-body {
-  width: 320px;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #f8fafc;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo-box {
-  background: white;
-  color: #4f46e5;
-  font-weight: 900;
-  padding: 4px 6px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.badge {
-  background: rgba(255,255,255,0.2);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.content {
-  padding: 20px;
-}
-
-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  margin-bottom: 8px;
-}
-
-.input-group {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px;
-  padding-right: 30px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-}
-
-#clearBtn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  font-size: 12px;
-  display: none;
-}
-
-input:not(:placeholder-shown) + #clearBtn {
-  display: block;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-#trackBtn {
-  background-color: #4f46e5;
-  color: white;
-  margin-bottom: 12px;
-}
-
-#trackBtn:hover {
-  opacity: 0.9;
-}
-
-.secondary {
-  background-color: white;
-  color: #475569;
-  border: 1px solid #e2e8f0;
-}
-
-.secondary:hover {
-  background-color: #f1f5f9;
-}
-
-.divider {
-  text-align: center;
-  font-size: 10px;
-  color: #94a3b8;
-  margin: 12px 0;
-  position: relative;
-}
-
-.divider::before, .divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background-color: #e2e8f0;
-}
-
-.divider::before { left: 0; }
-.divider::after { right: 0; }
-
-.footer {
-  background-color: #f1f5f9;
-  padding: 12px;
-  text-align: center;
-  border-top: 1px solid #e2e8f0;
-}
-
-.footer p {
-  margin: 0;
-  font-size: 10px;
-  color: #64748b;
-}
-EOF
-
-# JS
-cat <<EOF > extension/popup/popup.js
+# 3. Popup Logic (JS)
+echo "3. Creating popup.js..."
+cat <<EOF > "$EXT_DIR/popup.js"
 document.addEventListener('DOMContentLoaded', function() {
-  const resiInput = document.getElementById('resiInput');
-  const trackBtn = document.getElementById('trackBtn');
-  const openWebBtn = document.getElementById('openWebBtn');
-  const clearBtn = document.getElementById('clearBtn');
+  const btn = document.getElementById('checkBtn');
+  const resiInput = document.getElementById('resi');
+  const courierInput = document.getElementById('courier');
 
-  // Load last searched resi
-  chrome.storage.local.get(['lastResi'], function(result) {
-    if (result.lastResi) {
-      resiInput.value = result.lastResi;
+  // Load last used courier if available
+  chrome.storage.local.get(['lastCourier'], function(result) {
+    if (result.lastCourier) {
+      courierInput.value = result.lastCourier;
     }
   });
 
-  // Track function
-  function trackResi() {
+  btn.addEventListener('click', function() {
     const resi = resiInput.value.trim();
-    if (!resi) return;
+    const courier = courierInput.value;
 
-    // Save to history
-    chrome.storage.local.set({ lastResi: resi });
+    if (!resi) {
+      alert('Mohon masukkan nomor resi.');
+      return;
+    }
 
-    // Open CekKirim in new tab
-    const url = 'https://cekkirim.com/cek-resi?q=' + encodeURIComponent(resi);
-    chrome.tabs.create({ url: url });
-  }
+    // Save preference
+    chrome.storage.local.set({ lastCourier: courier });
 
-  trackBtn.addEventListener('click', trackResi);
+    // Construct URL (Adjust based on your actual route structure)
+    // Assuming format: https://cekkirim.com/cek-resi?courier=jne&resi=123
+    const targetUrl = \`https://cekkirim.com/cek-resi?courier=\${courier}&resi=\${resi}\`;
+
+    // Open in new tab
+    chrome.tabs.create({ url: targetUrl });
+  });
   
+  // Enter key support
   resiInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') trackResi();
-  });
-
-  openWebBtn.addEventListener('click', function() {
-    chrome.tabs.create({ url: 'https://cekkirim.com/dashboard' });
-  });
-
-  clearBtn.addEventListener('click', function() {
-    resiInput.value = '';
-    resiInput.focus();
+    if (e.key === 'Enter') {
+        btn.click();
+    }
   });
 });
 EOF
-echo "   [✓] Popup UI created."
-echo ""
 
-# 4. Dummy Icons (Placeholder)
-echo "4. Generating placeholder icons..."
-# In a real scenario, we'd copy image files. 
-# Here we'll just create a simple SVG or leave them empty to avoid error if missing, 
-# but manifest requires them. Let's create dummy PNGs using simple base64 or just warn user.
-# Actually, let's create a node script to generate simple colored squares if node is avail, or just copy a favicon if exists.
+# 4. Icon Placeholders
+echo "4. Creating Icon Placeholders..."
+mkdir -p "$EXT_DIR/icons"
+# Create dummy files so chrome doesn't complain immediately, 
+# but user should replace them.
+touch "$EXT_DIR/icons/icon16.png"
+touch "$EXT_DIR/icons/icon48.png"
+touch "$EXT_DIR/icons/icon128.png"
+echo "   (Note: Empty icon files created. Please replace them with real PNGs later)"
 
-if [ -f "public/favicon.ico" ]; then
-    echo "   [i] Note: Using placeholder icons. Please replace extension/icons/*.png with real logos before publishing."
-    touch extension/icons/icon16.png
-    touch extension/icons/icon48.png
-    touch extension/icons/icon128.png
-else
-    echo "   [!] Warning: Please add icon16.png, icon48.png, icon128.png to extension/icons/ manually."
-fi
-echo ""
-
-# 5. Build Script
-echo "5. Creating Build Script: extension/build.sh"
-cat <<EOF > extension/build.sh
+# 5. Build Script (Zip)
+echo "5. Creating build script..."
+cat <<EOF > "$EXT_DIR/build-ext.sh"
 #!/bin/bash
-echo "Building Extension..."
-rm -f extension.zip
-zip -r extension.zip . -x "*.DS_Store" -x "build.sh"
-echo "Done! Upload extension.zip to Chrome Web Store."
+zip -r cekkirim-extension.zip . -x "*.DS_Store" -x "build-ext.sh"
+echo "Extension packed: cekkirim-extension.zip"
 EOF
-chmod +x extension/build.sh
-echo "   [✓] Build script created."
-echo ""
+chmod +x "$EXT_DIR/build-ext.sh"
 
+echo ""
 echo "================================================="
-echo "Setup Complete!"
-echo "1. Go to chrome://extensions"
-echo "2. Enable Developer Mode"
-echo "3. Click 'Load Unpacked' -> Select 'd:/Project Website/Website CekKirim.com/Kirimdotcom/extension/'"
+echo "Chrome Extension Setup Complete!"
+echo "Folder: $EXT_DIR/"
+echo ""
+echo "How to Test:"
+echo "1. Open Chrome -> Go to chrome://extensions/"
+echo "2. Enable 'Developer mode' (top right)."
+echo "3. Click 'Load unpacked' and select the '$EXT_DIR' folder."
+echo "4. IMPORTANT: Replace the dummy icons in '$EXT_DIR/icons/' with real PNGs."
+echo ""
+echo "How to Publish:"
+echo "1. Run './build-ext.sh' inside the folder."
+echo "2. Upload the .zip to Chrome Web Store Developer Dashboard."

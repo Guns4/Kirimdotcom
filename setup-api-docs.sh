@@ -1,98 +1,99 @@
 #!/bin/bash
 
 # =============================================================================
-# Setup API Documentation (Phase 120)
-# Developer Experience (DX) & Swagger UI
+# API Documentation Setup (Swagger UI)
 # =============================================================================
 
-echo "Setting up API Documentation..."
+echo "Initializing API Documentation..."
 echo "================================================="
-echo ""
 
-# 0. Install Dependencies
-echo "0. Installing Swagger UI React..."
-echo "   > npm install swagger-ui-react"
-echo "   (Run this manually if script fails)"
-echo ""
+# 1. Install Dependencies
+echo "1. Installing swagger-ui-react..."
+# Check if installed to avoid redundant installs in script runs (optional but good)
+if ! grep -q "swagger-ui-react" package.json; then
+    npm install swagger-ui-react
+    npm install --save-dev @types/swagger-ui-react
+else
+    echo "   [OK] swagger-ui-react already installed."
+fi
 
-# 1. OpenAPI Spec
-echo "1. Creating Spec: public/openapi.json"
+# 2. Create OpenAPI Specification
+echo "2. Generating OpenAPI Spec: src/lib/swagger/openapi.json"
+mkdir -p src/lib/swagger
 
-cat <<EOF > public/openapi.json
+cat <<EOF > src/lib/swagger/openapi.json
 {
   "openapi": "3.0.0",
   "info": {
     "title": "CekKirim API",
-    "description": "Enterprise-grade Logistics API for tracking and shipping cost calculation.",
     "version": "1.0.0",
-    "contact": {
-      "email": "dev@cekkirim.com"
-    }
+    "description": "API Integration for Logistics Tracking and Cost Calculation. Use your Secret Key as Bearer Token."
   },
   "servers": [
     {
-      "url": "https://cekkirim.com",
+      "url": "https://cekkirim.com/api/v1",
       "description": "Production Server"
     },
     {
-      "url": "http://localhost:3000",
+      "url": "http://localhost:3000/api/v1",
       "description": "Local Development"
     }
   ],
   "components": {
     "securitySchemes": {
-      "InitialKey": {
+      "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "Enter your API Key (e.g. ck_live_...)"
+        "bearerFormat": "API Key"
       }
     }
   },
   "security": [
     {
-      "InitialKey": []
+      "bearerAuth": []
     }
   ],
   "paths": {
-    "/api/v1/track": {
-      "get": {
-        "summary": "Track Shipment",
-        "description": "Get real-time tracking information for a waybill (resi).",
+    "/track": {
+      "post": {
+        "summary": "Track a Shipment",
         "tags": ["Tracking"],
-        "parameters": [
-          {
-            "name": "waybill",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "JNE123456789"
-            }
-          },
-          {
-            "name": "courier",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["jne", "jnt", "sicepat", "pos"],
-              "example": "jne"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courier": {
+                    "type": "string",
+                    "example": "jne",
+                    "description": "Courier code (jne, jnt, sicepat, etc)"
+                  },
+                  "waybill": {
+                    "type": "string",
+                    "example": "JP1234567890",
+                    "description": "Receipt number (No. Resi)"
+                  }
+                },
+                "required": ["courier", "waybill"]
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "data": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": { 
                       "type": "object",
                       "properties": {
-                        "summary": { "type": "object", "properties": { "status": { "type": "string" } } },
+                        "status": { "type": "string", "example": "DELIVERED" },
                         "history": { "type": "array", "items": { "type": "object" } }
                       }
                     }
@@ -101,15 +102,13 @@ cat <<EOF > public/openapi.json
               }
             }
           },
-          "401": { "description": "Unauthorized / Invalid API Key" },
-          "402": { "description": "Insufficient Balance" }
+          "401": { "description": "Unauthorized (Invalid or Missing API Key)" }
         }
       }
     },
-    "/api/v1/cost": {
+    "/cost": {
       "post": {
         "summary": "Check Shipping Cost",
-        "description": "Calculate shipping rates between two locations.",
         "tags": ["Cost"],
         "requestBody": {
           "required": true,
@@ -118,23 +117,47 @@ cat <<EOF > public/openapi.json
               "schema": {
                 "type": "object",
                 "properties": {
-                  "origin": { "type": "string", "example": "Jakarta" },
-                  "destination": { "type": "string", "example": "Bandung" },
-                  "weight": { "type": "integer", "example": 1000 }
-                }
+                  "origin": {
+                    "type": "string",
+                    "example": "CGK10000",
+                    "description": "Origin District/City ID"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "example": "SUB10000",
+                    "description": "Destination District/City ID"
+                  },
+                  "weight": {
+                    "type": "integer",
+                    "example": 1000,
+                    "description": "Weight in grams"
+                  }
+                },
+                "required": ["origin", "destination", "weight"]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Rates found",
+            "description": "List of shipping costs",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "results": { "type": "array", "items": { "type": "object" } }
+                    "success": { "type": "boolean", "example": true },
+                    "results": { 
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": { "type": "string", "example": "jne" },
+                          "name": { "type": "string", "example": "JNE Express" },
+                          "costs": { "type": "array" }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -146,69 +169,49 @@ cat <<EOF > public/openapi.json
   }
 }
 EOF
-echo "   [✓] OpenAPI Spec created."
-echo ""
 
-# 2. Documentation Page
-echo "2. Creating Page: src/app/docs/api/page.tsx"
-mkdir -p src/app/docs/api
+# 3. Create Documentation Page
+echo "3. Creating Page: src/app/docs/page.tsx"
+mkdir -p src/app/docs
 
-cat <<EOF > src/app/docs/api/page.tsx
+cat <<EOF > src/app/docs/page.tsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import 'swagger-ui-react/swagger-ui.css';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import spec from '@/lib/swagger/openapi.json';
 
-// Dynamic import to avoid SSR issues with Swagger UI
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
+// Dynamically import SwaggerUI to avoid SSR issues with window object
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { 
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center">Loading API Docs...</div>
+});
 
 export default function ApiDocsPage() {
-    // Force mount to prevent hydration mismatch
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
-
-    if (!mounted) return <div className="p-10 text-center">Loading Docs...</div>;
-
     return (
-        <div className="bg-white min-h-screen">
-            {/* Header */}
-            <div className="border-b bg-gray-50 px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link href="/dashboard/developer" className="text-gray-500 hover:text-indigo-600 transition flex items-center gap-2 text-sm font-medium">
-                        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-                    </Link>
-                    <div className="h-6 w-px bg-gray-300 mx-2"></div>
-                    <h1 className="font-bold text-gray-800">API Reference</h1>
-                </div>
-                <div className="text-sm text-gray-500">
-                    v1.0.0
+        <div className="min-h-screen bg-white">
+            <div className="border-b border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-xl font-bold text-gray-900">Developer Documentation</h1>
+                    <a href="/dashboard/developer" className="text-sm text-blue-600 hover:underline">
+                        Get API Key &rarr;
+                    </a>
                 </div>
             </div>
-
-            {/* Swagger Container */}
-            <div className="swagger-container max-w-7xl mx-auto py-8">
-                <SwaggerUI url="/openapi.json" />
+            
+            <div className="max-w-7xl mx-auto py-8">
+                <SwaggerUI spec={spec} />
             </div>
-
-            <style jsx global>{\`
-                .swagger-ui .topbar { display: none }
-                .swagger-ui .info { margin: 20px 0 }
-                .swagger-ui .scheme-container { background: transparent; box-shadow: none; }
-            \`}</style>
         </div>
     );
 }
 EOF
-echo "   [✓] Docs Page created."
-echo ""
+echo "   [?] Documentation Page created."
 
-# Instructions
-echo "================================================="
-echo "Setup Complete!"
 echo ""
-echo "Next Steps:"
-echo "1. Run: npm install swagger-ui-react"
-echo "2. Visit: /docs/api to see your new Developer Portal."
+echo "================================================="
+echo "API Docs Setup Complete!"
+echo "1. Run 'npm install' if you haven't recently."
+echo "2. Visit '/docs' to view the interactive API playground."
+echo "3. Edit 'src/lib/swagger/openapi.json' to add more endpoints."
