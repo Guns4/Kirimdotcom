@@ -17,6 +17,7 @@ import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
 import NPSSurvey from "@/components/ui/NPSSurvey";
 import { getPublicFlags } from "@/app/actions/flagActions";
 import { FeatureFlagProvider } from "@/components/providers/FeatureFlagProvider";
+import { ThirdPartyScripts } from "@/components/ThirdPartyScripts";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -126,6 +127,12 @@ export default async function RootLayout({
                         </LiteModeProvider>
                     </FeatureFlagProvider>
                 </SystemStatusProvider>
+
+                {/* Third-party scripts with optimized loading */}
+                <ThirdPartyScripts
+                    gaId={process.env.NEXT_PUBLIC_GA_ID}
+                    adsenseId="ca-pub-5099892029462046"
+                />
             </body>
         </html>
     );
