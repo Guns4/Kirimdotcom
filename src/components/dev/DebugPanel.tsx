@@ -18,13 +18,9 @@ export function DebugPanel() {
         a11y: false,
     });
 
-    // Only show in development
-    if (process.env.NODE_ENV !== 'development') {
-        return null;
-    }
-
     // Toggle debug classes on body
     useEffect(() => {
+        if (process.env.NODE_ENV !== 'development') return;
         const body = document.body;
         Object.entries(modes).forEach(([mode, enabled]) => {
             const className = `debug-${mode}`;
@@ -35,6 +31,11 @@ export function DebugPanel() {
             }
         });
     }, [modes]);
+
+    // Only show in development
+    if (process.env.NODE_ENV !== 'development') {
+        return null;
+    }
 
     const toggleMode = (mode: keyof typeof modes) => {
         setModes((prev) => ({ ...prev, [mode]: !prev[mode] }));

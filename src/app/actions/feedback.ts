@@ -3,7 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export type FeedbackType = 'bug' | 'feature' | 'nps' | 'general';
+export type FeedbackType = 'bug' | 'feature' | 'nps' | 'general' | 'other';
 
 export async function submitFeedback(
     type: FeedbackType,
@@ -25,7 +25,7 @@ export async function submitFeedback(
 
     // 2. Insert into DB (Assuming 'feedback' table exists)
     // Structure: id, user_id, type, message, rating, path, created_at
-    const { error } = await supabase.from('feedback').insert({
+    const { error } = await (supabase.from('feedback') as any).insert({
         user_id: user?.id || null, // Allow anonymous if needed, or enforce auth
         type,
         message,
@@ -50,8 +50,7 @@ export async function getNPSStats() {
     // Calculate NPS: % Promoters (9-10) - % Detractors (0-6)
     // Passives (7-8) are ignored in calculation but counted in total
 
-    const { data, error } = await supabase
-        .from('feedback')
+    const { data, error } = await (supabase.from('feedback') as any)
         .select('rating')
         .eq('type', 'nps');
 
@@ -63,7 +62,7 @@ export async function getNPSStats() {
     let detractors = 0;
     let passives = 0;
 
-    data.forEach((f) => {
+    (data as any[]).forEach((f: any) => {
         const r = f.rating;
         if (r >= 9) promoters++;
         else if (r >= 7) passives++;
@@ -87,8 +86,7 @@ export async function getNPSStats() {
 export async function getRecentFeedback(limit = 10) {
     const supabase = await createClient();
 
-    const { data } = await supabase
-        .from('feedback')
+    const { data } = await (supabase.from('feedback') as any)
         .select('*, profiles(full_name, email)')
         .order('created_at', { ascending: false })
         .limit(limit);

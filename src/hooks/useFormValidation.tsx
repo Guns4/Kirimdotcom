@@ -65,7 +65,7 @@ export function useFormValidation<T extends Record<string, unknown>>({
                 return null;
             } catch (error) {
                 if (error instanceof ZodError) {
-                    const fieldError = error.errors.find((e) => e.path[0] === name);
+                    const fieldError = (error as any).errors.find((e: any) => e.path[0] === name);
                     return fieldError?.message || null;
                 }
                 return null;
@@ -106,13 +106,14 @@ export function useFormValidation<T extends Record<string, unknown>>({
         } catch (error) {
             if (error instanceof ZodError) {
                 const newErrors: Partial<Record<keyof T, string>> = {};
-                error.errors.forEach((e) => {
+                (error as any).errors.forEach((e: any) => {
                     const field = e.path[0] as keyof T;
                     if (!newErrors[field]) {
                         newErrors[field] = e.message;
                     }
                 });
                 setErrors(newErrors);
+                return false;
             }
             return false;
         }

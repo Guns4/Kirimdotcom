@@ -1,98 +1,78 @@
-/**
- * Web Vitals Optimization - Dynamic Imports
- * Lazy load heavy components for better LCP/FID
- */
+'use client';
 
 import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
 
-// Loading skeleton for charts
-const ChartSkeleton = () => (
-    <div className= "w-full h-64 bg-surface-200 animate-pulse rounded-xl" />
+// Loading skeleton for components
+const LoadingSkeleton = () => (
+    <div className="w-full h-full min-h-[200px] flex items-center justify-center bg-gray-50 rounded-lg animate-pulse">
+        <Loader2 className="w-6 h-6 text-gray-300 animate-spin" />
+    </div>
 );
 
-// Loading skeleton for maps
-const MapSkeleton = () => (
-    <div className= "w-full h-96 bg-surface-200 animate-pulse rounded-xl flex items-center justify-center" >
-    <span className="text-surface-500" > Loading map...</span>
-        </div>
-);
+// ============================================================================
+// Heavy Components (Lazy Loaded)
+// ============================================================================
 
-// Loading skeleton for PDF
-const PDFSkeleton = () => (
-    <div className= "w-full h-48 bg-surface-200 animate-pulse rounded-xl" />
-);
-
-/**
- * Dynamic Chart Components
- * Only loads Recharts when needed
- */
+// Recharts (Charts) - ~200KB
 export const DynamicAreaChart = dynamic(
-    () => import('recharts').then(mod => mod.AreaChart),
-    { loading: () => <ChartSkeleton />, ssr: false }
+    () => import('recharts').then((mod) => mod.AreaChart),
+    {
+        loading: () => <LoadingSkeleton />,
+        ssr: false
+    }
 );
 
 export const DynamicBarChart = dynamic(
-    () => import('recharts').then(mod => mod.BarChart),
-    { loading: () => <ChartSkeleton />, ssr: false }
+    () => import('recharts').then((mod) => mod.BarChart),
+    {
+        loading: () => <LoadingSkeleton />,
+        ssr: false
+    }
 );
 
-export const DynamicLineChart = dynamic(
-    () => import('recharts').then(mod => mod.LineChart),
-    { loading: () => <ChartSkeleton />, ssr: false }
-);
-
-export const DynamicPieChart = dynamic(
-    () => import('recharts').then(mod => mod.PieChart),
-    { loading: () => <ChartSkeleton />, ssr: false }
-);
-
-/**
- * Dynamic Map Component
- * Only loads Leaflet when needed
- */
+/*
+// Maps (Leaflet/Google Maps) - ~150KB
 export const DynamicMap = dynamic(
-    () => import('react-leaflet').then(mod => mod.MapContainer),
-    { loading: () => <MapSkeleton />, ssr: false }
+    () => import('@/components/maps/MapComponent'), // Example path
+    { 
+        loading: () => <LoadingSkeleton />,
+        ssr: false 
+    }
 );
 
-/**
- * Dynamic PDF Generator
- * Only loads react-pdf when needed
- */
+// PDF Viewer - ~500KB
 export const DynamicPDFViewer = dynamic(
-    () => import('@react-pdf/renderer').then(mod => mod.PDFViewer),
-    { loading: () => <PDFSkeleton />, ssr: false }
+    () => import('@/components/pdf/PDFViewer'), // Example path
+    { 
+        loading: () => <LoadingSkeleton />,
+        ssr: false 
+    }
 );
 
-/**
- * Dynamic Image Compressor
- * Only loads browser-image-compression when needed
- */
-export const loadImageCompressor = () =>
-    import('browser-image-compression').then(mod => mod.default);
+// 3D Models (Three.js) - ~1MB
+export const DynamicModelViewer = dynamic(
+    () => import('@/components/3d/ModelViewer'), // Example path
+    { 
+        loading: () => <LoadingSkeleton />,
+        ssr: false 
+    }
+);
+*/
 
-/**
- * Dynamic QR Code Generator
- */
-export const DynamicQRCode = dynamic(
-    () => import('next-qrcode').then(mod => mod.useQRCode),
+// Confetti - Animation library
+export const DynamicConfetti = dynamic(
+    () => import('react-confetti'),
     { ssr: false }
 );
 
-/**
- * Dynamic Three.js (if used)
- */
-export const DynamicThreeCanvas = dynamic(
-    () => import('three').then(mod => mod),
-    { ssr: false }
+/*
+// Editor (Rich Text)
+export const DynamicEditor = dynamic(
+    () => import('@/components/editor/RichTextEditor'), // Example path
+    { 
+        loading: () => <LoadingSkeleton />,
+        ssr: false 
+    }
 );
-
-export default {
-    DynamicAreaChart,
-    DynamicBarChart,
-    DynamicLineChart,
-    DynamicPieChart,
-    DynamicMap,
-    DynamicPDFViewer,
-    loadImageCompressor,
-};
+*/

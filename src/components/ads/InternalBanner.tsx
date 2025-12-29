@@ -104,6 +104,7 @@ export default function InternalBanner({ slot, className = '' }: InternalBannerP
                         src={ad.banner_url}
                         alt={`Iklan ${ad.advertiser_name}`}
                         fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
                             // Fallback if image fails to load

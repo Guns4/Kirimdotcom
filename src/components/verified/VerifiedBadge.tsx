@@ -17,7 +17,7 @@ export default function VerifiedBadge({ className = '', size = 'sm' }: VerifiedB
     return (
         <CheckCircle
             className={`${sizeClasses[size]} text-blue-500 fill-blue-500 ${className}`}
-            title="Verified User"
+            aria-label="Verified User"
         />
     );
 }

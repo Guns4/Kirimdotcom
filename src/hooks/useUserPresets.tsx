@@ -146,7 +146,7 @@ export function useSavedAddresses() {
         });
     }, []);
 
-    const useAddress = useCallback((id: string) => {
+    const recordAddressUsage = useCallback((id: string) => {
         setAddresses((prev) => {
             const updated = prev.map((a) =>
                 a.id === id
@@ -171,7 +171,7 @@ export function useSavedAddresses() {
         saveAddress,
         updateAddress,
         deleteAddress,
-        useAddress,
+        recordAddressUsage,
     };
 }
 
@@ -316,12 +316,12 @@ interface SavedAddressesDropdownProps {
 }
 
 export function SavedAddressesDropdown({ onSelect, className }: SavedAddressesDropdownProps) {
-    const { frequentAddresses, useAddress } = useSavedAddresses();
+    const { frequentAddresses, recordAddressUsage } = useSavedAddresses();
 
     if (frequentAddresses.length === 0) return null;
 
     const handleSelect = (address: SavedAddress) => {
-        useAddress(address.id);
+        recordAddressUsage(address.id);
         onSelect(address);
     };
 

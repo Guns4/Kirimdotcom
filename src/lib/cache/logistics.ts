@@ -44,7 +44,7 @@ export async function getCachedTracking(
     }
 
     // Check if cache is still fresh (< 3 hours old)
-    const lastUpdated = new Date(data.last_updated)
+    const lastUpdated = new Date((data as any).last_updated)
     const now = new Date()
     const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60)
 
@@ -76,8 +76,7 @@ export async function setCachedTracking(
     }
 
     // Upsert (insert or update if exists)
-    const { error } = await supabase
-        .from('cached_resi')
+    const { error } = await (supabase.from('cached_resi') as any)
         .upsert(cacheData, {
             onConflict: 'resi_number,courier_code',
         })
@@ -132,7 +131,7 @@ export async function getCachedOngkir(
     }
 
     // Check if cache is still fresh (< 24 hours old)
-    const lastUpdated = new Date(data.last_updated)
+    const lastUpdated = new Date((data as any).last_updated)
     const now = new Date()
     const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60)
 
@@ -166,8 +165,7 @@ export async function setCachedOngkir(
     }
 
     // Upsert (insert or update if exists)
-    const { error } = await supabase
-        .from('cached_ongkir')
+    const { error } = await (supabase.from('cached_ongkir') as any)
         .upsert(cacheData, {
             onConflict: 'origin_id,destination_id,weight,courier_code',
         })
@@ -222,8 +220,7 @@ export async function clearStaleCache(): Promise<{
     const ongkirCutoff = new Date()
     ongkirCutoff.setDate(ongkirCutoff.getDate() - 30)
 
-    const { data: deletedOngkir } = await supabase
-        .from('cached_ongkir')
+    const { data: deletedOngkir } = await (supabase.from('cached_ongkir') as any)
         .delete()
         .lt('last_updated', ongkirCutoff.toISOString())
         .select()

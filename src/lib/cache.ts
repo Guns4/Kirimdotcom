@@ -68,8 +68,8 @@ export function createCachedFunction<T extends (...args: unknown[]) => Promise<u
 export const getCachedSettings = unstable_cache(
     async () => {
         // Import dynamically to avoid circular dependency
-        const { createServerClient } = await import('@/utils/supabase/server');
-        const supabase = await createServerClient();
+        const { createClient } = await import('@/utils/supabase/server');
+        const supabase = await createClient();
 
         const { data } = await supabase
             .from('site_settings')
@@ -87,8 +87,8 @@ export const getCachedSettings = unstable_cache(
  */
 export const getCachedCourierMarkup = unstable_cache(
     async () => {
-        const { createServerClient } = await import('@/utils/supabase/server');
-        const supabase = await createServerClient();
+        const { createClient } = await import('@/utils/supabase/server');
+        const supabase = await createClient();
 
         const { data } = await supabase
             .from('courier_markup')
@@ -106,8 +106,8 @@ export const getCachedCourierMarkup = unstable_cache(
  */
 export const getCachedProvinces = unstable_cache(
     async () => {
-        const { createServerClient } = await import('@/utils/supabase/server');
-        const supabase = await createServerClient();
+        const { createClient } = await import('@/utils/supabase/server');
+        const supabase = await createClient();
 
         const { data } = await supabase
             .from('provinces')
@@ -125,8 +125,8 @@ export const getCachedProvinces = unstable_cache(
  */
 export const getCachedFAQ = unstable_cache(
     async () => {
-        const { createServerClient } = await import('@/utils/supabase/server');
-        const supabase = await createServerClient();
+        const { createClient } = await import('@/utils/supabase/server');
+        const supabase = await createClient();
 
         const { data } = await supabase
             .from('faq_items')
@@ -145,8 +145,8 @@ export const getCachedFAQ = unstable_cache(
  */
 export const getCachedCategories = unstable_cache(
     async () => {
-        const { createServerClient } = await import('@/utils/supabase/server');
-        const supabase = await createServerClient();
+        const { createClient } = await import('@/utils/supabase/server');
+        const supabase = await createClient();
 
         const { data } = await supabase
             .from('supplier_categories')

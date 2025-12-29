@@ -33,13 +33,12 @@ export function FeedbackWidget() {
 
         setIsSubmitting(true)
         try {
-            const result = await submitFeedback({
+            const result = await submitFeedback(
                 type,
-                rating: rating > 0 ? rating : undefined,
                 message,
-                pageUrl: pathname || 'unknown',
-                userAgent: navigator.userAgent
-            })
+                rating > 0 ? rating : undefined,
+                pathname || 'unknown'
+            )
 
             if (result.success) {
                 setIsSuccess(true)

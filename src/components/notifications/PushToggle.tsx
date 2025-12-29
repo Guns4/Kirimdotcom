@@ -42,7 +42,7 @@ export function PushToggle() {
 
     return (
         <Button
-            variant={isSubscribed ? "secondary" : "default"}
+            variant={isSubscribed ? "secondary" : "primary"}
             onClick={handleSubscribe}
             disabled={loading || isSubscribed}
         >

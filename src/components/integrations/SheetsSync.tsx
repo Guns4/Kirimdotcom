@@ -17,7 +17,7 @@ export function SheetsSync() {
         try {
             const res = await syncToSheets(sheetId)
             if (res?.success) {
-                toast.success(`Synced ${res.count} rows!`)
+                toast.success(`Synced ${(res as any).count} rows!`)
             } else {
                 toast.warning('Sync Simulation', { description: res?.message })
             }

@@ -23,7 +23,7 @@ export default function DailyCheckInWidget() {
 
             if (!user) return;
 
-            const { data } = await supabase.rpc('get_checkin_status', {
+            const { data } = await (supabase as any).rpc('get_checkin_status', {
                 p_user_id: user.id,
             });
 
@@ -47,7 +47,7 @@ export default function DailyCheckInWidget() {
 
             if (!user) return;
 
-            const { data } = await supabase.rpc('process_daily_checkin', {
+            const { data } = await (supabase as any).rpc('process_daily_checkin', {
                 p_user_id: user.id,
             });
 
@@ -142,10 +142,10 @@ export default function DailyCheckInWidget() {
                                         <div
                                             key={reward.day}
                                             className={`text-center p-2 rounded-lg ${isNext
-                                                    ? 'bg-orange-500 text-white ring-2 ring-orange-600'
-                                                    : isPassed
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-orange-500 text-white ring-2 ring-orange-600'
+                                                : isPassed
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-gray-100 text-gray-600'
                                                 }`}
                                         >
                                             <p className="text-xs font-semibold">D{reward.day}</p>

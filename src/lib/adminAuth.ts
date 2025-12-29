@@ -18,8 +18,7 @@ export async function checkIsAdmin() {
     }
 
     // Check admin role from profiles table
-    const { data: profile } = await supabase
-        .from('profiles')
+    const { data: profile } = await (supabase.from('profiles') as any)
         .select('role')
         .eq('id', user.id)
         .single();

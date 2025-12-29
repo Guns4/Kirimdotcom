@@ -69,7 +69,7 @@ export default function ServiceTabs() {
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <Card glass hover className="p-8">
+                                <Card className="p-8 glass-card">
                                     <CardContent className="space-y-6 p-0">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -104,7 +104,7 @@ export default function ServiceTabs() {
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <Card glass hover className="p-8">
+                                <Card className="p-8 glass-card">
                                     <CardContent className="space-y-6 p-0">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">

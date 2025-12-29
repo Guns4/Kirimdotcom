@@ -34,7 +34,7 @@ export function ProductForm({ product, onSuccess }: { product?: any, onSuccess?:
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant={product ? "ghost" : "default"}>{product ? "Edit" : "Add Product"}</Button>
+                <Button variant={product ? "ghost" : "primary"}>{product ? "Edit" : "Add Product"}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

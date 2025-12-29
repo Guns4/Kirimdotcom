@@ -13,8 +13,8 @@ export default async function BillingPage() {
     }
 
     // Fetch Current Subscription
-    const { data: sub } = await supabase
-        .from('user_subscriptions')
+    const { data: sub } = await (supabase
+        .from('user_subscriptions') as any)
         .select('*, subscription_plans(*)')
         .eq('user_id', user.id)
         .single();

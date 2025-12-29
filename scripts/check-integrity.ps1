@@ -3,18 +3,17 @@
 # Ensures all features are clickable and accessible
 # =============================================================================
 
-Write-Host "?? CekKirim Integrity Check" -ForegroundColor Cyan
+Write-Host "🚀 CekKirim Integrity Check" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Counter
 $PASS = 0
 $FAIL = 0
 
 # =============================================================================
 # 1. Check Sitemap Generation
 # =============================================================================
-Write-Host "?? Checking Sitemap..."
+Write-Host "🔍 Checking Sitemap..."
 if (Test-Path "$PSScriptRoot/../src/app/sitemap.ts") {
     Write-Host "[PASS] sitemap.ts exists" -ForegroundColor Green
     $PASS++
@@ -28,7 +27,7 @@ else {
 # 2. Check Breadcrumbs Component
 # =============================================================================
 Write-Host ""
-Write-Host "?? Checking Breadcrumbs..."
+Write-Host "🔍 Checking Breadcrumbs..."
 if (Test-Path "$PSScriptRoot/../src/components/AutoBreadcrumbs.tsx") {
     Write-Host "[PASS] AutoBreadcrumbs.tsx exists" -ForegroundColor Green
     $PASS++
@@ -42,7 +41,7 @@ else {
 # 3. Check Debug Mode
 # =============================================================================
 Write-Host ""
-Write-Host "?? Checking Debug Mode..."
+Write-Host "🔍 Checking Debug Mode..."
 if (Test-Path "$PSScriptRoot/../src/components/DebugMode.tsx") {
     Write-Host "[PASS] DebugMode.tsx exists" -ForegroundColor Green
     $PASS++
@@ -56,7 +55,7 @@ else {
 # 4. Check Navigation Components
 # =============================================================================
 Write-Host ""
-Write-Host "?? Checking Navigation..."
+Write-Host "🔍 Checking Navigation..."
 
 if (Test-Path "$PSScriptRoot/../src/components/navigation/NavbarDesktop.tsx") {
     Write-Host "[PASS] NavbarDesktop.tsx exists" -ForegroundColor Green
@@ -89,98 +88,116 @@ else {
 # 5. Check Critical Pages
 # =============================================================================
 Write-Host ""
-Write-Host "?? Checking Critical Pages..."
-$PAGES = @(
-    @{Path = "src/app/page.tsx"; Name = "Home Page" },
-    @{Path = "src/app/cek-ongkir/page.tsx"; Name = "Cek Ongkir" },
-    @{Path = "src/app/cek-resi/page.tsx"; Name = "Cek Resi" },
-    @{Path = "src/app/blacklist/page.tsx"; Name = "Blacklist" }
-)
+Write-Host "🔍 Checking Critical Pages..."
 
-foreach ($page in $PAGES) {
-    # Check if direct file or nested route exists (naive check for now, stick to user logic)
-    # The script acts relative to project root usually, but here I put it in scripts/
-    # So valid path is ../$page.Path
-    $Target = "$PSScriptRoot/../$($page.Path)"
-    
-    # Try alternate path for dynamic routes if not found
-    if (-not (Test-Path -LiteralPath $Target)) {
-        # Fallback checks logic can be added here but for now strict check
-        # Maybe Cek Resi is in [...slug]
-        if ($page.Name -eq "Cek Ongkir") {
-            $Target = "$PSScriptRoot/../src/app/cek-ongkir/[...route]/page.tsx"
-        }
-        if ($page.Name -eq "Cek Resi") {
-            $Target = "$PSScriptRoot/../src/app/cek-resi/[...slug]/page.tsx"
-        }
-    }
+# Define pages manually to avoid syntax issues
+$Page1_Path = "src/app/page.tsx"
+$Page1_Name = "Home Page"
 
-    if (Test-Path -LiteralPath $Target) {
-        Write-Host "[PASS] $($page.Name) exists" -ForegroundColor Green
-        $PASS++
-    }
-    else {
-        # Try finding ANY page.tsx in the directory
-        $Dir = "$PSScriptRoot/../$(Split-Path $page.Path -Parent)"
-        if (Test-Path "$Dir/page.tsx") {
-            Write-Host "[PASS] $($page.Name) exists (Root)" -ForegroundColor Green
-            $PASS++
-        }
-        elseif (Test-Path "$Dir/[...slug]/page.tsx") {
-            Write-Host "[PASS] $($page.Name) exists (Dynamic Slug)" -ForegroundColor Green
-            $PASS++
-        }
-        elseif (Test-Path "$Dir/[...route]/page.tsx") {
-            Write-Host "[PASS] $($page.Name) exists (Dynamic Route)" -ForegroundColor Green
-            $PASS++
-        }
-        else {
-            Write-Host "[FAIL] $($page.Name) missing" -ForegroundColor Red
-            $FAIL++
-        }
-    }
+$Page2_Path = "src/app/cek-ongkir/page.tsx"
+$Page2_Name = "Cek Ongkir"
+
+$Page3_Path = "src/app/cek-resi/page.tsx"
+$Page3_Name = "Cek Resi"
+
+$Page4_Path = "src/app/blacklist/page.tsx"
+$Page4_Name = "Blacklist"
+
+# Check Home Page
+if (Test-Path "$PSScriptRoot/../$Page1_Path") {
+    Write-Host "[PASS] $Page1_Name exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] $Page1_Name missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# Check Cek Ongkir (Recursive check for nested routes)
+$OngkirPath = "$PSScriptRoot/../src/app/cek-ongkir"
+if ((Test-Path "$OngkirPath/page.tsx") -or (Test-Path "$OngkirPath/[...route]/page.tsx")) {
+    Write-Host "[PASS] $Page2_Name exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] $Page2_Name missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# Check Cek Resi
+$ResiPath = "$PSScriptRoot/../src/app/cek-resi"
+if ((Test-Path "$ResiPath/page.tsx") -or (Test-Path "$ResiPath/[...slug]/page.tsx")) {
+    Write-Host "[PASS] $Page3_Name exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] $Page3_Name missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# Check Blacklist
+if (Test-Path "$PSScriptRoot/../$Page4_Path") {
+    Write-Host "[PASS] $Page4_Name exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] $Page4_Name missing" -ForegroundColor Red
+    $FAIL++
 }
 
 # =============================================================================
 # 6. Check UI Components
 # =============================================================================
 Write-Host ""
-Write-Host "?? Checking UI Components..."
-$UI_COMPONENTS = @(
-    "src/components/ui/button.tsx",
-    "src/components/ui/input.tsx",
-    "src/components/ui/card.tsx"
-)
+Write-Host "🔍 Checking UI Components..."
 
-foreach ($comp in $UI_COMPONENTS) {
-    if (Test-Path "$PSScriptRoot/../$comp") {
-        Write-Host "[PASS] $(Split-Path $comp -Leaf) exists" -ForegroundColor Green
-        $PASS++
-    }
-    else {
-        Write-Host "[FAIL] $(Split-Path $comp -Leaf) missing" -ForegroundColor Red
-        $FAIL++
-    }
+$Comp1 = "src/components/ui/button.tsx"
+if (Test-Path "$PSScriptRoot/../$Comp1") {
+    Write-Host "[PASS] button.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] button.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+$Comp2 = "src/components/ui/input.tsx"
+if (Test-Path "$PSScriptRoot/../$Comp2") {
+    Write-Host "[PASS] input.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] input.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+$Comp3 = "src/components/ui/card.tsx"
+if (Test-Path "$PSScriptRoot/../$Comp3") {
+    Write-Host "[PASS] card.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] card.tsx missing" -ForegroundColor Red
+    $FAIL++
 }
 
 # =============================================================================
 # 7. TypeScript Check
 # =============================================================================
 Write-Host ""
-Write-Host "?? TypeScript Validation..."
+Write-Host "🔍 TypeScript Validation..."
 if (Get-Command npx -ErrorAction SilentlyContinue) {
     Write-Host "Running type check..."
-    # Run in project root
     Push-Location "$PSScriptRoot/.."
     try {
-        $PROCESS = Start-Process -FilePath "npx" -ArgumentList "tsc --noEmit --skipLibCheck" -NoNewWindow -PassThru -Wait
-        if ($PROCESS.ExitCode -eq 0) {
+        $CMD = Start-Process -FilePath "npx" -ArgumentList "tsc --noEmit --skipLibCheck" -NoNewWindow -PassThru -Wait
+        if ($CMD.ExitCode -eq 0) {
             Write-Host "[PASS] TypeScript: No errors" -ForegroundColor Green
             $PASS++
         }
         else {
             Write-Host "[WARN] TypeScript: Some errors/warnings found" -ForegroundColor Yellow
-            $PASS++ # Warning doesn't fail integrity check in this script logic? Script says "Some warnings (non-blocking)"
+            $PASS++
         }
     }
     finally {
@@ -192,39 +209,23 @@ else {
 }
 
 # =============================================================================
-# 8. Debug Instructions
-# =============================================================================
-Write-Host ""
-Write-Host "?? Debug Mode Usage:" -ForegroundColor Cyan
-Write-Host "================================" -ForegroundColor Cyan
-Write-Host "Add ?debug=true to any URL to enable visual debugging:"
-Write-Host "  • http://localhost:3000?debug=true"
-Write-Host "  • https://cekkirim.com?debug=true"
-Write-Host ""
-Write-Host "Features:"
-Write-Host "  • Red outlines show clickable areas"
-Write-Host "  • Console logs small touch targets"
-Write-Host "  • Z-index overlay indicators"
-Write-Host "  • Breakpoint indicator (Mobile/Tablet/Desktop)"
-
-# =============================================================================
 # Summary
 # =============================================================================
 Write-Host ""
 Write-Host "================================" -ForegroundColor Cyan
-Write-Host "?? Summary" -ForegroundColor Cyan
+Write-Host "📈 Summary" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host "Passed: $PASS" -ForegroundColor Green
 Write-Host "Failed: $FAIL" -ForegroundColor Red
 Write-Host ""
 
 if ($FAIL -eq 0) {
-    Write-Host "?? [SUCCESS] All integrity checks passed!" -ForegroundColor Green
-    Write-Host "?? Ready for deployment" -ForegroundColor Green
+    Write-Host "✅ [SUCCESS] All integrity checks passed!" -ForegroundColor Green
+    Write-Host "🚀 Ready for deployment" -ForegroundColor Green
     exit 0
 }
 else {
-    Write-Host "? [ERROR] Some checks failed" -ForegroundColor Red
-    Write-Host "?? Please fix the issues above" -ForegroundColor Yellow
+    Write-Host "❌ [ERROR] Some checks failed" -ForegroundColor Red
+    Write-Host "🛠️ Please fix the issues above" -ForegroundColor Yellow
     exit 1
 }
