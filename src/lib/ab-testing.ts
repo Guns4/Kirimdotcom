@@ -1,82 +1,83 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { trackEvent } from './tracking';
+import { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/tracking';
 
 /**
- * Simple hash function to get a deterministic number from a string
+ * Deterministic hash function to assign user to a variant
+ * Ensures the same user always gets the same variant for an experiment
  */
-function hashCode(str: string): number {
+function getVariant(experimentId: string, userId: string, variants: string[]): string {
+    // Simple hashing
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
+    const input = `${experimentId}:${userId}`;
+    for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
         hash = hash & hash; // Convert to 32bit integer
     }
-    return Math.abs(hash);
+
+    // Positive modulo
+    const index = Math.abs(hash) % variants.length;
+    return variants[index];
 }
 
 /**
- * Get a variant for a user based on their ID (or anonymous ID) and experiment name.
- * @param experimentId Unique ID for the experiment (e.g., 'pricing_cta_color')
- * @param variants Array of variant names (e.g., ['blue', 'green'])
- * @param weights Optional weights (must sum to 100), e.g., [50, 50]
+ * Get stable user ID from localStorage or generate new one
  */
-export function getVariant(experimentId: string, variants: string[] = ['control', 'variant'], weights?: number[]): string {
-    // 1. Get or create anonymous ID
-    let userId = '';
-    if (typeof window !== 'undefined') {
-        userId = localStorage.getItem('ab-user-id') || '';
-        if (!userId) {
-            userId = Math.random().toString(36).substring(2, 15);
-            localStorage.setItem('ab-user-id', userId);
-        }
+function getUserId(): string {
+    if (typeof window === 'undefined') return 'server-side';
+
+    const STORAGE_KEY = 'ab-user-id';
+    let userId = localStorage.getItem(STORAGE_KEY);
+
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem(STORAGE_KEY, userId);
     }
 
-    // 2. Deterministic Hash
-    const hashInput = `${experimentId}:${userId}`;
-    const hash = hashCode(hashInput);
-    const range = hash % 100; // 0-99
-
-    // 3. Assign based on weights (default: equal split)
-    if (!weights) {
-        const index = hash % variants.length;
-        return variants[index];
-    }
-
-    let cumulativeWeight = 0;
-    for (let i = 0; i < variants.length; i++) {
-        cumulativeWeight += weights[i];
-        if (range < cumulativeWeight) {
-            return variants[i];
-        }
-    }
-
-    return variants[0];
+    return userId;
 }
 
 /**
- * React Hook for A/B Testing
+ * AB Testing Hook
+ * @param experimentId Unique ID for the experiment
+ * @param variants Array of variant names, e.g., ['control', 'variant_a']
+ * @returns The assigned variant
  */
-export function useExperiment(experimentId: string, variants: string[] = ['control', 'variant']) {
-    const [variant, setVariant] = useState<string>('control');
+export function useExperiment(experimentId: string, variants: string[] = ['control', 'variant']): string {
+    // Default to first variant (usually control) during SSR
+    const [variant, setVariant] = useState<string>(variants[0]);
+    const [hasLogged, setHasLogged] = useState(false);
 
     useEffect(() => {
-        // Assign variant
-        const assigned = getVariant(experimentId, variants);
-        setVariant(assigned);
+        if (typeof window === 'undefined') return;
 
-        // Auto-log exposure event
-        // We use a flag in session storage to avoid logging duplicate exposure events for same session
-        const trackedKey = `tracked_exp_${experimentId}`;
-        if (!sessionStorage.getItem(trackedKey)) {
-            trackEvent('experiment_exposure', {
-                experiment_id: experimentId,
-                variant: assigned
-            });
-            sessionStorage.setItem(trackedKey, 'true');
+        try {
+            const userId = getUserId();
+            const persistentKey = `ab_exp_${experimentId}`;
+
+            // Check if user already saw this experiment (saved in local storage override)
+            // Or just re-calculate deterministically
+            const assignedVariant = getVariant(experimentId, userId, variants);
+
+            setVariant(assignedVariant);
+
+            // Log exposure only once per session/mount
+            if (!hasLogged && !sessionStorage.getItem(`logged_${experimentId}`)) {
+                trackEvent('experiment_exposure', {
+                    experiment_id: experimentId,
+                    variant: assignedVariant,
+                    user_id: userId
+                });
+                setHasLogged(true);
+                sessionStorage.setItem(`logged_${experimentId}`, 'true');
+            }
+        } catch (error) {
+            console.error('[AB Testing] Error:', error);
+            // Fallback to control is implicit since state initialized to variants[0]
         }
-    }, [experimentId]);
+    }, [experimentId, variants, hasLogged]);
 
     return variant;
 }

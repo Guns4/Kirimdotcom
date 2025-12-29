@@ -1,5 +1,13 @@
 import { createClient } from '@/utils/supabase/server'
-import type { SiteSettings } from '@/types/database.types'
+// import type { SiteSettings } from '@/types/database.types'
+
+interface SiteSettings {
+    site_name: string;
+    site_description: string;
+    site_url: string;
+    maintenance_mode: boolean;
+    [key: string]: any;
+}
 
 /**
  * Fetch site settings from Supabase (Server-side)

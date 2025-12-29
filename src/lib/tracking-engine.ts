@@ -20,8 +20,7 @@ export async function smartTrackShipment(
     const supabase = await createClient()
 
     // 1. Cek Lokal (DB)
-    const { data: cached } = await supabase
-        .from('cached_resi')
+    const { data: cached } = await (supabase.from('cached_resi') as any)
         .select('*')
         .eq('waybill', waybill)
         .eq('courier', courier)
@@ -74,8 +73,7 @@ export async function smartTrackShipment(
 
         // 4. Update/Insert Cache
         // Using upsert with conflict on (waybill, courier)
-        const { error: upsertError } = await supabase
-            .from('cached_resi')
+        const { error: upsertError } = await (supabase.from('cached_resi') as any)
             .upsert({
                 waybill: waybill,
                 courier: courier,

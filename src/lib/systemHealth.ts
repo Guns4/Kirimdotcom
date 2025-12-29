@@ -1,4 +1,4 @@
-import { createServerClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 
 /**
  * System Health Monitor
@@ -25,9 +25,9 @@ interface ErrorLog {
  */
 export async function logError(error: ErrorLog): Promise<void> {
     try {
-        const supabase = await createServerClient();
+        const supabase = await createClient();
 
-        await supabase.from('error_logs').insert({
+        await (supabase.from('error_logs') as any).insert({
             ...error,
             created_at: new Date().toISOString(),
         });
@@ -128,7 +128,7 @@ export async function checkAllAPIs(): Promise<APIStatus[]> {
  */
 export async function checkDatabaseHealth(): Promise<boolean> {
     try {
-        const supabase = await createServerClient();
+        const supabase = await createClient();
         const { error } = await supabase.from('profiles').select('id').limit(1);
         return !error;
     } catch {
@@ -147,9 +147,8 @@ const MAINTENANCE_KEY = 'site_maintenance_mode';
  */
 export async function isMaintenanceMode(): Promise<boolean> {
     try {
-        const supabase = await createServerClient();
-        const { data } = await supabase
-            .from('site_settings')
+        const supabase = await createClient();
+        const { data } = await (supabase.from('site_settings') as any)
             .select('value')
             .eq('key', MAINTENANCE_KEY)
             .single();
@@ -165,10 +164,9 @@ export async function isMaintenanceMode(): Promise<boolean> {
  */
 export async function setMaintenanceMode(enabled: boolean): Promise<boolean> {
     try {
-        const supabase = await createServerClient();
+        const supabase = await createClient();
 
-        await supabase
-            .from('site_settings')
+        await (supabase.from('site_settings') as any)
             .upsert({
                 key: MAINTENANCE_KEY,
                 value: enabled ? 'true' : 'false',
@@ -190,13 +188,12 @@ export async function getMaintenanceInfo(): Promise<{
     estimatedEnd?: string;
 }> {
     try {
-        const supabase = await createServerClient();
-        const { data } = await supabase
-            .from('site_settings')
+        const supabase = await createClient();
+        const { data } = await (supabase.from('site_settings') as any)
             .select('key, value')
             .in('key', [MAINTENANCE_KEY, 'maintenance_message', 'maintenance_end']);
 
-        const settings = Object.fromEntries(data?.map(d => [d.key, d.value]) || []);
+        const settings = Object.fromEntries(data?.map((d: any) => [d.key, d.value]) || []);
 
         return {
             enabled: settings[MAINTENANCE_KEY] === 'true',

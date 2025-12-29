@@ -240,13 +240,13 @@ export function mapRowsToOrders(
             sourceOrderId: String(orderId),
             orderNumber: String(orderId),
             orderDate: orderDate instanceof Date && !isNaN(orderDate.getTime()) ? orderDate : undefined,
-            customerName: row[mapping.customerName || ''] ? String(row[mapping.customerName]) : undefined,
-            customerPhone: row[mapping.customerPhone || ''] ? String(row[mapping.customerPhone]) : undefined,
-            customerAddress: row[mapping.customerAddress || ''] ? String(row[mapping.customerAddress]) : undefined,
+            customerName: row[mapping.customerName || ''] ? String(row[mapping.customerName || '']) : undefined,
+            customerPhone: row[mapping.customerPhone || ''] ? String(row[mapping.customerPhone || '']) : undefined,
+            customerAddress: row[mapping.customerAddress || ''] ? String(row[mapping.customerAddress || '']) : undefined,
             products,
             totalAmount: total,
-            courier: row[mapping.courier || ''] ? String(row[mapping.courier]) : undefined,
-            awb: row[mapping.awb || ''] ? String(row[mapping.awb]) : undefined,
+            courier: row[mapping.courier || ''] ? String(row[mapping.courier || '']) : undefined,
+            awb: row[mapping.awb || ''] ? String(row[mapping.awb || '']) : undefined,
             rawData: row,
         });
     }

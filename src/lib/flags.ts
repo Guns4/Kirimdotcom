@@ -20,7 +20,7 @@ export async function fetchFeatureFlags(): Promise<Record<string, boolean>> {
     // Convert array to Record<key, boolean> for O(1) lookup
     const flags: Record<string, boolean> = {};
     data?.forEach(f => {
-        flags[f.key] = f.is_enabled;
+        flags[f.key] = f.is_enabled ?? false;
     });
 
     return flags;

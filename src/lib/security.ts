@@ -42,7 +42,7 @@ export async function rateLimitMiddleware(
     try {
         const supabase = await createClient();
 
-        const { data, error } = await supabase.rpc('check_rate_limit', {
+        const { data, error } = await (supabase.rpc as any)('check_rate_limit', {
             p_identifier: ip,
             p_identifier_type: 'ip',
             p_endpoint: endpoint,
@@ -157,7 +157,7 @@ export async function logSuspiciousActivity(
     try {
         const supabase = await createClient();
 
-        await supabase.rpc('log_security_event', {
+        await (supabase.rpc as any)('log_security_event', {
             p_event_type: 'suspicious_activity',
             p_ip_address: ip,
             p_description: reason,

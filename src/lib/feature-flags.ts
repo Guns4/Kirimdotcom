@@ -16,8 +16,7 @@ export type FeatureFlag = {
 export async function checkFeature(key: string): Promise<boolean> {
     try {
         const supabase = await createClient();
-        const { data: flag } = await supabase
-            .from('feature_flags')
+        const { data: flag } = await (supabase.from('feature_flags') as any)
             .select('*')
             .eq('key', key)
             .single();
@@ -62,20 +61,20 @@ export async function checkFeature(key: string): Promise<boolean> {
 // Admin: Get all flags
 export async function getAllFlags() {
     const supabase = await createClient();
-    const { data } = await supabase.from('feature_flags').select('*').order('key');
+    const { data } = await (supabase.from('feature_flags') as any).select('*').order('key');
     return data || [];
 }
 
 // Admin: Update flag
 export async function updateFlag(key: string, updates: Partial<FeatureFlag>) {
     const supabase = await createClient();
-    await supabase.from('feature_flags').update(updates).eq('key', key);
+    await (supabase.from('feature_flags') as any).update(updates).eq('key', key);
     revalidatePath('/'); // Revalidate everywhere as flags might affect layout
 }
 
 // Admin: Create flag
 export async function createFlag(key: string, description: string) {
     const supabase = await createClient();
-    await supabase.from('feature_flags').insert({ key, description });
+    await (supabase.from('feature_flags') as any).insert({ key, description });
     revalidatePath('/');
 }
