@@ -13,10 +13,10 @@ export async function createApiKey(label: string) {
     // 1. Generate Secret
     const rawKey = generateSecret();
     const hashed = hashKey(rawKey);
-    const prefix = rawKey.substring(0, 8) + '...';
+    const prefix = rawKey.substring(0, 12) + '...';
 
     // 2. Store Hash Only
-    const { error } = await (supabase.from('api_keys') as any).insert({
+    const { error } = await supabase.from('api_keys').insert({
         user_id: user.id,
         key_hash: hashed,
         key_prefix: prefix,
@@ -41,13 +41,31 @@ export async function revokeApiKey(id: string) {
 
     if (!user) return { error: 'Unauthorized' };
 
-    const { error } = await (supabase
-        .from('api_keys') as any)
+    const { error } = await supabase
+        .from('api_keys')
         .update({ is_active: false })
         .eq('id', id)
         .eq('user_id', user.id);
 
     if (error) return { error: 'Failed to revoke key' };
+
+    revalidatePath('/dashboard/developer');
+    return { success: true };
+}
+
+export async function deleteApiKey(id: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Unauthorized' };
+
+    const { error } = await supabase
+        .from('api_keys')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+    if (error) return { error: 'Failed to delete key' };
 
     revalidatePath('/dashboard/developer');
     return { success: true };
@@ -59,11 +77,29 @@ export async function getKeys() {
 
     if (!user) return [];
 
-    const { data } = await (supabase
-        .from('api_keys') as any)
+    const { data } = await supabase
+        .from('api_keys')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
     return data || [];
+}
+
+export async function updateApiKeyLabel(id: string, newLabel: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Unauthorized' };
+
+    const { error } = await supabase
+        .from('api_keys')
+        .update({ label: newLabel })
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+    if (error) return { error: 'Failed to update label' };
+
+    revalidatePath('/dashboard/developer');
+    return { success: true };
 }

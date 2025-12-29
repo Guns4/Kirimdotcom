@@ -1,96 +1,123 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
-import { getAllBlogPosts } from '@/lib/blog'
-import { Calendar, User, Clock, ArrowRight, Newspaper } from 'lucide-react'
+import Link from 'next/link';
+import { Calendar, ArrowRight, Tag } from 'lucide-react';
 
-export const metadata: Metadata = {
-    title: 'Blog - Tips Pengiriman & Tracking | CekKirim',
-    description: 'Artikel dan tips seputar pengiriman paket, cara tracking resi, perbandingan kurir, dan solusi masalah pengiriman di Indonesia.',
-}
-
-export default async function BlogPage() {
-    const posts = await getAllBlogPosts()
+export default function BlogPage() {
+    const blogPosts = [
+        {
+            title: "Cara Melacak Paket dengan Mudah di 2024",
+            slug: "cara-melacak-paket-2024",
+            excerpt: "Panduan lengkap tracking paket dari berbagai kurir menggunakan CekKirim. Cepat, akurat, dan gratis!",
+            category: "Tutorial",
+            date: "30 Des 2024",
+            image: "/placeholder-blog-1.jpg",
+            readTime: "5 menit"
+        },
+        {
+            title: "Tips Hemat Ongkir untuk Online Seller",
+            slug: "tips-hemat-ongkir",
+            excerpt: "Strategi jitu menghemat biaya pengiriman hingga 40% untuk bisnis online Anda.",
+            category: "Tips Bisnis",
+            date: "28 Des 2024",
+            image: "/placeholder-blog-2.jpg",
+            readTime: "7 menit"
+        },
+        {
+            title: "Perbandingan Kurir Terbaik di Indonesia",
+            slug: "perbandingan-kurir-indonesia",
+            excerpt: "Analisis mendalam JNE, J&T, SiCepat, dan AnterAja. Mana yang paling cocok untuk bisnis Anda?",
+            category: "Review",
+            date: "25 Des 2024",
+            image: "/placeholder-blog-3.jpg",
+            readTime: "10 menit"
+        },
+        {
+            title: "Arti Status 'On Process' dalam Tracking",
+            slug: "arti-on-process",
+            excerpt: "Pernah bingung dengan status tracking paket? Ini penjelasan lengkap setiap status pengiriman.",
+            category: "Edukasi",
+            date: "22 Des 2024",
+            image: "/placeholder-blog-4.jpg",
+            readTime: "6 menit"
+        },
+        {
+            title: "Cara Menghindari COD Bermasalah",
+            slug: "hindari-cod-bermasalah",
+            excerpt: "Panduan praktis untuk seller agar terhindar dari pembeli COD nakal dan meminimalkan retur.",
+            category: "Tips Bisnis",
+            date: "20 Des 2024",
+            image: "/placeholder-blog-5.jpg",
+            readTime: "8 menit"
+        },
+        {
+            title: "Update: Tarif Ongkir Terbaru 2024",
+            slug: "tarif-ongkir-2024",
+            excerpt: "Ringkasan perubahan tarif dari berbagai ekspedisi di awal tahun 2024.",
+            category: "News",
+            date: "18 Des 2024",
+            image: "/placeholder-blog-6.jpg",
+            readTime: "4 menit"
+        }
+    ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-12 px-4">
-            <div className="max-w-5xl mx-auto">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600/20 rounded-full text-indigo-400 text-sm mb-4">
-                        <Newspaper className="w-4 h-4" />
-                        Blog & Tips
+        <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+            {/* Header */}
+            <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
+                <div className="container-custom">
+                    <div className="max-w-3xl">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                            Blog CekKirim
+                        </h1>
+                        <p className="text-xl opacity-90">
+                            Tips, tutorial, dan insights seputar logistik & bisnis online Indonesia
+                        </p>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                        Tips Pengiriman & Tracking
-                    </h1>
-                    <p className="text-gray-400 max-w-2xl mx-auto">
-                        Pelajari cara efektif mengirim paket, tracking resi, dan mengatasi masalah pengiriman
-                    </p>
                 </div>
+            </section>
 
-                {/* Blog Grid */}
-                {posts.length === 0 ? (
-                    <div className="text-center py-12">
-                        <p className="text-gray-400">Belum ada artikel.</p>
-                    </div>
-                ) : (
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {posts.map((post) => (
-                            <article key={post.slug} className="glass-card overflow-hidden group hover:border-indigo-500/50 transition-all">
-                                {/* Cover Image */}
-                                {post.coverImage && (
-                                    <div className="aspect-video bg-gradient-to-br from-indigo-600/20 to-purple-600/20 relative">
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <Newspaper className="w-12 h-12 text-indigo-400/50" />
-                                        </div>
+            {/* Blog Posts Grid */}
+            <section className="py-16">
+                <div className="container-custom">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {blogPosts.map((post, index) => (
+                            <article
+                                key={index}
+                                className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 group"
+                            >
+                                {/* Image Placeholder */}
+                                <div className="aspect-video bg-gradient-to-br from-indigo-100 to-purple-100 relative overflow-hidden">
+                                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                                        <span className="text-sm">Featured Image</span>
                                     </div>
-                                )}
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-indigo-600">
+                                            {post.category}
+                                        </span>
+                                    </div>
+                                </div>
 
+                                {/* Content */}
                                 <div className="p-6">
-                                    {/* Tags */}
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {post.tags.slice(0, 2).map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="px-2 py-1 bg-indigo-600/20 text-indigo-400 text-xs rounded"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    {/* Title */}
-                                    <h2 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors line-clamp-2">
-                                        <Link href={`/blog/${post.slug}`}>
-                                            {post.title}
-                                        </Link>
-                                    </h2>
-
-                                    {/* Description */}
-                                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                                        {post.description}
-                                    </p>
-
-                                    {/* Meta */}
-                                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
                                         <span className="flex items-center gap-1">
                                             <Calendar className="w-3 h-3" />
-                                            {new Date(post.date).toLocaleDateString('id-ID', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                            })}
+                                            {post.date}
                                         </span>
-                                        <span className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3" />
-                                            {post.readingTime}
-                                        </span>
+                                        <span>•</span>
+                                        <span>{post.readTime} baca</span>
                                     </div>
 
-                                    {/* Read More */}
+                                    <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                                        {post.title}
+                                    </h2>
+
+                                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                                        {post.excerpt}
+                                    </p>
+
                                     <Link
                                         href={`/blog/${post.slug}`}
-                                        className="inline-flex items-center gap-2 text-indigo-400 text-sm hover:gap-3 transition-all"
+                                        className="inline-flex items-center gap-2 text-indigo-600 font-semibold text-sm hover:gap-3 transition-all"
                                     >
                                         Baca Selengkapnya
                                         <ArrowRight className="w-4 h-4" />
@@ -99,8 +126,37 @@ export default async function BlogPage() {
                             </article>
                         ))}
                     </div>
-                )}
-            </div>
-        </div>
-    )
+
+                    {/* Load More */}
+                    <div className="text-center mt-12">
+                        <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg hover:shadow-xl">
+                            Muat Artikel Lainnya
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            {/* Newsletter CTA */}
+            <section className="py-16 bg-gradient-to-r from-indigo-50 to-purple-50">
+                <div className="container-custom max-w-2xl text-center">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                        Dapatkan Update Terbaru
+                    </h3>
+                    <p className="text-gray-600 mb-8">
+                        Subscribe newsletter kami untuk tips bisnis online dan update fitur CekKirim
+                    </p>
+                    <div className="flex gap-3 max-w-md mx-auto">
+                        <input
+                            type="email"
+                            placeholder="Email Anda"
+                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition"
+                        />
+                        <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors whitespace-nowrap">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    );
 }

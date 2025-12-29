@@ -142,8 +142,13 @@ export default function Footer() {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/sitemap.xml" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1">
-                                        Sitemap <ExternalLink className="w-3 h-3" />
+                                    <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        FAQ / Bantuan
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/blog" className="text-sm text-gray-400 hover:text-white transition-colors block">
+                                        Blog
                                     </Link>
                                 </li>
                             </ul>

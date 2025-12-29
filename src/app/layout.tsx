@@ -17,6 +17,7 @@ import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
 import NPSSurvey from "@/components/ui/NPSSurvey";
 import { getPublicFlags } from "@/app/actions/flagActions";
 import { FeatureFlagProvider } from "@/components/providers/FeatureFlagProvider";
+import { ThirdPartyScripts } from "@/components/ThirdPartyScripts";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -67,6 +68,9 @@ export const metadata: Metadata = {
     verification: {
         google: "google-site-verification=YOUR_VERIFICATION_CODE", // Ganti dengan kode dari Google Search Console
     },
+    other: {
+        'google-adsense-account': 'ca-pub-5099892029462046',
+    },
 };
 
 export default async function RootLayout({
@@ -95,12 +99,7 @@ export default async function RootLayout({
     return (
         <html lang="id" className={inter.variable}>
             <head>
-                <Script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5099892029462046"
-                    crossOrigin="anonymous"
-                    strategy="lazyOnload"
-                />
+                {/* Preconnect to external domains for faster loading */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link rel="dns-prefetch" href="https://api.binderbyte.com" />
@@ -116,7 +115,6 @@ export default async function RootLayout({
                                 {children}
                             </main>
                             {!isWidget && <FeedbackWidget />}
-                            {!isWidget && <FeedbackWidget />}
                             <ClarityAnalytics />
                             <ErrorMonitor />
                             <WebVitalsReporter />
@@ -126,6 +124,12 @@ export default async function RootLayout({
                         </LiteModeProvider>
                     </FeatureFlagProvider>
                 </SystemStatusProvider>
+
+                {/* Third-party scripts with optimized loading */}
+                <ThirdPartyScripts
+                    gaId={process.env.NEXT_PUBLIC_GA_ID}
+                    adsenseId="ca-pub-5099892029462046"
+                />
             </body>
         </html>
     );
