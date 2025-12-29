@@ -193,9 +193,7 @@ export const withdrawSchema = z.object({
 export const ticketSchema = z.object({
     email: emailSchema,
     name: nameSchema.optional(),
-    category: z.enum(['tracking', 'payment', 'account', 'technical', 'other'], {
-        errorMap: () => ({ message: 'Kategori tidak valid' }),
-    }),
+    category: z.enum(['tracking', 'payment', 'account', 'technical', 'other']),
     subject: z.string().min(5, 'Subjek minimal 5 karakter').max(255, 'Subjek maksimal 255 karakter'),
     description: z.string().min(20, 'Deskripsi minimal 20 karakter').max(5000, 'Deskripsi maksimal 5000 karakter'),
 });

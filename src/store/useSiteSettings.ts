@@ -1,6 +1,15 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import type { SiteSettings } from '@/types/database.types'
+// import type { SiteSettings } from '@/types/database.types'
+
+export interface SiteSettings {
+    site_name: string;
+    site_description: string;
+    site_url: string;
+    maintenance_mode: boolean;
+    // add other fields as needed
+    [key: string]: any;
+}
 
 interface SiteSettingsState {
     settings: SiteSettings | null
