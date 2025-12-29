@@ -217,6 +217,7 @@ const config: Config = {
                 'bounce-soft': 'bounceSoft 0.6s ease-out',
                 'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
                 'float': 'float 3s ease-in-out infinite',
+                'spin-slow': 'spin 3s linear infinite',
             },
             keyframes: {
                 fadeIn: {
@@ -254,6 +255,9 @@ const config: Config = {
                 float: {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-10px)' },
+                },
+                shimmer: {
+                    '100%': { transform: 'translateX(100%)' },
                 },
             },
 
