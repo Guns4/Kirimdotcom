@@ -1,34 +1,59 @@
+import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-import { getSystemHealth } from '@/lib/systemHealth';
 
-/**
- * API Route: System Health Check
- * GET /api/health
- * Used by cron jobs and monitoring
- */
-
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET() {
+    const startTime = Date.now();
+
     try {
-        const health = await getSystemHealth();
+        const supabase = await createClient();
 
-        const statusCode = health.status === 'healthy' ? 200 :
-            health.status === 'degraded' ? 200 : 503;
+        // 1. Database Connectivity Check
+        const { error } = await (supabase.from('tenants') as any).select('count', { count: 'exact', head: true });
 
-        return NextResponse.json(health, {
-            status: statusCode,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
+        const responseTime = Date.now() - startTime;
+
+        if (error) {
+            console.error('Health Check DB Error:', error);
+
+            return NextResponse.json(
+                {
+                    status: 'degraded',
+                    db: 'error',
+                    detail: error.message,
+                    responseTime: `${responseTime}ms`,
+                    timestamp: new Date().toISOString()
+                },
+                { status: 503 }
+            );
+        }
+
+        // 2. Success - All systems operational
+        return NextResponse.json(
+            {
+                status: 'healthy',
+                db: 'connected',
+                responseTime: `${responseTime}ms`,
+                timestamp: new Date().toISOString()
+            },
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                }
             }
-        });
-    } catch (error) {
+        );
+    } catch (err: any) {
+        const responseTime = Date.now() - startTime;
+
         return NextResponse.json(
             {
                 status: 'error',
-                message: error instanceof Error ? error.message : 'Unknown error',
-                timestamp: new Date(),
+                message: err.message,
+                responseTime: `${responseTime}ms`,
+                timestamp: new Date().toISOString()
             },
             { status: 500 }
         );
