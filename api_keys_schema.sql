@@ -1,4 +1,5 @@
 -- ============================================================================
+<<<<<<< HEAD
 -- API Keys Schema (Phase 118) - IDEMPOTENT VERSION
 -- Secure API Key Management for Developer Dashboard
 -- ============================================================================
@@ -40,6 +41,25 @@ BEGIN
     END IF;
 END $$;
 
+=======
+-- API Keys Schema (Phase 118)
+-- Secure API Key Management for Developer Dashboard
+-- ============================================================================
+
+-- API Keys Table (Secure Storage)
+CREATE TABLE IF NOT EXISTS public.api_keys (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid REFERENCES auth.users NOT NULL,
+    key_hash text NOT NULL UNIQUE, -- SHA-256 Hash of the key
+    key_prefix text NOT NULL, -- First 7-12 chars (e.g. ck_live_abc...)
+    label text, -- e.g. "Production App"
+    is_active boolean DEFAULT true,
+    last_used_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+>>>>>>> effda148897327dacc96fb22748756a39122784d
 -- Indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON public.api_keys(user_id);
 CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON public.api_keys(key_hash);
