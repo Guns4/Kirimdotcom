@@ -19,54 +19,81 @@ const config: Config = {
     theme: {
         extend: {
             // ============================================
-            // COLOR PALETTE
+            // MODERN SAAS COLOR SYSTEM (CSS Variables)
             // ============================================
             colors: {
-                // Primary: Deep Ocean Blue - Trust & Professional
+                // CSS Variable-based colors (for new theme)
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "hsl(var(--background))",
+                foreground: "hsl(var(--foreground))",
                 primary: {
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
+                    // Keep existing palette for compatibility
                     50: '#e6f1ff',
                     100: '#cce3ff',
                     200: '#99c7ff',
                     300: '#66abff',
                     400: '#338fff',
-                    500: '#0066CC', // Main primary
+                    500: '#0066CC',
                     600: '#0052a3',
                     700: '#003d7a',
                     800: '#002952',
                     900: '#001429',
                     950: '#000a14',
                 },
-
-                // Secondary: Vibrant Orange - Energy & Speed
                 secondary: {
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
+                    // Keep existing palette
                     50: '#fff7ed',
                     100: '#ffedd5',
                     200: '#fed7aa',
                     300: '#fdba74',
                     400: '#fb923c',
-                    500: '#f97316', // Main secondary
+                    500: '#f97316',
                     600: '#ea580c',
                     700: '#c2410c',
                     800: '#9a3412',
                     900: '#7c2d12',
                     950: '#431407',
                 },
-
-                // Surface: Off-white & Soft Gray - Friendly
-                surface: {
-                    50: '#fafafa',  // Main background
-                    100: '#f5f5f5', // Card background
-                    200: '#eeeeee', // Borders
-                    300: '#e0e0e0', // Dividers
-                    400: '#bdbdbd', // Disabled text
-                    500: '#9e9e9e', // Placeholder
-                    600: '#757575', // Secondary text
-                    700: '#616161', // Body text
-                    800: '#424242', // Heading
-                    900: '#212121', // Primary text
+                destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
+                },
+                muted: {
+                    DEFAULT: "hsl(var(--muted))",
+                    foreground: "hsl(var(--muted-foreground))",
+                },
+                accent: {
+                    DEFAULT: "hsl(var(--accent))",
+                    foreground: "hsl(var(--accent-foreground))",
+                },
+                popover: {
+                    DEFAULT: "hsl(var(--popover))",
+                    foreground: "hsl(var(--popover-foreground))",
+                },
+                card: {
+                    DEFAULT: "hsl(var(--card))",
+                    foreground: "hsl(var(--card-foreground))",
                 },
 
-                // Semantic Colors
+                // Original palette (keep for backward compatibility)
+                surface: {
+                    50: '#fafafa',
+                    100: '#f5f5f5',
+                    200: '#eeeeee',
+                    300: '#e0e0e0',
+                    400: '#bdbdbd',
+                    500: '#9e9e9e',
+                    600: '#757575',
+                    700: '#616161',
+                    800: '#424242',
+                    900: '#212121',
+                },
                 success: {
                     50: '#ecfdf5',
                     100: '#d1fae5',
