@@ -14,8 +14,8 @@ export async function updateTenantBranding(formData: FormData) {
     const logo = formData.get('logo') as string;
 
     // Update tenant branding in database
-    const { error } = await supabase
-        .from('tenants')
+    const { error } = await (supabase
+        .from('tenants') as any)
         .update({
             brand_name: brandName,
             primary_color: primaryColor,
@@ -39,8 +39,8 @@ export async function getTenantSettings() {
 
     if (!user) return null;
 
-    const { data } = await supabase
-        .from('tenants')
+    const { data } = await (supabase
+        .from('tenants') as any)
         .select('*')
         .eq('owner_id', user.id)
         .single();
