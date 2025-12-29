@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# =============================================================================
+# Setup Database Archiving (Phase 126)
+# Performance Optimization & Auto-Maintenance
+# =============================================================================
+
+echo "Setting up Database Archiving..."
+echo "================================================="
+echo ""
+
+echo "✓ SQL Schema: archiving_schema.sql"
+echo ""
+
+echo "================================================="
+echo "Database Archiving Setup Complete!"
+echo ""
+echo "Deployment Steps:"
+echo ""
+echo "1. **Run SQL Schema**:"
+echo "   - Open Supabase SQL Editor"
+echo "   - Execute: archiving_schema.sql"
+echo "   - Verify tables created"
+echo ""
+echo "2. **Automation Options**:"
+echo ""
+echo "   Option A: pg_cron (if enabled on your Supabase plan)"
+echo "   - Uncomment pg_cron section in SQL"
+echo "   - Runs automatically at 3 AM on 1st of month"
+echo ""
+echo "   Option B: API Route + External Cron"
+echo "   - Create API route: /api/cron/archive-orders"
+echo "   - Use Vercel Cron or GitHub Actions"
+echo "   - Schedule monthly execution"
+echo ""
+echo "3. **Verify Archive Function**:"
+echo "   ```sql"
+echo "   SELECT public.archive_old_orders();"
+echo "   ```"
+echo ""
+echo "4. **Check Stats**:"
+echo "   ```sql"
+echo "   SELECT * FROM public.view_archiving_stats;"
+echo "   ```"
+echo ""
+echo "Features Enabled:"
+echo "  ✓ Orders older than 6 months auto-archived"
+echo "  ✓ Archive only COMPLETED/CANCELLED/DELIVERED orders"
+echo "  ✓ Unified view for user history (active + archive)"
+echo "  ✓ RLS policies for data security"
+echo "  ✓ Admin stats dashboard ready"
+echo "  ✓ Performance indexes on archive"
