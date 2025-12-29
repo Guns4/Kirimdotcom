@@ -367,3 +367,64 @@
         @apply shadow-none border border-gray-300;
     }
 }
+
+/* ============================================
+   DEBUG MODE STYLES
+   ============================================ */
+body.debug-mode button,
+body.debug-mode a,
+body.debug-mode [role="button"],
+body.debug-mode [onclick] {
+    outline: 2px solid red !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+}
+
+body.debug-mode [style*="z-index"] {
+    outline: 2px solid yellow !important;
+}
+
+/* Breakpoint indicator */
+body.debug-mode::after {
+    content: 'Mobile (XS)';
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
+    background: black;
+    color: #4ade80; /* Tailwind green-400 */
+    padding: 4px 8px;
+    font-family: monospace;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 99999;
+    border: 1px solid #4ade80;
+}
+
+@media (min-width: 640px) {
+    body.debug-mode::after {
+        content: 'Mobile (SM)';
+    }
+}
+
+@media (min-width: 768px) {
+    body.debug-mode::after {
+        content: 'Tablet (MD)';
+    }
+}
+
+@media (min-width: 1024px) {
+    body.debug-mode::after {
+        content: 'Desktop (LG)';
+    }
+}
+
+@media (min-width: 1280px) {
+    body.debug-mode::after {
+        content: 'Desktop (XL)';
+    }
+}
+
+@media (min-width: 1536px) {
+    body.debug-mode::after {
+        content: 'Desktop (2XL)';
+    }
+}

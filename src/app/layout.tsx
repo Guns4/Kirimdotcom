@@ -21,7 +21,9 @@ import { FeatureFlagProvider } from "@/components/providers/FeatureFlagProvider"
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
-    display: "swap",
+    display: "swap", // Critical: Text visible before font loads
+    preload: true,
+    adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -99,6 +101,11 @@ export default async function RootLayout({
                     crossOrigin="anonymous"
                     strategy="lazyOnload"
                 />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link rel="dns-prefetch" href="https://api.binderbyte.com" />
+                <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
             </head>
             <body className={`font-sans antialiased min-h-screen flex flex-col ${isWidget ? 'bg-transparent' : 'bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30'}`}>
                 <SystemStatusProvider>
