@@ -1,0 +1,240 @@
+/* ============================================================================
+   CekKirim Sidebar Styles
+   WhatsApp-like design for seamless integration
+   ============================================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #111b21;
+  overflow-x: hidden;
+}
+
+.sidebar-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #008069 0%, #00a884 100%);
+  color: white;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: #54656f;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d7db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #008069;
+  box-shadow: 0 0 0 2px rgba(0, 128, 105, 0.1);
+}
+
+/* Button */
+.check-btn {
+  width: 100%;
+  padding: 12px;
+  background: #008069;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 128, 105, 0.3);
+}
+
+.check-btn:hover {
+  background: #006d59;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 128, 105, 0.4);
+}
+
+.check-btn:active {
+  transform: translateY(0);
+}
+
+.loader {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Results Area */
+.results-area {
+  margin-top: 20px;
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  min-height: 120px;
+}
+
+.placeholder {
+  color: #8696a0;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 40px;
+  line-height: 1.6;
+}
+
+/* Result Item */
+.result-item {
+  border-bottom: 1px solid #f0f2f5;
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-item:hover {
+  background: #f7f8fa;
+  padding: 12px 8px;
+  margin: 0 -8px;
+  border-radius: 8px;
+}
+
+.courier-info .courier {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111b21;
+}
+
+.courier-info .service {
+  font-size: 11px;
+  color: #667781;
+  margin-top: 2px;
+}
+
+.courier-info .etd {
+  font-size: 10px;
+  color: #8696a0;
+  margin-top: 2px;
+}
+
+.price-info {
+  text-align: right;
+}
+
+.price {
+  color: #008069;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid #d1d7db;
+  color: #54656f;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #f0f2f5;
+  border-color: #008069;
+  color: #008069;
+}
+
+.copy-btn.copied {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #16a34a;
+}
+
+/* Footer */
+.footer {
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: #8696a0;
+  border-top: 1px solid #e9edef;
+}
+
+.footer a {
+  color: #008069;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #f0f2f5;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #d1d7db;
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+}

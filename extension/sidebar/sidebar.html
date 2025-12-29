@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CekKirim Sidebar</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <div class="sidebar-container">
+    <!-- Header -->
+    <div class="header">
+      <h3>📦 Cek Ongkir Cepat</h3>
+      <p class="subtitle">by CekKirim.com</p>
+    </div>
+    
+    <!-- Form -->
+    <div class="content">
+      <div class="form-group">
+        <label for="origin">Asal (Kota)</label>
+        <input type="text" id="origin" placeholder="Cth: Jakarta" value="Jakarta">
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Tujuan (Kota/Kecamatan)</label>
+        <input type="text" id="destination" placeholder="Cth: Bandung" autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Berat (Gram)</label>
+        <input type="number" id="weight" value="1000" min="1" max="30000">
+      </div>
+
+      <button id="checkBtn" class="check-btn">
+        <span id="btnText">🔍 Cek Harga</span>
+        <span id="btnLoader" class="loader" style="display:none">⏳</span>
+      </button>
+
+      <!-- Results -->
+      <div id="results" class="results-area">
+        <div class="placeholder">
+          💡 Isi tujuan dan klik "Cek Harga" untuk melihat estimasi ongkir dari berbagai kurir.
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <a href="https://cekkirim.com" target="_blank">
+          Powered by CekKirim.com
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="sidebar.js"></script>
+</body>
+</html>

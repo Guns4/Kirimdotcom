@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CekKirim Helper</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <span class="logo-box">CK</span>
+                <h1>CekKirim</h1>
+            </div>
+            <span class="badge">Helper</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <label for="resiInput">Cek Resi Instan</label>
+            <div class="input-group">
+                <input type="text" id="resiInput" placeholder="Masukkan nomor resi..." autofocus>
+                <button id="clearBtn" class="clear-btn" title="Clear">✕</button>
+            </div>
+
+            <button id="trackBtn" class="primary-btn">
+                🔍 Lacak Paket
+            </button>
+
+            <div class="divider">ATAU</div>
+
+            <button id="openWebBtn" class="secondary-btn">
+                📊 Buka Dashboard Seller
+            </button>
+
+            <!-- Quick Stats (Optional) -->
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Pencarian Terakhir</span>
+                    <span class="stat-value" id="lastSearch">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>💡 Tips: Pilih teks resi → Klik kanan → "Cek Resi via CekKirim"</p>
+            <p class="version">v1.0.0</p>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CekKirim API",
+        "description": "Enterprise-grade Logistics API for tracking and shipping cost calculation. Access real-time tracking data and shipping rates for major Indonesian couriers.",
+        "version": "1.0.0",
+        "contact": {
+            "name": "CekKirim Developer Support",
+            "email": "dev@cekkirim.com",
+            "url": "https://cekkirim.com/support"
+        },
+        "license": {
+            "name": "Commercial License",
+            "url": "https://cekkirim.com/terms"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://cekkirim.com",
+            "description": "Production Server"
+        },
+        {
+            "url": "http://localhost:3000",
+            "description": "Local Development"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "API Key",
+                "description": "Enter your API Key in format: `ck_live_xxxxxx` or `ck_test_xxxxxx`"
+            }
+        },
+        "schemas": {
+            "TrackingResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "waybill": {
+                                "type": "string",
+                                "example": "JNE123456789"
+                            },
+                            "courier": {
+                                "type": "string",
+                                "example": "JNE"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "DELIVERED"
+                            },
+                            "history": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "date": {
+                                            "type": "string"
+                                        },
+                                        "desc": {
+                                            "type": "string"
+                                        },
+                                        "location": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "CostResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "courier": {
+                                    "type": "string"
+                                },
+                                "service": {
+                                    "type": "string"
+                                },
+                                "price": {
+                                    "type": "integer"
+                                },
+                                "etd": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Invalid API key"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "UNAUTHORIZED"
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Tracking",
+            "description": "Track shipments in real-time"
+        },
+        {
+            "name": "Shipping Cost",
+            "description": "Calculate shipping rates"
+        },
+        {
+            "name": "Webhook",
+            "description": "Receive tracking updates"
+        }
+    ],
+    "paths": {
+        "/api/v1/track": {
+            "get": {
+                "summary": "Track Shipment",
+                "description": "Get real-time tracking information for a waybill (resi number).",
+                "operationId": "trackShipment",
+                "tags": [
+                    "Tracking"
+                ],
+                "parameters": [
+                    {
+                        "name": "waybill",
+                        "in": "query",
+                        "required": true,
+                        "description": "Tracking number (resi)",
+                        "schema": {
+                            "type": "string",
+                            "example": "JNE123456789"
+                        }
+                    },
+                    {
+                        "name": "courier",
+                        "in": "query",
+                        "required": true,
+                        "description": "Courier code",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "jne",
+                                "jnt",
+                                "sicepat",
+                                "pos",
+                                "anteraja",
+                                "ninja"
+                            ],
+                            "example": "jne"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TrackingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid API Key",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "Payment Required - Insufficient Balance",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tracking number not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/cost": {
+            "post": {
+                "summary": "Calculate Shipping Cost",
+                "description": "Get shipping rates from multiple couriers between two locations.",
+                "operationId": "calculateCost",
+                "tags": [
+                    "Shipping Cost"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "origin",
+                                    "destination",
+                                    "weight"
+                                ],
+                                "properties": {
+                                    "origin": {
+                                        "type": "string",
+                                        "description": "Origin city or district",
+                                        "example": "Jakarta Pusat"
+                                    },
+                                    "destination": {
+                                        "type": "string",
+                                        "description": "Destination city or district",
+                                        "example": "Bandung"
+                                    },
+                                    "weight": {
+                                        "type": "integer",
+                                        "description": "Package weight in grams",
+                                        "example": 1000,
+                                        "minimum": 1
+                                    },
+                                    "couriers": {
+                                        "type": "array",
+                                        "description": "Optional: Filter specific couriers",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "jne",
+                                            "jnt"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rates calculated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/v1/webhook/subscribe": {
+            "post": {
+                "summary": "Subscribe to Tracking Updates",
+                "description": "Register a webhook URL to receive automatic tracking updates.",
+                "operationId": "subscribeWebhook",
+                "tags": [
+                    "Webhook"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "format": "uri",
+                                        "example": "https://yourdomain.com/webhook"
+                                    },
+                                    "events": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "tracking.updated",
+                                                "tracking.delivered"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Webhook subscribed successfully"
+                    }
+                }
+            }
+        }
+    }
+}
