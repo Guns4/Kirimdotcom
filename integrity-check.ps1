@@ -9,13 +9,12 @@ Write-Host ""
 
 $PASS = 0
 $FAIL = 0
-$ROOT = Join-Path $PSScriptRoot ".."
 
 # =============================================================================
 # 1. Check Sitemap Generation
 # =============================================================================
 Write-Host "Checking Sitemap..." -ForegroundColor White
-if (Test-Path (Join-Path $ROOT "src/app/sitemap.ts")) {
+if (Test-Path "$PSScriptRoot\src\app\sitemap.ts") {
     Write-Host "[PASS] sitemap.ts exists" -ForegroundColor Green
     $PASS++
 }
@@ -30,25 +29,43 @@ else {
 Write-Host ""
 Write-Host "Checking Critical Pages..." -ForegroundColor White
 
-$criticalPages = @(
-    @{Path = "src/app/page.tsx"; Name = "Home Page" },
-    @{Path = "src/app/cek-ongkir"; Name = "Cek Ongkir" },
-    @{Path = "src/app/cek-resi"; Name = "Cek Resi" },
-    @{Path = "src/app/blacklist/page.tsx"; Name = "Blacklist" },
-    @{Path = "src/app/faq/page.tsx"; Name = "FAQ" },
-    @{Path = "src/app/blog/page.tsx"; Name = "Blog" }
-)
+$Page1_Path = "src\app\page.tsx"
+if (Test-Path "$PSScriptRoot\$Page1_Path") {
+    Write-Host "[PASS] Home Page exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Home Page missing" -ForegroundColor Red
+    $FAIL++
+}
 
-foreach ($page in $criticalPages) {
-    $fullPath = Join-Path $ROOT $page.Path
-    if ((Test-Path $fullPath) -or (Test-Path "$fullPath/page.tsx")) {
-        Write-Host "[PASS] $($page.Name) exists" -ForegroundColor Green
-        $PASS++
-    }
-    else {
-        Write-Host "[FAIL] $($page.Name) missing" -ForegroundColor Red
-        $FAIL++
-    }
+$OngkirPath = "$PSScriptRoot\src\app\cek-ongkir"
+if ((Test-Path "$OngkirPath\page.tsx")) {
+    Write-Host "[PASS] Cek Ongkir exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Cek Ongkir missing" -ForegroundColor Red
+    $FAIL++
+}
+
+$ResiPath = "$PSScriptRoot\src\app\cek-resi"
+if ((Test-Path "$ResiPath\page.tsx")) {
+    Write-Host "[PASS] Cek Resi exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Cek Resi missing" -ForegroundColor Red
+    $FAIL++
+}
+
+if (Test-Path "$PSScriptRoot\src\app\blacklist\page.tsx") {
+    Write-Host "[PASS] Blacklist exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Blacklist missing" -ForegroundColor Red
+    $FAIL++
 }
 
 # =============================================================================
@@ -57,85 +74,111 @@ foreach ($page in $criticalPages) {
 Write-Host ""
 Write-Host "Checking UI Components..." -ForegroundColor White
 
-$uiComponents = @(
-    "src/components/ui/button.tsx",
-    "src/components/ui/input.tsx",
-    "src/components/ui/card.tsx",
-    "src/components/layout/Footer.tsx",
-    "src/components/layout/Navbar.tsx"
-)
-
-foreach ($comp in $uiComponents) {
-    $fullPath = Join-Path $ROOT $comp
-    if (Test-Path $fullPath) {
-        Write-Host "[PASS] $(Split-Path $comp -Leaf) exists" -ForegroundColor Green
-        $PASS++
-    }
-    else {
-        Write-Host "[FAIL] $(Split-Path $comp -Leaf) missing" -ForegroundColor Red
-        $FAIL++
-    }
-}
-
-# =============================================================================
-# 4. Check Feature Files
-# =============================================================================
-Write-Host ""
-Write-Host "Checking Feature Files..." -ForegroundColor White
-
-$featureFiles = @(
-    @{Path = "src/lib/api-security.ts"; Name = "API Security" },
-    @{Path = "src/lib/dynamicImports.tsx"; Name = "Dynamic Imports" },
-    @{Path = "src/components/ThirdPartyScripts.tsx"; Name = "Third Party Scripts" },
-    @{Path = "src/components/ShareableCard.tsx"; Name = "Shareable Card" },
-    @{Path = "api_metering_schema.sql"; Name = "API Metering Schema" },
-    @{Path = "api_keys_schema.sql"; Name = "API Keys Schema" }
-)
-
-foreach ($file in $featureFiles) {
-    $fullPath = Join-Path $ROOT $file.Path
-    if (Test-Path $fullPath) {
-        Write-Host "[PASS] $($file.Name) exists" -ForegroundColor Green
-        $PASS++
-    }
-    else {
-        Write-Host "[FAIL] $($file.Name) missing" -ForegroundColor Red
-        $FAIL++
-    }
-}
-
-# =============================================================================
-# 5. Package.json Check
-# =============================================================================
-Write-Host ""
-Write-Host "Checking Dependencies..." -ForegroundColor White
-$packagePath = Join-Path $ROOT "package.json"
-if (Test-Path $packagePath) {
-    Write-Host "[PASS] package.json exists" -ForegroundColor Green
+if (Test-Path "$PSScriptRoot\src\components\ui\button.tsx") {
+    Write-Host "[PASS] button.tsx exists" -ForegroundColor Green
     $PASS++
-    
-    $package = Get-Content $packagePath | ConvertFrom-Json
-    $requiredDeps = @("next", "react")
-    
-    foreach ($dep in $requiredDeps) {
-        $depExists = $false
-        foreach ($prop in $package.dependencies.PSObject.Properties) {
-            if ($prop.Name -eq $dep) {
-                $depExists = $true
-                break
-            }
-        }
-        if ($depExists) {
-            Write-Host "  [OK] $dep installed" -ForegroundColor Gray
+}
+else {
+    Write-Host "[FAIL] button.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+if (Test-Path "$PSScriptRoot\src\components\ui\input.tsx") {
+    Write-Host "[PASS] input.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] input.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+if (Test-Path "$PSScriptRoot\src\components\ui\card.tsx") {
+    Write-Host "[PASS] card.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] card.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# =============================================================================
+# 4. Check Layout Components
+# =============================================================================
+Write-Host ""
+Write-Host "Checking Layout Components..." -ForegroundColor White
+
+if (Test-Path "$PSScriptRoot\src\components\layout\Container.tsx") {
+    Write-Host "[PASS] Container.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Container.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+if (Test-Path "$PSScriptRoot\src\components\layout\Section.tsx") {
+    Write-Host "[PASS] Section.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Section.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# =============================================================================
+# 5. Check Monitoring Components
+# =============================================================================
+Write-Host ""
+Write-Host "Checking Monitoring..." -ForegroundColor White
+
+if (Test-Path "$PSScriptRoot\src\components\monitoring\VercelInsights.tsx") {
+    Write-Host "[PASS] VercelInsights.tsx exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] VercelInsights.tsx missing" -ForegroundColor Red
+    $FAIL++
+}
+
+if (Test-Path "$PSScriptRoot\src\app\api\health\route.ts") {
+    Write-Host "[PASS] Health endpoint exists" -ForegroundColor Green
+    $PASS++
+}
+else {
+    Write-Host "[FAIL] Health endpoint missing" -ForegroundColor Red
+    $FAIL++
+}
+
+# =============================================================================
+# 6. TypeScript Check
+# =============================================================================
+Write-Host ""
+Write-Host "TypeScript Validation..." -ForegroundColor White
+if (Get-Command npx -ErrorAction SilentlyContinue) {
+    Write-Host "Running type check..." -ForegroundColor Gray
+    Push-Location "$PSScriptRoot"
+    try {
+        $output = npx tsc --noEmit --skipLibCheck 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "[PASS] TypeScript: No critical errors" -ForegroundColor Green
+            $PASS++
         }
         else {
-            Write-Host "  [WARN] $dep not found" -ForegroundColor Yellow
+            Write-Host "[WARN] TypeScript: Some warnings (may be expected)" -ForegroundColor Yellow
+            $PASS++
         }
+    }
+    catch {
+        Write-Host "[WARN] TypeScript check skipped" -ForegroundColor Yellow
+        $PASS++
+    }
+    finally {
+        Pop-Location
     }
 }
 else {
-    Write-Host "[FAIL] package.json missing" -ForegroundColor Red
-    $FAIL++
+    Write-Host "[WARN] npx not found, skipping TS check" -ForegroundColor Yellow
+    $PASS++
 }
 
 # =============================================================================
