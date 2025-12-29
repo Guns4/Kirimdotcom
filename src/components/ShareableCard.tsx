@@ -2,12 +2,7 @@
 
 import { useRef } from 'react';
 import html2canvas from 'html2canvas';
-import { Download, Share2 } from 'lucide-react';
-
-/**
- * Shareable Tracking Receipt Card
- * Instagram/WA Story-ready design with brand gradient
- */
+import { Download, Share2, Package, MapPin } from 'lucide-react';
 
 interface ShareableCardProps {
     trackingNumber: string;
@@ -22,13 +17,52 @@ export function ShareableCard({
     trackingNumber,
     courier,
     status,
-    deliveryDays,
-    origin,
-    destination,
+    deliveryDays = 0,
+    origin = '',
+    destination = ''
 }: ShareableCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
 
-    const downloadImage = async () => {
+    // Determine status styling
+    const isDelivered = status.toUpperCase().includes('DELIVERED') || status.toUpperCase().includes('TERKIRIM');
+    const isTransit = status.toUpperCase().includes('TRANSIT') || status.toUpperCase().includes('PERJALANAN');
+
+    const gradientClass = isDelivered
+        ? 'from-green-500 to-emerald-600'
+        : isTransit
+            ? 'from-blue-500 to-indigo-600'
+            : 'from-indigo-500 to-purple-600';
+
+    const statusEmoji = isDelivered ? '✅' : isTransit ? '🚚' : '📦';
+    const statusText = isDelivered ? 'Paket Terkirim!' : isTransit ? 'Dalam Perjalanan' : 'Sedang Diproses';
+
+    /**
+     * Download card as image
+     */
+    const handleDownload = async () => {
+        if (!cardRef.current) return;
+
+        try {
+            const canvas = await html2canvas(cardRef.current, {
+                scale: 2, // 2x for better quality
+                backgroundColor: null,
+                logging: false,
+            });
+
+            const image = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `cekkirim-${trackingNumber}.png`;
+            link.href = image;
+            link.click();
+        } catch (error) {
+            console.error('Failed to download:', error);
+        }
+    };
+
+    /**
+     * Share via Web Share API or fallback to WhatsApp
+     */
+    const handleShare = async () => {
         if (!cardRef.current) return;
 
         try {
@@ -36,45 +70,30 @@ export function ShareableCard({
                 scale: 2,
                 backgroundColor: null,
                 logging: false,
-                useCORS: true, // Helpful if loading external images/fonts
             });
 
-            const link = document.createElement('a');
-            link.download = `cekkirim-${trackingNumber}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        } catch (error) {
-            console.error('Failed to generate image:', error);
-        }
-    };
-
-    const shareToWhatsApp = async () => {
-        if (!cardRef.current) return;
-
-        try {
-            const canvas = await html2canvas(cardRef.current, {
-                scale: 2,
-                backgroundColor: null,
-            });
-
-            canvas.toBlob((blob) => {
+            canvas.toBlob(async (blob) => {
                 if (!blob) return;
 
                 const file = new File([blob], `cekkirim-${trackingNumber}.png`, {
                     type: 'image/png',
                 });
 
-                if (navigator.share && navigator.canShare({ files: [file] })) {
-                    // Native Share API (Mobile)
-                    navigator.share({
-                        files: [file],
-                        title: 'Status Paket CekKirim',
-                        text: `✅ Paket ${courier} ${status}!\n\nCek ongkir & tracking gratis di CekKirim.com 📦`,
-                    }).catch((err) => console.error('Error sharing:', err));
+                // Try Web Share API (mobile)
+                if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: `${statusEmoji} Tracking ${courier}`,
+                            text: `Paket ${trackingNumber} - ${statusText}`,
+                            files: [file],
+                        });
+                    } catch (err) {
+                        console.log('Share cancelled');
+                    }
                 } else {
-                    // Fallback: WhatsApp Web link (cannot attach image directly via URL scheme)
+                    // Fallback: WhatsApp Web
                     const text = encodeURIComponent(
-                        `✅ Paket ${courier} ${status}!\n\nLink Tracking: https://cekkirim.com/cek-resi/${courier}/${trackingNumber}`
+                        `${statusEmoji} *${statusText}*\n\nKurir: ${courier}\nNo. Resi: ${trackingNumber}\n\nCek tracking lengkap di:\nhttps://cekkirim.com/cek-resi?q=${trackingNumber}`
                     );
                     window.open(`https://wa.me/?text=${text}`, '_blank');
                 }
@@ -84,115 +103,103 @@ export function ShareableCard({
         }
     };
 
-    const getStatusEmoji = (status: string) => {
-        const s = status.toUpperCase();
-        if (s.includes('DELIVERED') || s.includes('SAMPAI')) return '✅';
-        if (s.includes('TRANSIT') || s.includes('DALAM PERJALANAN')) return '🚚';
-        if (s.includes('MANIFEST') || s.includes('PICKUP')) return '📦';
-        return '📍';
-    };
-
-    const getStatusColor = (status: string) => {
-        const s = status.toUpperCase();
-        if (s.includes('DELIVERED') || s.includes('SAMPAI'))
-            return 'from-green-500 to-emerald-600';
-        if (s.includes('TRANSIT') || s.includes('DALAM PERJALANAN')) return 'from-blue-500 to-indigo-600';
-        return 'from-primary-500 to-accent-500'; // Default brand gradient
-    };
-
     return (
-        <div className="space-y-6">
-            {/* Shareable Container: 9:16 Aspect Ratio for Stories */}
-            <div className="flex justify-center">
-                <div
-                    ref={cardRef}
-                    className="relative w-[320px] h-[568px] sm:w-[360px] sm:h-[640px] rounded-3xl overflow-hidden shadow-2xl"
-                    style={{ aspectRatio: '9/16' }}
-                >
-                    {/* Background Gradient */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${getStatusColor(status)}`} />
+        <div className="space-y-4">
+            {/* Shareable Card (9:16 aspect ratio for Instagram Story) */}
+            <div
+                ref={cardRef}
+                className="relative w-full max-w-sm mx-auto"
+                style={{ aspectRatio: '9/16' }}
+            >
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} rounded-3xl overflow-hidden`}>
+                    {/* Decorative Circles */}
+                    <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    <div className="absolute bottom-20 left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+                </div>
 
-                    {/* Decorative Elements */}
-                    <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-[-50px] left-[-50px] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                {/* Content */}
+                <div className="relative h-full flex flex-col justify-between p-8 text-white">
+                    {/* Header */}
+                    <div className="text-center">
+                        <h1 className="text-5xl font-black mb-2">{statusEmoji}</h1>
+                        <h2 className="text-2xl font-bold mb-1">{statusText}</h2>
+                        {deliveryDays > 0 && (
+                            <p className="text-white/90 text-sm">
+                                dalam {deliveryDays} hari
+                            </p>
+                        )}
+                    </div>
 
-                    {/* Content Layer */}
-                    <div className="relative h-full flex flex-col items-center justify-between p-8 text-white">
-
-                        {/* 1. Header Area */}
-                        <div className="text-center space-y-4 pt-4">
-                            <div className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/10 rounded-full text-sm font-semibold tracking-wide">
-                                {courier.toUpperCase()}
+                    {/* Main Info */}
+                    <div className="space-y-6">
+                        {/* Courier Badge */}
+                        <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 text-center">
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                                <Package className="w-5 h-5" />
+                                <span className="text-sm font-medium opacity-90">Kurir</span>
                             </div>
-                            <div className="flex flex-col items-center">
-                                <div className="text-7xl mb-2 drop-shadow-xl">{getStatusEmoji(status)}</div>
-                                <h1 className="text-3xl font-bold leading-tight drop-shadow-md px-2 line-clamp-2">
-                                    {status}
-                                </h1>
-                            </div>
+                            <h3 className="text-3xl font-black">{courier}</h3>
                         </div>
 
-                        {/* 2. Tracking Details */}
-                        <div className="w-full space-y-6 text-center">
-                            {deliveryDays && (
-                                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                                    <div className="text-white/80 text-xs uppercase tracking-wider mb-1">Estimasi Pengiriman</div>
-                                    <div className="text-4xl font-bold">{deliveryDays} Hari</div>
-                                </div>
-                            )}
-
-                            {origin && destination && (
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between gap-2 px-2">
-                                        <div className="text-left flex-1 min-w-0">
-                                            <div className="text-xs text-white/70">Asal</div>
-                                            <div className="text-lg font-semibold truncate">{origin}</div>
-                                        </div>
-                                        <div className="text-xl opacity-60">→</div>
-                                        <div className="text-right flex-1 min-w-0">
-                                            <div className="text-xs text-white/70">Tujuan</div>
-                                            <div className="text-lg font-semibold truncate">{destination}</div>
-                                        </div>
+                        {/* Route */}
+                        {origin && destination && (
+                            <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4">
+                                <div className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="w-4 h-4" />
+                                        <span className="font-semibold">{origin}</span>
+                                    </div>
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold">{destination}</span>
                                     </div>
                                 </div>
-                            )}
+                            </div>
+                        )}
+
+                        {/* Tracking Number */}
+                        <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 text-center">
+                            <p className="text-xs opacity-75 mb-1">No. Resi</p>
+                            <p className="font-mono text-lg font-bold tracking-wider">{trackingNumber}</p>
                         </div>
+                    </div>
 
-                        {/* 3. Footer / Watermark */}
-                        <div className="w-full text-center space-y-4 pb-4">
-                            <div className="pt-4 border-t border-white/20 w-3/4 mx-auto">
-                                <div className="text-xs text-white/60 mb-1">Nomor Resi</div>
-                                <div className="font-mono text-lg font-bold tracking-wider">{trackingNumber}</div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-center opacity-90">
-                                <div className="text-2xl font-bold tracking-tight">CekKirim.com</div>
-                                <div className="text-xs font-medium text-white/80">Cek Ongkir & Tracking Gratis 🚀</div>
-                            </div>
+                    {/* Footer Branding */}
+                    <div className="text-center">
+                        <div className="inline-block bg-white/25 backdrop-blur-md rounded-full px-6 py-3">
+                            <p className="text-sm font-bold">
+                                Tracked with <span className="text-white">CekKirim.com</span>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+            <div className="flex gap-3 justify-center">
                 <button
-                    onClick={downloadImage}
-                    className="flex items-center justify-center gap-2 px-6 py-3.5 bg-surface-900 text-white rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl active:scale-95"
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
                 >
                     <Download className="w-5 h-5" />
-                    <span className="font-medium">Download</span>
+                    Download
                 </button>
                 <button
-                    onClick={shareToWhatsApp}
-                    className="flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25D366] text-white rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg hover:shadow-xl active:scale-95"
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl"
                 >
                     <Share2 className="w-5 h-5" />
-                    <span className="font-medium">Share WA</span>
+                    Share
                 </button>
             </div>
+
+            {/* Info Text */}
+            <p className="text-center text-sm text-gray-500">
+                Bagikan tracking kamu ke Instagram atau WhatsApp Story! 📸
+            </p>
         </div>
     );
 }
-
-export default ShareableCard;
