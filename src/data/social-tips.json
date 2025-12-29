@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "category": "TIPS KIRIM",
+        "title": "Jangan Kirim Powerbank via Udara!",
+        "content": "Baterai Lithium dianggap Dangerous Goods di pesawat. Gunakan kargo darat jika ingin kirim powerbank agar tidak diretur bandara."
+    },
+    {
+        "id": 2,
+        "category": "PACKING HACK",
+        "title": "Rumus Packing Aman: 3 Lapis",
+        "content": "1. Bubble Wrap tebal.\n2. Kardus Corrugated keras.\n3. Lakban keliling penuh (H method). Anti bonyok!"
+    },
+    {
+        "id": 3,
+        "category": "HEMAT ONGKIR",
+        "title": "Kirim Banyak? Pakai Cargo!",
+        "content": "Untuk paket di atas 10kg, JNE Trucking (JTR) atau J&T Cargo bisa hemat ongkir hingga 70% dibanding reguler."
+    }
+]
