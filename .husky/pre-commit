@@ -1,13 +1,10 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-echo "ðŸ›¡ï¸  GUARD: Checking code before commit..."
+echo "🛡️  GUARD: Checking code before commit..."
 
 # 1. Run Lint-Staged
 echo "   [1/2] Running Lint-Staged..."
 npx lint-staged
 if [ $? -ne 0 ]; then
-    echo "   âŒ Linting Failed! Auto-fix couldn't resolve everything."
+    echo "   ❌ Linting Failed! Auto-fix couldn't resolve everything."
     echo "      Please fix the errors above."
     exit 1
 fi
@@ -16,9 +13,9 @@ fi
 echo "   [2/2] Checking Types (tsc)..."
 npx tsc --noEmit
 if [ $? -ne 0 ]; then
-    echo "   âŒ Type Check Failed!"
+    echo "   ❌ Type Check Failed!"
     echo "      FIX ERROR FIRST!"
     exit 1
 fi
 
-echo "   âœ… Code is clean. Committing..."
+echo "   ✅ Code is clean. Committing..."
