@@ -94,14 +94,14 @@ export async function processBulkPayout(withdrawalIds: string[]) {
                 user_id: withdrawal.user_id,
                 amount: -withdrawal.amount,
                 type: 'WITHDRAWAL',
-                description: `Pencairan Dana #${withdrawal.id.slice(0, 8)}`
+                description: \`Pencairan Dana #\${withdrawal.id.slice(0, 8)}\`
             });
 
             results.success++;
             results.totalAmount += Number(withdrawal.amount);
 
         } catch (error) {
-            console.error(`Failed to process withdrawal ${withdrawal.id}:`, error);
+            console.error(\`Failed to process withdrawal \${withdrawal.id}:\`, error);
             
             // Mark as FAILED
             await supabase
@@ -171,7 +171,7 @@ export function BulkPayoutPanel({ withdrawals }: BulkPayoutPanelProps) {
         }
 
         // Safety Confirmation
-        const confirmMessage = `Anda akan mentransfer total Rp ${totalAmount.toLocaleString('id-ID')} ke ${selected.size} User.\n\nLanjutkan?`;
+        const confirmMessage = \`Anda akan mentransfer total Rp \${totalAmount.toLocaleString('id-ID')} ke \${selected.size} User.\n\nLanjutkan?\`;
         
         if (!confirm(confirmMessage)) {
             return;
@@ -185,7 +185,7 @@ export function BulkPayoutPanel({ withdrawals }: BulkPayoutPanelProps) {
             
             toast.dismiss();
             toast.success(
-                `Berhasil: ${results.success} | Gagal: ${results.failed}\nTotal: Rp ${results.totalAmount.toLocaleString('id-ID')}`,
+                \`Berhasil: \${results.success} | Gagal: \${results.failed}\nTotal: Rp \${results.totalAmount.toLocaleString('id-ID')}\`,
                 { duration: 5000 }
             );
 
@@ -271,7 +271,7 @@ export function BulkPayoutPanel({ withdrawals }: BulkPayoutPanelProps) {
                             withdrawals.map(withdrawal => (
                                 <tr 
                                     key={withdrawal.id}
-                                    className={`hover:bg-gray-50 cursor-pointer ${selected.has(withdrawal.id) ? 'bg-blue-50' : ''}`}
+                                    className={\`hover:bg-gray-50 cursor-pointer \${selected.has(withdrawal.id) ? 'bg-blue-50' : ''}\`}
                                     onClick={() => toggleSelection(withdrawal.id)}
                                 >
                                     <td className="px-4 py-3">
