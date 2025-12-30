@@ -15,7 +15,6 @@ export function BiometricLogin() {
         try {
             // 1. Get Challenge from Server
             const resp = await fetch('/api/auth/webauthn/generate-options');
-            if (!resp.ok) throw new Error('Auth init failed');
             const options = await resp.json();
 
             // 2. Pass to Browser/Device (FaceID/TouchID)

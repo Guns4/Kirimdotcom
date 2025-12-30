@@ -17,7 +17,7 @@ export function BottomNav() {
     ];
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 flex justify-between items-center z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 flex justify-between items-center z-50 pb-safe">
             {navItems.map((item) => (
                 <Link
                     key={item.href}
@@ -25,7 +25,7 @@ export function BottomNav() {
                     className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${isActive(item.href) ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
                         }`}
                 >
-                    <item.icon className={`w-6 h-6 ${isActive(item.href) ? 'fill-current' : ''}`} />
+                    <item.icon className="w-6 h-6" />
                     <span className="text-[10px] font-medium">{item.label}</span>
                 </Link>
             ))}

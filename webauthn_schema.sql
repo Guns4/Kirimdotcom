@@ -16,10 +16,6 @@ CREATE INDEX IF NOT EXISTS idx_authenticators_user ON public.user_authenticators
 -- RLS
 ALTER TABLE user_authenticators ENABLE ROW LEVEL SECURITY;
 
-DO $$ BEGIN
-    CREATE POLICY "Users can manage their own authenticators" ON user_authenticators
-        FOR ALL TO authenticated
-        USING (auth.uid() = user_id);
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+CREATE POLICY "Users can manage their own authenticators" ON user_authenticators
+    FOR ALL TO authenticated
+    USING (auth.uid() = user_id);
