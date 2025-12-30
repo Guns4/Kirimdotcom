@@ -8,7 +8,7 @@ export async function GET(request: Request) {
         return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // 1. Find Targets
     // CHURN_RISK, and haven't received a campaign in 30 days
@@ -26,9 +26,11 @@ export async function GET(request: Request) {
         return NextResponse.json({ processed: 0, message: 'No targets found' });
     }
 
+    const validTargets = targets as any[];
+
     let sentCount = 0;
 
-    for (const target of targets) {
+    for (const target of validTargets) {
         // 2. Generate Voucher
         const code = `WB-${target.user_id.split('-')[0].toUpperCase()}`; // Simple Code
         const expires = new Date();
@@ -41,12 +43,12 @@ export async function GET(request: Request) {
             discount_amount: 5000, // Rp 5.000
             max_usage: 1,
             expires_at: expires.toISOString()
-        }, { onConflict: 'code' }); // If code exists, skip/update (idempotent)
+        } as any, { onConflict: 'code' }); // If code exists, skip/update (idempotent)
 
         if (!error) {
             // 3. Mark Campaign Sent
             await supabase.from('user_segments')
-                .update({ last_campaign_at: new Date().toISOString() })
+                .update({ last_campaign_at: new Date().toISOString() } as any)
                 .eq('user_id', target.user_id);
 
             // 4. Mock Send
@@ -57,7 +59,11 @@ export async function GET(request: Request) {
     }
 
     if (sentCount > 0) {
-        await sendAdminAlert('Winback Campaign Run', `Sent ${sentCount} vouchers to Churn Risk users.`);
+        await sendAdminAlert({
+            subject: 'Winback Campaign Run',
+            message: `Sent ${sentCount} vouchers to Churn Risk users.`,
+            severity: 'info'
+        });
     }
 
     return NextResponse.json({ processed: sentCount, targets: targets.length });

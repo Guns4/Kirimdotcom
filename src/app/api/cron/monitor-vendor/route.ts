@@ -25,35 +25,34 @@ export async function GET(request: Request) {
     if (balance < 50000) {
         // Enable Maintenance Mode for key features
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'true' }, { onConflict: 'key' }); // Store as string or boolean depending on schema
+            .upsert({ key: 'ppob_maintenance_mode', value: 'true' } as any, { onConflict: 'key' });
 
-        await sendAdminAlert(
-            'CRITICAL: PPOB VENDOR EMPTY',
-            `Balance is Rp ${balance.toLocaleString('id-ID')}. PPOB System has been AUTO-LOCKED to prevent failures.`
-        );
+        await sendAdminAlert({
+            subject: 'CRITICAL: PPOB VENDOR EMPTY',
+            message: `Balance is Rp ${balance.toLocaleString('id-ID')}. PPOB System has been AUTO-LOCKED to prevent failures.`,
+            severity: 'critical'
+        });
         return NextResponse.json({ status: 'CRITICAL', balance, action: 'LOCKED' });
     }
 
     // 2. Warning Level (< 500k) -> ALERT ONLY
     else if (balance < 500000) {
         // Ensure system is unlocked if it was unlocked before (optimistic)
-        // Only unlock if we want to auto-recover. Usually safer to manual unlock from critical.
-        // But the requirement says "Ensure system is unlocked if it was locked before"
-
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'false' }, { onConflict: 'key' });
+            .upsert({ key: 'ppob_maintenance_mode', value: 'false' } as any, { onConflict: 'key' });
 
-        await sendAdminAlert(
-            'WARNING: PPOB BALANCE LOW',
-            `Balance is Rp ${balance.toLocaleString('id-ID')}. Please Top Up immediately.`
-        );
+        await sendAdminAlert({
+            subject: 'WARNING: PPOB BALANCE LOW',
+            message: `Balance is Rp ${balance.toLocaleString('id-ID')}. Please Top Up immediately.`,
+            severity: 'warning'
+        });
         return NextResponse.json({ status: 'WARNING', balance, action: 'ALERT_SENT' });
     }
 
     // 3. Healthy -> ENSURE UNLOCKED
     else {
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'false' }, { onConflict: 'key' });
+            .upsert({ key: 'ppob_maintenance_mode', value: 'false' } as any, { onConflict: 'key' });
 
         return NextResponse.json({ status: 'HEALTHY', balance });
     }
