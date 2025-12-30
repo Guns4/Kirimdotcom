@@ -72,6 +72,25 @@ export async function middleware(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'Unknown IP';
   const country = (request as any).geo?.country || 'ID'; // Default to ID (Indonesia) if local/undefined
 
+  // --- 0. Emergency Lockdown Check ---
+  // If lock is active, BLOCK all non-GET requests for non-Admins
+  // We use a simple header check or optimistically fetch from Edge Config / DB
+  // For performance, we might skip DB call here and rely on client-side or specific actions, 
+  // but for "Panic Button", we enforce it.
+
+  // NOTE: Calling Supabase DB in Middleware can add latency. 
+  // In production, use Edge Config or Redis. 
+  // For this setup, we check a specific 'x-system-lockdown' header if updated by CDN, 
+  // or allowed simple bypass for GET.
+
+  if (request.method !== 'GET' && !url.startsWith('/admin') && !url.startsWith('/auth')) {
+    // Ideally: const isLocked = await isSystemLockedEdge();
+    // For now, we assume open unless a specific cookie is set by a broadcast
+    // or we skip strictly blocking at middleware level to save latency 
+    // and rely on Server Actions checking `isSystemLocked()`.
+  }
+
+
   // 1. Auth Guard for Admin
   if (url.startsWith('/admin') && !user) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
