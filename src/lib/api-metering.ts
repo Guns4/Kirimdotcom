@@ -64,12 +64,12 @@ export async function handleMeteredRequest(
     // 4. Call atomic metering function
     const supabase = await createClient();
 
-    const { data, error } = await supabase.rpc('meter_api_request', {
+    const { data, error } = await (supabase as any).rpc('meter_api_request', {
       p_key_hash: hashedKey,
       p_cost: cost,
       p_endpoint: endpoint,
       p_method: req.method,
-      p_ip: req.ip || req.headers.get('x-forwarded-for') || 'unknown',
+      p_ip: (req as any).ip || req.headers.get('x-forwarded-for') || 'unknown',
     });
 
     // Handle RPC errors

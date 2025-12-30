@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Lightbulb, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Sparkles, Lightbulb, AlertTriangle } from 'lucide-react';
 
 interface AIInsightProps {
   message: string;

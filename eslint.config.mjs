@@ -28,6 +28,13 @@ const eslintConfig = [
         ]
     },
     {
+        files: ["**/*.ts", "**/*.tsx"],
+        plugins: {
+            "@typescript-eslint": (await import("@typescript-eslint/eslint-plugin")).default
+        },
+        languageOptions: {
+            parser: (await import("@typescript-eslint/parser")).default,
+        },
         rules: {
             "react-hooks/rules-of-hooks": "error",
             "react-hooks/exhaustive-deps": "warn",

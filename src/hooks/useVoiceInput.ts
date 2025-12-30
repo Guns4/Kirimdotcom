@@ -122,12 +122,11 @@ export function useVoiceInput(
     // Remove spaces inside potential resi numbers spoken as digits?
     // "satu dua tiga" -> "1 2 3" -> "123"
     // This is complex, but basic regex for now:
-    const words = text.split(' ');
+    // const words = text.split(' ');
     // Try to find a "word" that looks like a resi (regex: alphanumeric, length > 5)
     // Or remove spaces and check?
 
     // Simple heuristic: Look for digit-heavy block
-    const digitBlockRegex = /[A-Z0-9]{8,}/i;
     // Also handling spoken digits is tricky without a dedicated library,
     // relying on Web Speech API standard digit output for "123"
 

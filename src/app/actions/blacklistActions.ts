@@ -36,9 +36,12 @@ export async function checkCustomerRisk(
     }
 
     // Calculate risk
-    const { data, error } = await supabase.rpc('calculate_customer_risk', {
-      p_customer_phone: cleanPhone,
-    });
+    const { data, error } = await (supabase as any).rpc(
+      'calculate_customer_risk',
+      {
+        p_customer_phone: cleanPhone,
+      }
+    );
 
     if (error || !data || data.length === 0) {
       return {
@@ -124,14 +127,17 @@ export async function submitBlacklistReport(
 
     const cleanPhone = customerPhone.replace(/\D/g, '');
 
-    const { data, error } = await supabase.rpc('submit_blacklist_report', {
-      p_reporter_id: user.id,
-      p_customer_phone: cleanPhone,
-      p_customer_name: customerName,
-      p_reason: reason,
-      p_description: description,
-      p_proof_url: proofImageUrl,
-    });
+    const { data, error } = await (supabase as any).rpc(
+      'submit_blacklist_report',
+      {
+        p_reporter_id: user.id,
+        p_customer_phone: cleanPhone,
+        p_customer_name: customerName,
+        p_reason: reason,
+        p_description: description,
+        p_proof_url: proofImageUrl,
+      }
+    );
 
     if (error) {
       console.error('Error submitting report:', error);
@@ -170,7 +176,7 @@ export async function getMyReports() {
       return { data: null, error: 'Not authenticated' };
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('blacklist_reports')
       .select('*')
       .eq('reporter_id', user.id)
