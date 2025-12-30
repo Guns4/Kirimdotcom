@@ -1,60 +1,157 @@
-'use client';
-
-import { useState } from 'react';
-import { Printer, Check, Bluetooth } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Printer, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { printerService } from '@/lib/printer-service';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'sonner';
 
-export default function ReceiptPrinter() {
-    const [connected, setConnected] = useState(false);
-    const [loading, setLoading] = useState(false);
+interface ReceiptPrinterProps {
+  onPrint?: () => void;
+  transactionData?: any; // Pass data to print when ready
+}
 
-    const handleConnect = async () => {
-        setLoading(true);
-        try {
-            await printerService.connect();
-            setConnected(true);
-        } catch (e) {
-            alert('Gagal koneksi printer. Pastikan Bluetooth aktif dan browser support Web Bluetooth.');
-        } finally {
-            setLoading(false);
-        }
-    };
+export function ReceiptPrinter({ transactionData }: ReceiptPrinterProps) {
+  const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
-    const testPrint = async () => {
-        if (!connected) return;
-        try {
-            await printerService.print(`
-          CEKKIRIM.COM
-          Agent Receipt Test
-          ------------------
-          Date: ${new Date().toLocaleDateString()}
-          Status: OK
-          ------------------
-          Terima Kasih
-          `);
-        } catch (e) {
-            alert('Print Error');
-        }
-    };
+  const handleConnect = async () => {
+    setIsConnecting(true);
+    try {
+      await printerService.connect();
+      setIsConnected(true);
+      toast.success('Printer connected successfully');
+    } catch (error: any) {
+      toast.error('Failed to connect printer', {
+        description: error.message,
+      });
+      setIsConnected(false);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
-    return (
-        <div className="flex items-center gap-2">
-            <button
-                onClick={connected ? testPrint : handleConnect}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${connected
-                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-            >
-                {loading ? (
-                    <span className="animate-spin">⌛</span>
-                ) : connected ? (
-                    <><Printer className="w-4 h-4" /> Test Print</>
+  const handleDisconnect = async () => {
+    try {
+      await printerService.disconnect();
+      setIsConnected(false);
+      toast.info('Printer disconnected');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handlePrintTest = async () => {
+    if (!isConnected) {
+      toast.error('Printer not connected');
+      return;
+    }
+
+    setIsPrinting(true);
+    try {
+      await printerService.printText('TEST PRINT SUCCESS', 'CENTER');
+      await printerService.printText(
+        '--------------------------------',
+        'CENTER'
+      );
+      await printerService.feed(2);
+      await printerService.cut();
+      toast.success('Test print sent');
+    } catch (error: any) {
+      toast.error('Print failed', { description: error.message });
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
+  const handlePrintReceipt = async () => {
+    if (!transactionData) return;
+
+    setIsPrinting(true);
+    try {
+      await printerService.printReceipt(transactionData);
+      toast.success('Receipt printed');
+    } catch (error: any) {
+      toast.error('Print failed', { description: error.message });
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium flex items-center justify-between">
+          <span>Receipt Printer</span>
+          {isConnected ? (
+            <span className="text-green-500 flex items-center text-xs gap-1">
+              <CheckCircle size={14} /> Connected
+            </span>
+          ) : (
+            <span className="text-zinc-500 flex items-center text-xs gap-1">
+              <XCircle size={14} /> Disconnected
+            </span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {!isConnected ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={handleConnect}
+            disabled={isConnecting}
+          >
+            {isConnecting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Connecting...
+              </>
+            ) : (
+              <>
+                <Printer className="mr-2 h-4 w-4" /> Connect Bluetooth Printer
+              </>
+            )}
+          </Button>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+                onClick={handlePrintTest}
+                disabled={isPrinting}
+              >
+                Test Print
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDisconnect}
+              >
+                Disconnect
+              </Button>
+            </div>
+
+            {transactionData && (
+              <Button
+                size="sm"
+                className="w-full"
+                onClick={handlePrintReceipt}
+                disabled={isPrinting}
+              >
+                {isPrinting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                    <><Bluetooth className="w-4 h-4" /> Connect Printer</>
+                  <Printer className="mr-2 h-4 w-4" />
                 )}
-            </button>
-            {connected && <span className="text-green-500"><Check className="w-4 h-4" /></span>}
-        </div>
-    );
+                Print Last Receipt
+              </Button>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
