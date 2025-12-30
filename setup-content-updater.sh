@@ -10,7 +10,7 @@ echo ">>> Setting up Content Freshness System..."
 echo ">>> Creating scripts/run-refresh.ts..."
 
 cat << 'EOF' > scripts/run-refresh.ts
-import { ContentRefresher } from '../src/lib/content-refresher.ts';
+import { ContentRefresher } from '../src/lib/content-refresher';
 
 // Get current year
 const currentYear = new Date().getFullYear();

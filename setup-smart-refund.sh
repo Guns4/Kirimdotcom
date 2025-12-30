@@ -110,7 +110,7 @@ echo ">>> Creating src/app/actions/ticket-refund.ts..."
 cat << 'EOF' > src/app/actions/ticket-refund.ts
 'use server';
 
-import { SmartRefundSystem } from '@/lib/smart-refund.ts';
+import { SmartRefundSystem } from '@/lib/smart-refund';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
