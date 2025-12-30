@@ -1,9 +1,5 @@
 -- Enum: Dispute Status
-DO $$ BEGIN
-    CREATE TYPE dispute_status AS ENUM ('OPEN', 'INVESTIGATING', 'RESOLVED_BUYER', 'RESOLVED_SELLER', 'CANCELLED');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+CREATE TYPE dispute_status AS ENUM ('OPEN', 'INVESTIGATING', 'RESOLVED_BUYER', 'RESOLVED_SELLER', 'CANCELLED');
 
 -- Table: Disputes
 CREATE TABLE IF NOT EXISTS public.disputes (
@@ -55,26 +51,14 @@ ALTER TABLE dispute_evidence ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Admins can view all
 -- (Requires admin_profiles table from Task 93)
-DO $$ BEGIN
-    CREATE POLICY "Admins can view disputes" ON disputes
-        FOR ALL TO authenticated
-        USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+CREATE POLICY "Admins can view disputes" ON disputes
+    FOR ALL TO authenticated
+    USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));
 
-DO $$ BEGIN
-    CREATE POLICY "Admins can view messages" ON dispute_messages
-        FOR ALL TO authenticated
-        USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+CREATE POLICY "Admins can view messages" ON dispute_messages
+    FOR ALL TO authenticated
+    USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));
 
-DO $$ BEGIN
-    CREATE POLICY "Admins can view evidence" ON dispute_evidence
-        FOR ALL TO authenticated
-        USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+CREATE POLICY "Admins can view evidence" ON dispute_evidence
+    FOR ALL TO authenticated
+    USING (EXISTS (SELECT 1 FROM admin_profiles WHERE id = auth.uid()));

@@ -128,7 +128,7 @@ export async function resolveDispute(
             user_id: dispute.buyer_id,
             amount: dispute.amount,
             type: 'DISPUTE_REFUND',
-            description: `Refund dari Sengketa #${disputeId.slice(0, 8)}`
+            description: \`Refund dari Sengketa #\${disputeId.slice(0, 8)}\`
         });
     } else {
         // Release payment to seller
@@ -136,7 +136,7 @@ export async function resolveDispute(
             user_id: dispute.seller_id,
             amount: dispute.amount,
             type: 'DISPUTE_RELEASE',
-            description: `Pembayaran dari Sengketa #${disputeId.slice(0, 8)}`
+            description: \`Pembayaran dari Sengketa #\${disputeId.slice(0, 8)}\`
         });
     }
 
@@ -203,14 +203,14 @@ export function DisputePanel({ dispute, messages, evidence }: DisputePanelProps)
             return;
         }
 
-        if (!confirm(`Yakin ${winner === 'BUYER' ? 'menangkan Pembeli' : 'menangkan Seller'}?`)) {
+        if (!confirm(\`Yakin \${winner === 'BUYER' ? 'menangkan Pembeli' : 'menangkan Seller'}?\`)) {
             return;
         }
 
         setLoading(true);
         try {
             const result = await resolveDispute(dispute.id, winner, notes);
-            toast.success(`Sengketa diselesaikan! ${winner === 'BUYER' ? 'Pembeli' : 'Seller'} menerima Rp ${result.amount.toLocaleString('id-ID')}`);
+            toast.success(\`Sengketa diselesaikan! \${winner === 'BUYER' ? 'Pembeli' : 'Seller'} menerima Rp \${result.amount.toLocaleString('id-ID')}\`);
         } catch (error: any) {
             toast.error(error.message || 'Gagal menyelesaikan sengketa');
         } finally {
@@ -229,9 +229,9 @@ export function DisputePanel({ dispute, messages, evidence }: DisputePanelProps)
                         <h2 className="text-xl font-bold text-gray-900">Sengketa #{dispute.id.slice(0, 8)}</h2>
                         <p className="text-sm text-gray-500">Order ID: {dispute.order_id}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    <span className={\`px-3 py-1 rounded-full text-xs font-bold \${
                         isResolved ? 'bg-gray-200 text-gray-700' : 'bg-red-100 text-red-700'
-                    }`}>
+                    }\`}>
                         {dispute.status}
                     </span>
                 </div>
@@ -271,14 +271,14 @@ export function DisputePanel({ dispute, messages, evidence }: DisputePanelProps)
                         <p className="text-sm text-gray-500 text-center py-4">Belum ada percakapan</p>
                     ) : (
                         messages.map(msg => (
-                            <div key={msg.id} className={`flex ${msg.sender_type === 'BUYER' ? 'justify-start' : 'justify-end'}`}>
-                                <div className={`max-w-[70%] p-3 rounded-lg ${
+                            <div key={msg.id} className={\`flex \${msg.sender_type === 'BUYER' ? 'justify-start' : 'justify-end'}\`}>
+                                <div className={\`max-w-[70%] p-3 rounded-lg \${
                                     msg.sender_type === 'BUYER' 
                                         ? 'bg-blue-100 text-blue-900' 
                                         : msg.sender_type === 'SELLER'
                                         ? 'bg-orange-100 text-orange-900'
                                         : 'bg-gray-100 text-gray-900'
-                                }`}>
+                                }\`}>
                                     <p className="text-xs font-semibold mb-1">{msg.sender_type} ({msg.sender?.email})</p>
                                     <p className="text-sm">{msg.message}</p>
                                     <p className="text-xs text-gray-500 mt-1">
@@ -428,11 +428,11 @@ export default async function DisputesPage() {
                                     Rp {Number(dispute.amount).toLocaleString('id-ID')}
                                 </td>
                                 <td className="px-4 py-3">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                    <span className={\`px-2 py-1 rounded-full text-xs font-bold \${
                                         dispute.status === 'OPEN' ? 'bg-red-100 text-red-700' :
                                         dispute.status === 'INVESTIGATING' ? 'bg-yellow-100 text-yellow-700' :
                                         'bg-gray-200 text-gray-700'
-                                    }`}>
+                                    }\`}>
                                         {dispute.status}
                                     </span>
                                 </td>
@@ -441,7 +441,7 @@ export default async function DisputesPage() {
                                 </td>
                                 <td className="px-4 py-3">
                                     <Link 
-                                        href={`/admin/disputes/${dispute.id}`}
+                                        href={\`/admin/disputes/\${dispute.id}\`}
                                         className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                     >
                                         Lihat Detail →
