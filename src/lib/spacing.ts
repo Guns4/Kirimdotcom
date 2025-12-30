@@ -8,15 +8,15 @@
 // ============================================
 
 export const CONTAINER = {
-    // Max widths
-    sm: 'max-w-3xl',      // 768px - Blog content
-    md: 'max-w-5xl',      // 1024px - Default pages
-    lg: 'max-w-6xl',      // 1152px - Wide content
-    xl: 'max-w-7xl',      // 1280px - Full width sections
-    full: 'max-w-full',   // No limit
+  // Max widths
+  sm: 'max-w-3xl', // 768px - Blog content
+  md: 'max-w-5xl', // 1024px - Default pages
+  lg: 'max-w-6xl', // 1152px - Wide content
+  xl: 'max-w-7xl', // 1280px - Full width sections
+  full: 'max-w-full', // No limit
 
-    // Default container class
-    default: 'container mx-auto px-4 max-w-7xl',
+  // Default container class
+  default: 'container mx-auto px-4 max-w-7xl',
 };
 
 // ============================================
@@ -24,15 +24,15 @@ export const CONTAINER = {
 // ============================================
 
 export const SECTION = {
-    // Vertical padding for sections
-    sm: 'py-8 lg:py-12',
-    md: 'py-12 lg:py-16',
-    lg: 'py-16 lg:py-20',
-    xl: 'py-20 lg:py-28',
-    hero: 'py-20 lg:py-32',
+  // Vertical padding for sections
+  sm: 'py-8 lg:py-12',
+  md: 'py-12 lg:py-16',
+  lg: 'py-16 lg:py-20',
+  xl: 'py-20 lg:py-28',
+  hero: 'py-20 lg:py-32',
 
-    // Default section padding
-    default: 'py-16 lg:py-20',
+  // Default section padding
+  default: 'py-16 lg:py-20',
 };
 
 // ============================================
@@ -40,23 +40,23 @@ export const SECTION = {
 // ============================================
 
 export const TYPOGRAPHY = {
-    // Headings
-    h1: 'text-3xl lg:text-5xl font-bold leading-tight tracking-tight',
-    h2: 'text-2xl lg:text-4xl font-bold leading-tight',
-    h3: 'text-xl lg:text-2xl font-semibold leading-snug',
-    h4: 'text-lg lg:text-xl font-semibold leading-snug',
+  // Headings
+  h1: 'text-3xl lg:text-5xl font-bold leading-tight tracking-tight',
+  h2: 'text-2xl lg:text-4xl font-bold leading-tight',
+  h3: 'text-xl lg:text-2xl font-semibold leading-snug',
+  h4: 'text-lg lg:text-xl font-semibold leading-snug',
 
-    // Body text
-    body: 'text-base leading-relaxed',
-    bodyLarge: 'text-lg leading-relaxed',
-    bodySm: 'text-sm leading-relaxed',
+  // Body text
+  body: 'text-base leading-relaxed',
+  bodyLarge: 'text-lg leading-relaxed',
+  bodySm: 'text-sm leading-relaxed',
 
-    // Lead paragraph (description under headings)
-    lead: 'text-lg lg:text-xl text-surface-500 leading-relaxed',
+  // Lead paragraph (description under headings)
+  lead: 'text-lg lg:text-xl text-surface-500 leading-relaxed',
 
-    // Small/caption text
-    caption: 'text-xs text-surface-500 leading-normal',
-    label: 'text-sm font-medium text-surface-700',
+  // Small/caption text
+  caption: 'text-xs text-surface-500 leading-normal',
+  label: 'text-sm font-medium text-surface-700',
 };
 
 // ============================================
@@ -64,21 +64,21 @@ export const TYPOGRAPHY = {
 // ============================================
 
 export const SPACING = {
-    // Stack spacing (vertical gaps)
-    stackSm: 'space-y-4',
-    stackMd: 'space-y-6',
-    stackLg: 'space-y-8',
-    stackXl: 'space-y-12',
+  // Stack spacing (vertical gaps)
+  stackSm: 'space-y-4',
+  stackMd: 'space-y-6',
+  stackLg: 'space-y-8',
+  stackXl: 'space-y-12',
 
-    // Grid gaps
-    gridSm: 'gap-4',
-    gridMd: 'gap-6',
-    gridLg: 'gap-8',
+  // Grid gaps
+  gridSm: 'gap-4',
+  gridMd: 'gap-6',
+  gridLg: 'gap-8',
 
-    // Inline spacing (horizontal gaps)
-    inlineSm: 'space-x-2',
-    inlineMd: 'space-x-4',
-    inlineLg: 'space-x-6',
+  // Inline spacing (horizontal gaps)
+  inlineSm: 'space-x-2',
+  inlineMd: 'space-x-4',
+  inlineLg: 'space-x-6',
 };
 
 // ============================================
@@ -86,11 +86,11 @@ export const SPACING = {
 // ============================================
 
 export const CARD = {
-    padding: 'p-6',
-    paddingSm: 'p-4',
-    paddingLg: 'p-8',
-    rounded: 'rounded-2xl',
-    shadow: 'shadow-sm hover:shadow-md transition-shadow',
+  padding: 'p-6',
+  paddingSm: 'p-4',
+  paddingLg: 'p-8',
+  rounded: 'rounded-2xl',
+  shadow: 'shadow-sm hover:shadow-md transition-shadow',
 };
 
 // ============================================
@@ -101,22 +101,22 @@ export const CARD = {
  * Section wrapper with proper spacing
  */
 export const sectionClasses = (variant: keyof typeof SECTION = 'default') => {
-    return `${SECTION[variant]}`;
+  return `${SECTION[variant]}`;
 };
 
 /**
  * Container wrapper
  */
 export const containerClasses = (width: keyof typeof CONTAINER = 'default') => {
-    if (width === 'default') return CONTAINER.default;
-    return `container mx-auto px-4 ${CONTAINER[width]}`;
+  if (width === 'default') return CONTAINER.default;
+  return `container mx-auto px-4 ${CONTAINER[width]}`;
 };
 
 /**
  * Typography presets
  */
 export const textClasses = (variant: keyof typeof TYPOGRAPHY) => {
-    return TYPOGRAPHY[variant];
+  return TYPOGRAPHY[variant];
 };
 
 // ============================================
@@ -153,12 +153,12 @@ export const CSS_VARIABLES = `
 `;
 
 export default {
-    CONTAINER,
-    SECTION,
-    TYPOGRAPHY,
-    SPACING,
-    CARD,
-    sectionClasses,
-    containerClasses,
-    textClasses,
+  CONTAINER,
+  SECTION,
+  TYPOGRAPHY,
+  SPACING,
+  CARD,
+  sectionClasses,
+  containerClasses,
+  textClasses,
 };

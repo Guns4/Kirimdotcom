@@ -1,4 +1,4 @@
--- Table to store validated bank accounts
+﻿-- Table to store validated bank accounts
 CREATE TABLE IF NOT EXISTS public.saved_bank_accounts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
@@ -22,3 +22,5 @@ FOR SELECT USING (auth.uid() = user_id);
 
 CREATE POLICY "Users delete own accounts" ON public.saved_bank_accounts
 FOR DELETE USING (auth.uid() = user_id);
+
+-- Insert strictly controlled via Server Action/API (No direct INSERT policy for now)

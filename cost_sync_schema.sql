@@ -1,4 +1,4 @@
--- Table to link local products to provider codes
+﻿-- Table to link local products to provider codes
 CREATE TABLE IF NOT EXISTS public.provider_products (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     product_code TEXT UNIQUE NOT NULL, -- Internal SKU

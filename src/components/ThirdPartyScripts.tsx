@@ -3,38 +3,38 @@
 import Script from 'next/script';
 
 interface ThirdPartyScriptsProps {
-    gaId?: string;
-    adsenseId?: string;
-    monetagId?: string;
-    crispId?: string;
+  gaId?: string;
+  adsenseId?: string;
+  monetagId?: string;
+  crispId?: string;
 }
 
 /**
  * Third-Party Scripts Component
  * Handles all external scripts with optimal loading strategy
- * 
+ *
  * Loading Strategies:
  * - beforeInteractive: Critical scripts (rarely needed)
  * - afterInteractive: Needed early (chat widgets)
  * - lazyOnload: Analytics, ads, tracking (recommended for most)
  */
 export function ThirdPartyScripts({
-    gaId,
-    adsenseId,
-    monetagId,
-    crispId,
+  gaId,
+  adsenseId,
+  monetagId,
+  crispId,
 }: ThirdPartyScriptsProps) {
-    return (
+  return (
+    <>
+      {/* Google Analytics - lazyOnload for better performance */}
+      {gaId && (
         <>
-            {/* Google Analytics - lazyOnload for better performance */}
-            {gaId && (
-                <>
-                    <Script
-                        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-                        strategy="lazyOnload"
-                    />
-                    <Script id="google-analytics" strategy="lazyOnload">
-                        {`
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            strategy="lazyOnload"
+          />
+          <Script id="google-analytics" strategy="lazyOnload">
+            {`
                             window.dataLayer = window.dataLayer || [];
                             function gtag(){dataLayer.push(arguments);}
                             gtag('js', new Date());
@@ -42,31 +42,31 @@ export function ThirdPartyScripts({
                                 page_path: window.location.pathname,
                             });
                         `}
-                    </Script>
-                </>
-            )}
+          </Script>
+        </>
+      )}
 
-            {/* Google AdSense - lazyOnload */}
-            {adsenseId && (
-                <Script
-                    src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-                    strategy="lazyOnload"
-                    crossOrigin="anonymous"
-                />
-            )}
+      {/* Google AdSense - lazyOnload */}
+      {adsenseId && (
+        <Script
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
+      )}
 
-            {/* Monetag - lazyOnload */}
-            {monetagId && (
-                <Script
-                    src={`https://alwingulla.com/88/${monetagId}/invoke.js`}
-                    strategy="lazyOnload"
-                />
-            )}
+      {/* Monetag - lazyOnload */}
+      {monetagId && (
+        <Script
+          src={`https://alwingulla.com/88/${monetagId}/invoke.js`}
+          strategy="lazyOnload"
+        />
+      )}
 
-            {/* Crisp Chat - afterInteractive (users might need support early) */}
-            {crispId && (
-                <Script id="crisp-chat" strategy="afterInteractive">
-                    {`
+      {/* Crisp Chat - afterInteractive (users might need support early) */}
+      {crispId && (
+        <Script id="crisp-chat" strategy="afterInteractive">
+          {`
                         window.$crisp=[];
                         window.CRISP_WEBSITE_ID="${crispId}";
                         (function(){
@@ -77,27 +77,27 @@ export function ThirdPartyScripts({
                             d.getElementsByTagName("head")[0].appendChild(s);
                         })();
                     `}
-                </Script>
-            )}
+        </Script>
+      )}
 
-            {/* Preconnect to external domains for faster loading */}
-            <link rel="preconnect" href="https://www.google-analytics.com" />
-            <link rel="preconnect" href="https://www.googletagmanager.com" />
-            {adsenseId && (
-                <>
-                    <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
-                    <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
-                </>
-            )}
+      {/* Preconnect to external domains for faster loading */}
+      <link rel="preconnect" href="https://www.google-analytics.com" />
+      <link rel="preconnect" href="https://www.googletagmanager.com" />
+      {adsenseId && (
+        <>
+          <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+          <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         </>
-    );
+      )}
+    </>
+  );
 }
 
 /**
  * Usage in layout.tsx:
- * 
+ *
  * import { ThirdPartyScripts } from '@/components/ThirdPartyScripts';
- * 
+ *
  * export default function RootLayout({ children }) {
  *   return (
  *     <html>

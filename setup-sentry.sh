@@ -35,7 +35,7 @@ export default function SentryDebugPage() {
         onClick={() => setError(true)}
         className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
       >
-        💣 Trigger Crash
+        ⚠️ Trigger Crash
       </button>
     </div>
   );

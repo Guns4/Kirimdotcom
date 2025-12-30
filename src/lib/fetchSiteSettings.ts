@@ -1,12 +1,12 @@
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server';
 // import type { SiteSettings } from '@/types/database.types'
 
 interface SiteSettings {
-    site_name: string;
-    site_description: string;
-    site_url: string;
-    maintenance_mode: boolean;
-    [key: string]: any;
+  site_name: string;
+  site_description: string;
+  site_url: string;
+  maintenance_mode: boolean;
+  [key: string]: any;
 }
 
 /**
@@ -14,25 +14,25 @@ interface SiteSettings {
  * Used in Server Components and Server Actions
  */
 export async function fetchSiteSettings(): Promise<SiteSettings | null> {
-    try {
-        const supabase = await createClient()
+  try {
+    const supabase = await createClient();
 
-        const { data, error } = await supabase
-            .from('site_settings')
-            .select('*')
-            .limit(1)
-            .single()
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('*')
+      .limit(1)
+      .single();
 
-        if (error) {
-            console.error('Error fetching site settings:', error.message)
-            return null
-        }
-
-        return data
-    } catch (error) {
-        console.error('Failed to fetch site settings:', error)
-        return null
+    if (error) {
+      console.error('Error fetching site settings:', error.message);
+      return null;
     }
+
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch site settings:', error);
+    return null;
+  }
 }
 
 /**
@@ -40,20 +40,20 @@ export async function fetchSiteSettings(): Promise<SiteSettings | null> {
  * Used in Client Components
  */
 export async function fetchSiteSettingsClient(): Promise<SiteSettings | null> {
-    try {
-        const response = await fetch('/api/site-settings', {
-            method: 'GET',
-            cache: 'no-cache',
-        })
+  try {
+    const response = await fetch('/api/site-settings', {
+      method: 'GET',
+      cache: 'no-cache',
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch site settings')
-        }
-
-        const data = await response.json()
-        return data.settings
-    } catch (error) {
-        console.error('Failed to fetch site settings:', error)
-        return null
+    if (!response.ok) {
+      throw new Error('Failed to fetch site settings');
     }
+
+    const data = await response.json();
+    return data.settings;
+  } catch (error) {
+    console.error('Failed to fetch site settings:', error);
+    return null;
+  }
 }

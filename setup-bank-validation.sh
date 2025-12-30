@@ -39,33 +39,30 @@ FOR DELETE USING (auth.uid() = user_id);
 EOF
 
 # 2. Validation API Route
-echo "2. Creating API: app/api/finance/validate-bank/route.ts"
-mkdir -p app/api/finance/validate-bank
-cat <<EOF > app/api/finance/validate-bank/route.ts
+echo "2. Creating API: src/app/api/finance/validate-bank/route.ts"
+mkdir -p src/app/api/finance/validate-bank
+cat <<EOF > src/app/api/finance/validate-bank/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
-export async function POST(request: Request) {
-    const { bank_code, account_number } = await request.json();
-    
-    if (!bank_code || !account_number) {
-        return NextResponse.json({ error: 'Missing bank_code or account_number' }, { status: 400 });
-    }
+const MOCK_DB: Record<string, string> = {
+    '1234567890': 'AHMAD DANI',
+    '0987654321': 'SITI AMINAH',
+    '1122334455': 'PT SINAR JAYA'
+};
 
+export async function POST(request: Request) {
     try {
+        const { bank_code, account_number } = await request.json();
+        
+        if (!bank_code || !account_number) {
+            return NextResponse.json({ error: 'Missing bank_code or account_number' }, { status: 400 });
+        }
+
         // MOCK VALIDATION LOGIC
         // In Prod: Call Xendit / Flip / Midtrans Disbursement API
-        // e.g. await xendit.disbursement.getBankAccount({ bank_code, account_number });
         
-        let mockName = '';
-        
-        // Simulate behavior
-        if (Object.keys(MOCK_DB).includes(account_number)) {
-            mockName = MOCK_DB[account_number];
-        } else {
-             // Random realistic name if not in mock db
-             mockName = 'BUDI SANTOSO'; 
-        }
+        let mockName = MOCK_DB[account_number] || 'BUDI SANTOSO';
 
         // Return the name for User Confirmation
         return NextResponse.json({ 
@@ -79,25 +76,19 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-
-const MOCK_DB: Record<string, string> = {
-    '1234567890': 'AHMAD DANI',
-    '0987654321': 'SITI AMINAH',
-    '1122334455': 'PT SINAR JAYA'
-};
 EOF
 
 # 3. Server Action to Save
-echo "3. Creating Action: app/actions/bank-account.ts"
-mkdir -p app/actions
-cat <<EOF > app/actions/bank-account.ts
+echo "3. Creating Action: src/app/actions/bank-account.ts"
+mkdir -p src/app/actions
+cat <<EOF > src/app/actions/bank-account.ts
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function saveBankAccount(bankCode: string, accountNumber: string, accountName: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // 1. Double check auth
     const { data: { user } } = await supabase.auth.getUser();
@@ -119,42 +110,51 @@ export async function saveBankAccount(bankCode: string, accountNumber: string, a
 }
 
 export async function getSavedAccounts() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data } = await supabase.from('saved_bank_accounts').select('*');
     return data || [];
 }
 EOF
 
 # 4. React Component
-echo "4. Creating Component: components/finance/BankAccountManager.tsx"
-mkdir -p components/finance
-cat <<EOF > components/finance/BankAccountManager.tsx
+echo "4. Creating Component: src/components/finance/BankAccountManager.tsx"
+mkdir -p src/components/finance
+cat <<EOF > src/components/finance/BankAccountManager.tsx
 'use client';
 
 import { useState } from 'react';
 import { saveBankAccount } from '@/app/actions/bank-account';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, CheckCircle2, User, Landmark, Plus, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function BankAccountManager({ existingAccounts }: { existingAccounts: any[] }) {
     const [bank, setBank] = useState('BCA');
     const [number, setNumber] = useState('');
     const [verifiedName, setVerifiedName] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleCheck = async () => {
+        if (!number) return toast.error('Please enter account number');
         setLoading(true);
         try {
             const res = await fetch('/api/finance/validate-bank', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ bank_code: bank, account_number: number })
             });
             const data = await res.json();
             if (data.status === 'success') {
                 setVerifiedName(data.account_name);
+                toast.success('Account Found');
             } else {
-                alert('Account not found');
+                toast.error('Account not found');
             }
         } catch (e) {
-            alert('Error validating');
+            toast.error('Error validating');
         } finally {
             setLoading(false);
         }
@@ -162,75 +162,143 @@ export default function BankAccountManager({ existingAccounts }: { existingAccou
 
     const handleSave = async () => {
         if (!verifiedName) return;
+        setIsSaving(true);
         try {
             await saveBankAccount(bank, number, verifiedName);
-            alert('Bank Saved!');
-            window.location.reload(); // Simple refresh to show new data
-        } catch (e) {
-            alert('Failed to save');
+            toast.success('Bank Account Saved Successfully');
+            window.location.reload(); 
+        } catch (e: any) {
+            toast.error(e.message || 'Failed to save');
+        } finally {
+            setIsSaving(false);
         }
     };
 
     return (
-        <div className="p-4 border rounded-lg bg-white shadow-sm">
-            <h3 className="text-lg font-bold mb-4">Saved Accounts</h3>
-            <div className="space-y-2 mb-6">
-                {existingAccounts.map((acc: any) => (
-                    <div key={acc.id} className="flex justify-between p-3 bg-gray-50 rounded">
-                        <div>
-                            <p className="font-semibold">{acc.bank_code} - {acc.account_number}</p>
-                            <p className="text-sm text-gray-600">{acc.account_holder_name}</p>
-                        </div>
-                        <span className="text-green-600 text-xs px-2 py-1 bg-green-100 rounded-full h-fit">Verified</span>
+        <div className="space-y-8 max-w-2xl">
+            {/* Existing Accounts List */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm">
+                <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">Saved Bank Accounts</h3>
+                        <p className="text-xs text-zinc-500">Manage your verified withdrawal accounts</p>
                     </div>
-                ))}
+                </div>
+                
+                <div className="p-4 space-y-3">
+                    {existingAccounts.length > 0 ? (
+                        existingAccounts.map((acc: any) => (
+                            <div key={acc.id} className="group relative flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-800/40 hover:bg-white dark:hover:bg-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-700/50 transition-all duration-200">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                        <Landmark className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-bold text-zinc-800 dark:text-zinc-100">{acc.bank_code}</p>
+                                            <span className="text-[10px] uppercase tracking-wider font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                                                <CheckCircle2 className="w-3 h-3" /> Verified
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-mono text-zinc-600 dark:text-zinc-400">{acc.account_number}</p>
+                                        <p className="text-xs text-zinc-400 mt-1 uppercase">{acc.account_holder_name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="py-12 text-center">
+                            <Landmark className="w-12 h-12 text-zinc-200 dark:text-zinc-800 mx-auto mb-3" />
+                            <p className="text-zinc-500 dark:text-zinc-400 text-sm">No bank accounts saved yet.</p>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <h3 className="text-lg font-bold mb-2">Add New Account</h3>
-            <div className="grid gap-4">
-                <select value={bank} onChange={e => setBank(e.target.value)} className="p-2 border rounded">
-                    <option value="BCA">BCA</option>
-                    <option value="MANDIRI">MANDIRI</option>
-                    <option value="BRI">BRI</option>
-                    <option value="BNI">BNI</option>
-                </select>
-                <input 
-                    type="text" 
-                    placeholder="Account Number" 
-                    value={number} 
-                    onChange={e => setNumber(e.target.value)}
-                    className="p-2 border rounded"
-                />
-                
-                {!verifiedName ? (
-                    <button 
-                        onClick={handleCheck} 
-                        disabled={loading}
-                        className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
-                    >
-                        {loading ? 'Checking...' : 'Check Account'}
-                    </button>
-                ) : (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded">
-                        <p className="text-sm text-gray-600 mb-1">Found Account:</p>
-                        <p className="text-xl font-bold text-green-800">{verifiedName}</p>
-                        <p className="text-xs text-gray-500 mb-4">Is this correct?</p>
-                        <div className="flex gap-2">
-                            <button 
-                                onClick={handleSave} 
-                                className="flex-1 bg-green-600 text-white p-2 rounded hover:bg-green-700"
-                            >
-                                Yes, Save Account
-                            </button>
-                            <button 
-                                onClick={() => setVerifiedName(null)} 
-                                className="px-4 py-2 border rounded hover:bg-gray-100"
-                            >
-                                Cancel
-                            </button>
-                        </div>
+            {/* Add New Account Form */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden">
+                <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                        <Plus className="w-6 h-6" />
                     </div>
-                )}
+                    <div>
+                        <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-100">Add New Account</h3>
+                        <p className="text-xs text-zinc-500">Validate and save a new bank account</p>
+                    </div>
+                </div>
+
+                <div className="p-6 grid gap-6">
+                    <div className="grid gap-2">
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Select Bank</label>
+                        <Select value={bank} onValueChange={setBank}>
+                            <SelectTrigger className="h-12 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-xl focus:ring-primary">
+                                <SelectValue placeholder="Select a bank" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                                <SelectItem value="BCA">Bank Central Asia (BCA)</SelectItem>
+                                <SelectItem value="MANDIRI">Bank Mandiri</SelectItem>
+                                <SelectItem value="BRI">Bank Rakyat Indonesia (BRI)</SelectItem>
+                                <SelectItem value="BNI">Bank Negara Indonesia (BNI)</SelectItem>
+                                <SelectItem value="CIMB">CIMB Niaga</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Account Number</label>
+                        <Input 
+                            type="text" 
+                            placeholder="e.g., 12345678" 
+                            value={number} 
+                            onChange={e => setNumber(e.target.value)}
+                            className="h-12 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-xl focus:ring-primary text-lg font-mono"
+                        />
+                    </div>
+                    
+                    {!verifiedName ? (
+                        <Button 
+                            onClick={handleCheck} 
+                            disabled={loading || !number}
+                            className="w-full h-14 text-base font-bold rounded-2xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                        >
+                            {loading ? (
+                                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Validating...</>
+                            ) : (
+                                'Verify Bank Account'
+                            )}
+                        </Button>
+                    ) : (
+                        <div className="p-6 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-2xl animate-in fade-in slide-in-from-bottom-2">
+                            <div className="flex items-start gap-4 mb-6">
+                                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 border border-green-200 dark:border-green-800">
+                                    <User className="w-7 h-7" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-green-600 dark:text-green-500 uppercase tracking-widest mb-1">Account Holder Name Found</p>
+                                    <p className="text-2xl font-black text-green-900 dark:text-green-100 tracking-tight">{verifiedName}</p>
+                                    <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-1 italic italic">Real-time data from financial network</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-3">
+                                <Button 
+                                    onClick={handleSave} 
+                                    disabled={isSaving}
+                                    className="flex-1 h-12 font-bold rounded-xl bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20"
+                                >
+                                    {isSaving ? 'Saving...' : 'Save as Verified Account'}
+                                </Button>
+                                <Button 
+                                    variant="outline"
+                                    onClick={() => setVerifiedName(null)} 
+                                    className="px-6 h-12 border-zinc-200 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 font-bold"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -240,5 +308,6 @@ EOF
 echo ""
 echo "================================================="
 echo "Bank Validation Setup Complete!"
-echo "1. Run 'bank_validation.sql'"
+echo "1. Run 'bank_validation.sql' in Supabase."
 echo "2. Use <BankAccountManager /> in your Finance page."
+echo "Dependencies: sonner, lucide-react (ensure installed)"

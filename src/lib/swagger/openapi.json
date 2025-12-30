@@ -1,0 +1,146 @@
+﻿{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CekKirim API",
+    "version": "1.0.0",
+    "description": "API Integration for Logistics Tracking and Cost Calculation. Use your Secret Key as Bearer Token."
+  },
+  "servers": [
+    {
+      "url": "https://cekkirim.com/api/v1",
+      "description": "Production Server"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Local Development"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/track": {
+      "post": {
+        "summary": "Track a Shipment",
+        "tags": ["Tracking"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courier": {
+                    "type": "string",
+                    "example": "jne",
+                    "description": "Courier code (jne, jnt, sicepat, etc)"
+                  },
+                  "waybill": {
+                    "type": "string",
+                    "example": "JP1234567890",
+                    "description": "Receipt number (No. Resi)"
+                  }
+                },
+                "required": ["courier", "waybill"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": { 
+                      "type": "object",
+                      "properties": {
+                        "status": { "type": "string", "example": "DELIVERED" },
+                        "history": { "type": "array", "items": { "type": "object" } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid or Missing API Key)" }
+        }
+      }
+    },
+    "/cost": {
+      "post": {
+        "summary": "Check Shipping Cost",
+        "tags": ["Cost"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "example": "CGK10000",
+                    "description": "Origin District/City ID"
+                  },
+                  "destination": {
+                    "type": "string",
+                    "example": "SUB10000",
+                    "description": "Destination District/City ID"
+                  },
+                  "weight": {
+                    "type": "integer",
+                    "example": 1000,
+                    "description": "Weight in grams"
+                  }
+                },
+                "required": ["origin", "destination", "weight"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of shipping costs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "results": { 
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": { "type": "string", "example": "jne" },
+                          "name": { "type": "string", "example": "JNE Express" },
+                          "costs": { "type": "array" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

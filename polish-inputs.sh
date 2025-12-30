@@ -111,7 +111,7 @@ if (fs.existsSync(file)) {
     }
 
     fs.writeFileSync(file, content);
-    console.log('   [✓] Select component updated (Ring Primary).');
+    console.log('   [?] Select component updated (Ring Primary).');
 }
 "
 

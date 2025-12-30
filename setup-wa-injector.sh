@@ -46,7 +46,7 @@ function initInjector() {
     // 1. Create Toggle Button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'cekkirim-toggle';
-    toggleBtn.innerHTML = '📦'; // Simple icon, replace with SVG if needed
+    toggleBtn.innerHTML = '🚚'; // Simple icon
     toggleBtn.title = 'Open CekKirim';
     
     // 2. Create Iframe Container (Sidebar)
@@ -56,7 +56,7 @@ function initInjector() {
 
     // 3. Create Iframe
     const iframe = document.createElement('iframe');
-    iframe.src = 'https://cekkirim.com/embed/widget'; // Ensure this route exists in your Next.js app
+    iframe.src = 'https://cekkirim.com/embed/widget'; // Use local for dev: http://localhost:3000/embed/widget
     iframe.title = 'CekKirim Widget';
     
     sidebar.appendChild(iframe);
@@ -142,13 +142,51 @@ cat <<EOF > "$PROJECT_DIR/styles.css"
     transform: rotate(45deg); /* Turn icon into X */
 }
 #cekkirim-toggle.active::before {
-    content: '+'; /* Trick to show X if using text/icon logic */
+    content: '+'; 
 }
 EOF
 
 # 4. Dummy Icon
 echo "4. Creating Icon..."
 touch "$PROJECT_DIR/icon.png"
+
+# 5. Create Backend Widget Page
+echo "5. Creating Backend Widget Page: src/app/embed/widget/page.tsx"
+mkdir -p src/app/embed/widget
+
+cat <<EOF > src/app/embed/widget/page.tsx
+import React from 'react';
+
+export default function WidgetPage() {
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+         <h1 className="font-bold text-lg text-gray-800">CekKirim Quick Access</h1>
+         <p className="text-xs text-gray-500">Cek Ongkir & Resi Instan</p>
+      </div>
+      
+      <div className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-4">
+            {/* Simple Tab Switcher Placeholder */}
+            <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg">
+                <button className="flex-1 py-1 px-3 text-sm font-medium bg-white shadow-sm rounded-md text-gray-900">Cek Ongkir</button>
+                <button className="flex-1 py-1 px-3 text-sm font-medium text-gray-500 hover:text-gray-700">Cek Resi</button>
+            </div>
+
+            {/* Content Placeholder */}
+            <div className="border-2 border-dashed border-gray-200 rounded-lg h-64 flex items-center justify-center text-gray-400 text-sm p-4 text-center">
+                Embed your existing CheckCostForm or TrackingForm here, simplified for 350px width.
+            </div>
+
+            <button className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">
+                Cek Sekarang
+            </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+EOF
 
 echo ""
 echo "================================================="
@@ -158,7 +196,7 @@ echo ""
 echo "Installation:"
 echo "1. Chrome > Extensions > Developer Mode > Load Unpacked > Select '$PROJECT_DIR'"
 echo "2. Open web.whatsapp.com"
-echo "3. Look for the floating 📦 button on the top right."
+echo "3. Look for the floating 🚚 button on the top right."
 echo ""
 echo "Backend Requirement:"
-echo "Make sure you create a simplified page at 'https://cekkirim.com/embed/widget' designed to fit in 350px width."
+echo "Widget page created at 'http://localhost:3000/embed/widget'. Ensure your server is running."

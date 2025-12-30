@@ -1,8 +1,5 @@
--- Ensure Ledger Table has required columns for Splitting
-ALTER TABLE public.ledger_entries ADD COLUMN IF NOT EXISTS reference_id TEXT;
-ALTER TABLE public.ledger_entries ADD COLUMN IF NOT EXISTS destination_wallet_id UUID;
-
--- Function to handle payments with automatic profit splitting
+﻿-- Function to handle payments with automatic profit splitting
+-- USAGE: Call this instead of a simple Debit.
 CREATE OR REPLACE FUNCTION process_split_payment(
     p_user_id UUID,
     p_amount_total DECIMAL,   -- Total Price user pays (e.g. 10,500)

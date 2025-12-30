@@ -1,0 +1,58 @@
+﻿/* Toggle Button (Floating) */
+#cekkirim-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s, right 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cekkirim-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Sidebar Container */
+#cekkirim-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px; /* Mobile width usually fits well */
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    z-index: 99998;
+    transition: transform 0.3s ease-in-out;
+}
+
+#cekkirim-sidebar.hidden {
+    transform: translateX(100%);
+}
+
+/* Iframe Styling */
+#cekkirim-sidebar iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Push toggle button when sidebar is open */
+#cekkirim-toggle.active {
+    right: 370px; /* 350px width + 20px margin */
+    background: #ef4444; /* Change to close button color */
+    transform: rotate(45deg); /* Turn icon into X */
+}
+#cekkirim-toggle.active::before {
+    content: '+'; 
+}

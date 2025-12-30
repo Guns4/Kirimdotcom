@@ -63,7 +63,7 @@ if (!content.includes(importStmt)) {
 if (content.includes('</body>')) {
     content = content.replace('</body>', '        <VercelMonitoring />\n      </body>');
     fs.writeFileSync(layoutPath, content, 'utf8');
-    console.log(' [✓] Successfully injected <VercelMonitoring /> into layout.');
+    console.log(' [?] Successfully injected <VercelMonitoring /> into layout.');
 } else {
     console.error(' [!] Could not find </body> tag in layout. Please add <VercelMonitoring /> manually.');
 }

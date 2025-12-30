@@ -8,12 +8,13 @@ echo "Initializing Vendor Monitor..."
 echo "================================================="
 
 # 1. API Endpoint for Monitoring
-echo "1. Creating API: app/api/cron/monitor-vendor/route.ts"
-mkdir -p app/api/cron/monitor-vendor
-cat <<EOF > app/api/cron/monitor-vendor/route.ts
+echo "1. Creating API: src/app/api/cron/monitor-vendor/route.ts"
+mkdir -p src/app/api/cron/monitor-vendor
+
+cat <<EOF > src/app/api/cron/monitor-vendor/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { sendAdminAlert } from '@/lib/admin-alert';
+import { adminAlert } from '@/lib/admin-alert';
 
 // Mock Vendor API
 async function getVendorBalance() {
@@ -28,23 +29,23 @@ async function getVendorBalance() {
 
 export async function GET(request: Request) {
     const authHeader = request.headers.get('authorization');
-    if (authHeader !== \`Bearer \${process.env.CRON_SECRET}\`) {
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
          return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const balance = await getVendorBalance();
     
-    console.log(\`[VENDOR MONITOR] Current Balance: Rp \${balance}\`);
+    console.log(`[VENDOR MONITOR] Current Balance: Rp ${balance}`);
 
     // 1. Critical Level (< 50k) -> SHUTDOWN
     if (balance < 50000) {
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'true'::jsonb }); // Enable Lock
+            .upsert({ key: 'ppob_maintenance_mode', value: true }, { onConflict: 'key' }); // Enable Lock
             
-        await sendAdminAlert(
+        await adminAlert.critical(
             'CRITICAL: PPOB VENDOR EMPTY', 
-            \`Balance is Rp \${balance}. PPOB System has been AUTO-LOCKED to prevent failures.\`
+            `Balance is Rp ${balance}. PPOB System has been AUTO-LOCKED to prevent failures.`
         );
         return NextResponse.json({ status: 'CRITICAL', balance, action: 'LOCKED' });
     }
@@ -53,11 +54,11 @@ export async function GET(request: Request) {
     else if (balance < 500000) {
         // Ensure system is unlocked if it was locked before
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'false'::jsonb });
+            .upsert({ key: 'ppob_maintenance_mode', value: false }, { onConflict: 'key' });
             
-        await sendAdminAlert(
+        await adminAlert.warning(
             'WARNING: PPOB BALANCE LOW', 
-            \`Balance is Rp \${balance}. Please Top Up immediately.\`
+            `Balance is Rp ${balance}. Please Top Up immediately.`
         );
         return NextResponse.json({ status: 'WARNING', balance, action: 'ALERT_SENT' });
     }
@@ -65,7 +66,7 @@ export async function GET(request: Request) {
     // 3. Healthy -> ENSURE UNLOCKED
     else {
         await supabase.from('system_settings')
-            .upsert({ key: 'ppob_maintenance_mode', value: 'false'::jsonb });
+            .upsert({ key: 'ppob_maintenance_mode', value: false }, { onConflict: 'key' });
             
         return NextResponse.json({ status: 'HEALTHY', balance });
     }
@@ -76,4 +77,4 @@ echo ""
 echo "================================================="
 echo "Vendor Monitor Ready!"
 echo "Endpoint: GET /api/cron/monitor-vendor"
-echo "Note: Uses 'system_settings' table from Circuit Breaker step."
+echo "Note: Uses 'system_settings' table."

@@ -61,12 +61,13 @@ ORDER BY 1 DESC;
 EOF
 
 # 2. Report Generator API
-echo "2. Creating API: app/api/cron/report/route.ts"
-mkdir -p app/api/cron/report
-cat <<EOF > app/api/cron/report/route.ts
+echo "2. Creating API: src/app/api/cron/report/route.ts"
+mkdir -p src/app/api/cron/report
+
+cat <<EOF > src/app/api/cron/report/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { sendAdminAlert } from '@/lib/admin-alert';
+import { adminAlert } from '@/lib/admin-alert';
 
 export async function GET(request: Request) {
     const authHeader = request.headers.get('authorization');
@@ -74,7 +75,7 @@ export async function GET(request: Request) {
          return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // 1. Fetch Last Month's Data
     const { data: report } = await supabase
@@ -88,28 +89,20 @@ export async function GET(request: Request) {
     }
 
     // 2. Generate Summary
-    const REPORT_HTML = \`
-    <h1>Financial Report: \${report.month_str}</h1>
-    <table border="1" cellpadding="10" style="border-collapse: collapse;">
-        <tr>
-            <th>Total Revenue</th>
-            <td style="color: green;">Rp \${report.total_revenue.toLocaleString()}</td>
-        </tr>
-        <tr>
-            <th>Operational Expenses</th>
-            <td style="color: red;">(Rp \${report.total_expenses.toLocaleString()})</td>
-        </tr>
-        <tr>
-            <th>NET PROFIT</th>
-            <td style="font-weight: bold; font-size: 1.2em;">Rp \${report.net_profit.toLocaleString()}</td>
-        </tr>
-    </table>
-    <p>Generated automatically by System.</p>
-    \`;
+    // Note: HTML can be used if sending via email service like Resend
+    const reportSummary = \`Revenue: Rp \${report.total_revenue.toLocaleString()} | Expenses: Rp \${report.total_expenses.toLocaleString()} | Net Profit: Rp \${report.net_profit.toLocaleString()}\`;
 
-    // 3. Send Email (Mock)
+    // 3. Send Alert
     console.log('[REPORT GENERATED]', report);
-    await sendAdminAlert(\`Monthly Financial Report - \${report.month_str}\`, \`Revenue: \${report.total_revenue} | Expenses: \${report.total_expenses} | Profit: \${report.net_profit}\`);
+    await adminAlert.info(
+        \`Monthly Financial Report - \${report.month_str}\`, 
+        reportSummary,
+        {
+            revenue: report.total_revenue,
+            expenses: report.total_expenses,
+            profit: report.net_profit
+        }
+    );
 
     return NextResponse.json({ success: true, report });
 }

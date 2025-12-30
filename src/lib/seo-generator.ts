@@ -12,7 +12,10 @@ interface RouteParams {
  *   return generateRouteMeta(params.origin, params.destination);
  * }
  */
-export function generateRouteMeta(origin: string, destination: string): Metadata {
+export function generateRouteMeta(
+  origin: string,
+  destination: string
+): Metadata {
   // Clean up inputs (remove dashes, capitalize)
   const cleanOrigin = formatCityName(origin);
   const cleanDest = formatCityName(destination);
@@ -31,8 +34,8 @@ export function generateRouteMeta(origin: string, destination: string): Metadata
       url: `https://cekkirim.com/cek-ongkir/${origin}/${destination}`,
     },
     alternates: {
-      canonical: `https://cekkirim.com/cek-ongkir/${origin}/${destination}`
-    }
+      canonical: `https://cekkirim.com/cek-ongkir/${origin}/${destination}`,
+    },
   };
 }
 
@@ -41,6 +44,6 @@ function formatCityName(slug: string): string {
   if (!slug) return '';
   return slug
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }

@@ -1,0 +1,27 @@
+﻿{
+  "manifest_version": 3,
+  "name": "CekKirim - Cek Resi Cepat",
+  "version": "1.1.0",
+  "description": "Ekstensi browser untuk cek resi dan ongkir instan.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

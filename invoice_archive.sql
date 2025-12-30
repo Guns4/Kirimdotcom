@@ -1,4 +1,4 @@
--- Table to link Ledger Entries to PDF Files
+﻿-- Table to link Ledger Entries to PDF Files
 CREATE TABLE IF NOT EXISTS public.transaction_invoices (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     
@@ -16,7 +16,6 @@ CREATE INDEX IF NOT EXISTS idx_invoices_ledger ON public.transaction_invoices(le
 CREATE INDEX IF NOT EXISTS idx_invoices_number ON public.transaction_invoices(invoice_number);
 
 -- Storage Bucket (SQL for Supabase Storage)
--- Note: Must be run in Dashboard if SQL editor doesn't support Storage API
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('secure-invoices', 'secure-invoices', false)
 ON CONFLICT (id) DO NOTHING;

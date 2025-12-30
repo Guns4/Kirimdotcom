@@ -75,7 +75,6 @@ FROM public.ledger_entries le
 JOIN public.wallets w ON le.wallet_id = w.id
 WHERE w.slug = 'WALLET_SYSTEM_REVENUE'
 ORDER BY le.created_at DESC;
-
 EOF
 
 echo ""

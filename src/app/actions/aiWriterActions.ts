@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import OpenAI from 'openai';
 import fs from 'fs';
@@ -8,16 +8,16 @@ import { revalidatePath } from 'next/cache';
 // Initialize OpenAI (or compatible API like Gemini via adapter if needed)
 // For now, assuming standard OpenAI SDK usage
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'sk-placeholder',
+  apiKey: process.env.OPENAI_API_KEY || 'sk-placeholder',
 });
 
 const DRAFTS_DIR = path.join(process.cwd(), 'content/drafts');
 
 export async function generateArticle(keyword: string) {
-    console.log('Generating article for:', keyword);
+  console.log('Generating article for:', keyword);
 
-    try {
-        const prompt = `
+  try {
+    const prompt = `
         Bertindaklah sebagai SEO Content Writer profesional.
         Topik: "${keyword}"
         
@@ -42,30 +42,36 @@ export async function generateArticle(keyword: string) {
         Tulis artikel lengkap minimal 800 kata.
         `;
 
-        const completion = await openai.chat.completions.create({
-            messages: [{ role: 'user', content: prompt }],
-            model: 'gpt-4o-mini', // Cheap & Fast
-        });
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'gpt-4o-mini', // Cheap & Fast
+    });
 
-        const content = completion.choices[0].message.content || '';
-        if (!content) throw new Error('No content generated');
+    const content = completion.choices[0].message.content || '';
+    if (!content) throw new Error('No content generated');
 
-        // Clean up markdown block if present
-        const cleanContent = content.replace(/\\\`\\\`\\\`markdown/g, '').replace(/\\\`\\\`\\\`/g, '').trim();
+    // Clean up markdown block if present
+    const cleanContent = content
+      .replace(/\\\`\\\`\\\`markdown/g, '')
+      .replace(/\\\`\\\`\\\`/g, '')
+      .trim();
 
-        // Save to file
-        const slug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const filename = `${slug}.mdx`;
+    // Save to file
+    const slug = keyword
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    const filename = `${slug}.mdx`;
 
-        if (!fs.existsSync(DRAFTS_DIR)) fs.mkdirSync(DRAFTS_DIR, { recursive: true });
+    if (!fs.existsSync(DRAFTS_DIR))
+      fs.mkdirSync(DRAFTS_DIR, { recursive: true });
 
-        fs.writeFileSync(path.join(DRAFTS_DIR, filename), cleanContent);
+    fs.writeFileSync(path.join(DRAFTS_DIR, filename), cleanContent);
 
-        revalidatePath('/dashboard/admin');
-        return { success: true, filename };
-
-    } catch (error: any) {
-        console.error('AI Writer Error:', error);
-        return { success: false, error: error.message };
-    }
+    revalidatePath('/dashboard/admin');
+    return { success: true, filename };
+  } catch (error: any) {
+    console.error('AI Writer Error:', error);
+    return { success: false, error: error.message };
+  }
 }

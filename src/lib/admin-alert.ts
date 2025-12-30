@@ -4,21 +4,21 @@
  */
 
 interface AlertOptions {
-    subject: string;
-    message: string;
-    severity?: 'info' | 'warning' | 'error' | 'critical';
-    metadata?: Record<string, any>;
+  subject: string;
+  message: string;
+  severity?: 'info' | 'warning' | 'error' | 'critical';
+  metadata?: Record<string, any>;
 }
 
 /**
  * Send alert to admin via email or notification service
  */
 export async function sendAdminAlert(options: AlertOptions): Promise<void> {
-    const { subject, message, severity = 'info', metadata } = options;
+  const { subject, message, severity = 'info', metadata } = options;
 
-    try {
-        // Log to console for now
-        console.log(`
+  try {
+    // Log to console for now
+    console.log(`
 [ADMIN ALERT - ${severity.toUpperCase()}]
 Subject: ${subject}
 Message: ${message}
@@ -26,15 +26,15 @@ Metadata: ${JSON.stringify(metadata, null, 2)}
 Timestamp: ${new Date().toISOString()}
         `);
 
-        // TODO: Implement actual notification service
-        // Options:
-        // 1. Send email via Resend/SendGrid
-        // 2. Send Slack notification
-        // 3. Send Discord webhook
-        // 4. Store in database notifications table
+    // TODO: Implement actual notification service
+    // Options:
+    // 1. Send email via Resend/SendGrid
+    // 2. Send Slack notification
+    // 3. Send Discord webhook
+    // 4. Store in database notifications table
 
-        // Example: Email implementation
-        /*
+    // Example: Email implementation
+    /*
         await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -53,26 +53,28 @@ Timestamp: ${new Date().toISOString()}
             })
         });
         */
-
-    } catch (error) {
-        // Don't throw - we don't want alert failures to break the main flow
-        console.error('Failed to send admin alert:', error);
-    }
+  } catch (error) {
+    // Don't throw - we don't want alert failures to break the main flow
+    console.error('Failed to send admin alert:', error);
+  }
 }
 
 /**
  * Quick alert helpers for common scenarios
  */
 export const adminAlert = {
-    info: (subject: string, message: string, metadata?: Record<string, any>) =>
-        sendAdminAlert({ subject, message, severity: 'info', metadata }),
+  info: (subject: string, message: string, metadata?: Record<string, any>) =>
+    sendAdminAlert({ subject, message, severity: 'info', metadata }),
 
-    warning: (subject: string, message: string, metadata?: Record<string, any>) =>
-        sendAdminAlert({ subject, message, severity: 'warning', metadata }),
+  warning: (subject: string, message: string, metadata?: Record<string, any>) =>
+    sendAdminAlert({ subject, message, severity: 'warning', metadata }),
 
-    error: (subject: string, message: string, metadata?: Record<string, any>) =>
-        sendAdminAlert({ subject, message, severity: 'error', metadata }),
+  error: (subject: string, message: string, metadata?: Record<string, any>) =>
+    sendAdminAlert({ subject, message, severity: 'error', metadata }),
 
-    critical: (subject: string, message: string, metadata?: Record<string, any>) =>
-        sendAdminAlert({ subject, message, severity: 'critical', metadata }),
+  critical: (
+    subject: string,
+    message: string,
+    metadata?: Record<string, any>
+  ) => sendAdminAlert({ subject, message, severity: 'critical', metadata }),
 };

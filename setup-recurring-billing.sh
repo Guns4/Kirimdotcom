@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // 2. Fetch Due Subscriptions
   // Fetch active subscriptions where auto_renew is true and billing date <= today
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       // Get Wallet
       const { data: wallet } = await supabase.from('wallets').select('id, balance').eq('user_id', sub.user_id).single();
 
-      if (wallet && wallet.balance >= amount) {
+      if (wallet && Number(wallet.balance) >= amount) {
           // SUCCESS FLOW
           
           // A. Debit Ledger
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
           await supabase.from('user_subscriptions').update({
               next_billing_date: nextDate.toISOString(),
               last_payment_date: new Date().toISOString(),
-              status: 'active' // Ensure it stays active
+              status: 'active' 
           }).eq('id', sub.id);
 
           // C. Log Payment
@@ -95,9 +95,7 @@ export async function GET(req: NextRequest) {
       } else {
           // FAILURE FLOW (Insufficient Funds)
           
-          // A. Set Status to Past Due or Expired
-          // (Soft downgrade logic: Give them 3 days grace period usually, but for strict req: "Downgrade")
-          // We will mark as 'past_due' so UI can prompt them.
+          // A. Set Status to Past Due
           await supabase.from('user_subscriptions').update({
               status: 'past_due'
           }).eq('id', sub.id);

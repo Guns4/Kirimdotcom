@@ -1,12 +1,4 @@
--- Ensure Wallet Slug exists (Dependency from System Wallets)
-DO $$ 
-BEGIN 
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='wallets' AND column_name='slug') THEN
-        ALTER TABLE public.wallets ADD COLUMN slug TEXT UNIQUE;
-    END IF;
-END $$;
-
--- Function to handle payments with automatic profit splitting AND TAX
+﻿-- Function to handle payments with automatic profit splitting AND TAX
 CREATE OR REPLACE FUNCTION process_split_payment_with_tax(
     p_user_id UUID,
     p_amount_total DECIMAL,   -- Total Price user pays (e.g. 10,500)

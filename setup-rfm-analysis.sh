@@ -42,9 +42,10 @@ GROUP BY u.id;
 EOF
 
 # 2. RFM Processor (Cron)
-echo "2. Creating Processor: app/api/cron/analytics/rfm/route.ts"
-mkdir -p app/api/cron/analytics/rfm
-cat <<EOF > app/api/cron/analytics/rfm/route.ts
+echo "2. Creating Processor: src/app/api/cron/analytics/rfm/route.ts"
+mkdir -p src/app/api/cron/analytics/rfm
+
+cat <<EOF > src/app/api/cron/analytics/rfm/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
@@ -99,9 +100,10 @@ export async function GET(request: Request) {
 EOF
 
 # 3. Dashboard API
-echo "3. Creating Dashboard API: app/api/admin/analytics/segments/route.ts"
-mkdir -p app/api/admin/analytics/segments
-cat <<EOF > app/api/admin/analytics/segments/route.ts
+echo "3. Creating Dashboard API: src/app/api/admin/analytics/segments/route.ts"
+mkdir -p src/app/api/admin/analytics/segments
+
+cat <<EOF > src/app/api/admin/analytics/segments/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 

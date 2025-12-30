@@ -1,4 +1,4 @@
--- 1. Rename Old Table (Safety First)
+﻿-- 1. Rename Old Table (Safety First)
 ALTER TABLE IF EXISTS public.tracking_logs RENAME TO tracking_logs_legacy;
 
 -- 2. Create Parent Table (Partitioned)
@@ -50,3 +50,4 @@ $$ LANGUAGE plpgsql;
 
 -- 7. Schedule via pg_cron (if available)
 -- SELECT cron.schedule('partition-maintenance', '0 0 1 12 *', 'SELECT create_next_year_partition()');
+

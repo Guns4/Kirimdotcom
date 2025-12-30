@@ -24,19 +24,13 @@ BEGIN
   LOOP
     final_code := 'REF-' || SUBSTRING(base_code, 1, 4) || FLOOR(RANDOM() * 8999 + 1000)::TEXT;
     
-    SELECT EXISTS(SELECT 1 FROM user_referrals WHERE referral_code = final_code) INTO exists_flag;
+    SELECT EXISTS(SELECT 1 FROM public.user_referrals WHERE referral_code = final_code) INTO exists_flag;
     EXIT WHEN NOT exists_flag;
   END LOOP;
   
   RETURN final_code;
 END;
 \$\$ LANGUAGE plpgsql;
-
--- Trigger: Create Referral Profile on User Creation
--- (Note: This assumes we have a public.profiles table or similar to get the name, 
---  otherwise we use email or random)
--- For simplicity in this script, we'll let the application call this, 
--- OR use a trigger on 'profiles' insert if available.
 
 -- REWARD LOGIC: Trigger on Subscription Upgrade
 CREATE OR REPLACE FUNCTION process_referral_reward() RETURNS TRIGGER AS \$\$
@@ -46,9 +40,6 @@ DECLARE
   v_referrer_wallet_id UUID;
 BEGIN
   -- Only trigger if upgrading to Premium (Free -> Pro/Enterprise) 
-  -- AND it was not active before (First time upgrade or re-sub)
-  -- Or just check 'is_premium' flip
-  
   IF NEW.is_premium = true AND (OLD.is_premium = false OR OLD.is_premium IS NULL) THEN
   
       -- 1. Find Referrer
@@ -106,7 +97,6 @@ DROP TRIGGER IF EXISTS tr_referral_reward ON public.user_subscriptions;
 CREATE TRIGGER tr_referral_reward
 AFTER UPDATE ON public.user_subscriptions
 FOR EACH ROW EXECUTE FUNCTION process_referral_reward();
-
 EOF
 
 # 2. Server Action (Registration Helper)
@@ -120,12 +110,12 @@ import { cookies } from 'next/headers';
 
 export async function captureReferral(referralCode: string) {
   // Simple: Store in cookie for 30 days
-  cookies().set('ref_code', referralCode, { maxAge: 60 * 60 * 24 * 30 });
+  (await cookies()).set('ref_code', referralCode, { maxAge: 60 * 60 * 24 * 30 });
 }
 
 export async function assignReferrer(userId: string) {
-  const supabase = createClient();
-  const refCode = cookies().get('ref_code')?.value;
+  const supabase = await createClient();
+  const refCode = (await cookies()).get('ref_code')?.value;
   
   if (!refCode) return;
 
@@ -142,12 +132,12 @@ export async function assignReferrer(userId: string) {
       }).eq('user_id', userId);
       
       // Clear cookie
-      cookies().delete('ref_code');
+      (await cookies()).delete('ref_code');
   }
 }
 
 export async function createReferralProfile(userId: string, name: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     // Using Postgres Function to generate code
     const { data: code } = await supabase.rpc('generate_referral_code', { p_name: name || 'USER' });
     

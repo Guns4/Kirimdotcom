@@ -49,15 +49,16 @@ USING (
 EOF
 
 # 2. Generator API
-echo "2. Creating API: app/api/admin/invoices/generate/route.ts"
-mkdir -p app/api/admin/invoices/generate
-cat <<EOF > app/api/admin/invoices/generate/route.ts
+echo "2. Creating API: src/app/api/admin/invoices/generate/route.ts"
+mkdir -p src/app/api/admin/invoices/generate
+
+cat <<EOF > src/app/api/admin/invoices/generate/route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request: Request) {
     const { ledger_entry_id } = await request.json();
-    const supabase = createClient();
+    const supabase = await createClient();
 
     try {
         // 1. Fetch Ledger Data

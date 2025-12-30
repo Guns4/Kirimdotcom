@@ -30,7 +30,7 @@ DECLARE
     v_maintenance BOOLEAN;
 BEGIN
     -- 1. Check if already in Maintenance Mode
-    SELECT (value->>'mode')::boolean INTO v_maintenance 
+    SELECT (value)::boolean INTO v_maintenance 
     FROM public.system_settings 
     WHERE key = 'finance_maintenance_mode';
     
@@ -39,7 +39,6 @@ BEGIN
     END IF;
 
     -- 2. Calculate Total Outflow (Withdrawals) in last 1 Hour
-    -- Status should be 'COMPLETED' or 'PROCESSING' or 'REQUESTED' (if we count attempts)
     SELECT COALESCE(SUM(amount), 0) INTO v_total_outflow
     FROM public.withdrawal_requests
     WHERE created_at > (NOW() - INTERVAL '1 hour');
@@ -69,30 +68,28 @@ DROP TRIGGER IF EXISTS tr_velocity_check ON public.withdrawal_requests;
 CREATE TRIGGER tr_velocity_check
 BEFORE INSERT ON public.withdrawal_requests
 FOR EACH ROW EXECUTE FUNCTION check_financial_velocity();
-
 EOF
 
 # 2. Helper Library
-echo "2. Creating Lib: lib/circuit-breaker.ts"
-mkdir -p lib
-cat <<EOF > lib/circuit-breaker.ts
+echo "2. Creating Lib: src/lib/circuit-breaker.ts"
+mkdir -p src/lib
+cat <<EOF > src/lib/circuit-breaker.ts
 import { createClient } from '@/utils/supabase/server';
 
 export async function isSystemLocked() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data } = await supabase
         .from('system_settings')
         .select('value')
         .eq('key', 'finance_maintenance_mode')
         .single();
         
-    return data?.value === true; // or check JSON structure
+    return data?.value === true;
 }
 
 export async function sendPanicAlert(message: string) {
     console.error(\`[PANIC] \${message}\`);
-    // Connect to WhatsApp API here
-    // await whatsapp.sendText(ADMIN_PHONE, \`🚨 EMERGENCY: \${message}\`);
+    // Connect to WhatsApp API or other alert services here
 }
 EOF
 

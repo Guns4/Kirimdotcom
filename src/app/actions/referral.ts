@@ -1,37 +1,45 @@
-'use server'
+﻿'use server';
 
-import { createClient } from '@/utils/supabase/server'
-import { safeAction } from '@/lib/safe-action'
-import { nanoid } from 'nanoid'
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
-export const getReferralData = async () => {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+export async function captureReferral(referralCode: string) {
+  // Simple: Store in cookie for 30 days
+  (await cookies()).set('ref_code', referralCode, { maxAge: 60 * 60 * 24 * 30 });
+}
 
-    let { data: refData } = await supabase.from('user_referrals').select('*').eq('user_id', user.id).single()
+export async function assignReferrer(userId: string) {
+  const supabase = await createClient();
+  const refCode = (await cookies()).get('ref_code')?.value;
+  
+  if (!refCode) return;
 
-    // Generate Code if none
-    if (!refData) {
-        const code = nanoid(8).toUpperCase()
-        const { data, error } = await supabase.from('user_referrals').insert({
-            user_id: user.id,
+  // Find referrer
+  const { data: referrer } = await supabase
+     .from('user_referrals')
+     .select('user_id')
+     .eq('referral_code', refCode)
+     .single();
+     
+  if (referrer) {
+      await supabase.from('user_referrals').update({
+          referred_by: referrer.user_id
+      }).eq('user_id', userId);
+      
+      // Clear cookie
+      (await cookies()).delete('ref_code');
+  }
+}
+
+export async function createReferralProfile(userId: string, name: string) {
+    const supabase = await createClient();
+    // Using Postgres Function to generate code
+    const { data: code } = await supabase.rpc('generate_referral_code', { p_name: name || 'USER' });
+    
+    if (code) {
+        await supabase.from('user_referrals').insert({
+            user_id: userId,
             referral_code: code
-        }).select().single()
-
-        if (!error) refData = data
-    }
-
-    // Get Stats
-    const { count } = await supabase.from('referral_conversions').select('*', { count: 'exact', head: true }).eq('referrer_id', user.id)
-    const { data: earnings } = await supabase.from('referral_conversions').select('commission_earned').eq('referrer_id', user.id)
-
-    const totalEarnings = earnings?.reduce((acc, curr) => acc + (Number(curr.commission_earned) || 0), 0) || 0
-
-    return {
-        code: refData?.referral_code,
-        link: `${process.env.NEXT_PUBLIC_APP_URL || 'https://cekkirim.com'}?ref=${refData?.referral_code}`,
-        total_referred: count || 0,
-        total_earnings: totalEarnings
+        });
     }
 }

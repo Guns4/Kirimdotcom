@@ -1,11 +1,4 @@
--- Ensure Table Exists (Dependency from RFM)
-CREATE TABLE IF NOT EXISTS public.user_segments (
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-    segment TEXT NOT NULL,         -- 'SULTAN', 'CHURN_RISK', 'NEWBIE', 'REGULAR'
-    last_computed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Add Campaign tracking to User Segments
+﻿-- Add Campaign tracking to User Segments
 ALTER TABLE public.user_segments ADD COLUMN IF NOT EXISTS last_campaign_at TIMESTAMP WITH TIME ZONE;
 
 -- Voucher Table

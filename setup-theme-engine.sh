@@ -52,15 +52,18 @@ export const getTenantByHostname = cache(async (hostname: string): Promise<Tenan
     const supabase = createClient(cookies());
 
     // 1. Try match by Custom Domain
+    // Sanitize hostname to avoid potential issues if it contains port
+    const cleanHostname = hostname.split(':')[0];
+
     let { data } = await supabase
         .from('tenants')
         .select('*')
-        .eq('domain', hostname)
+        .eq('domain', cleanHostname)
         .single();
 
     // 2. Fallback: Check subdomain if using main domain (e.g. slug.cekkirim.com)
-    if (!data && hostname.includes('.cekkirim.com')) {
-        const slug = hostname.split('.')[0];
+    if (!data && cleanHostname.includes('.cekkirim.com')) {
+        const slug = cleanHostname.split('.')[0];
         const res = await supabase.from('tenants').select('*').eq('slug', slug).single();
         data = res.data;
     }
@@ -102,17 +105,12 @@ export function TenantProvider({
             // Inject CSS Variable
             root.style.setProperty('--primary', tenant.color_primary);
             
-            // Optional: If using Tailwind with RGB variables, you might need to convert Hex to RGB
-            // setProperty('--primary-rgb', hexToRgb(tenant.color_primary));
+            // Optional: Helper logic for variants could go here
         }
     }, [tenant]);
 
     return (
         <TenantContext.Provider value={{ tenant }}>
-            {/* 
-              Optional: Render a discrete style tag if you need strict CSS override immediately 
-              or complex overrides not possible via variables
-            */}
             {children}
         </TenantContext.Provider>
     );

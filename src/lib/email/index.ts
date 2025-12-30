@@ -3,53 +3,53 @@
 // ============================================
 // Integration with Resend.com for sending emails
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
-const FROM_EMAIL = 'CekKirim <notifikasi@cekkirim.com>'
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const FROM_EMAIL = 'CekKirim <notifikasi@cekkirim.com>';
 
 interface SendEmailParams {
-    to: string
-    subject: string
-    html: string
+  to: string;
+  subject: string;
+  html: string;
 }
 
 interface EmailResult {
-    success: boolean
-    messageId?: string
-    error?: string
+  success: boolean;
+  messageId?: string;
+  error?: string;
 }
 
 export async function sendEmail(params: SendEmailParams): Promise<EmailResult> {
-    if (!RESEND_API_KEY) {
-        console.error('RESEND_API_KEY not configured')
-        return { success: false, error: 'Email service not configured' }
+  if (!RESEND_API_KEY) {
+    console.error('RESEND_API_KEY not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: params.to,
+        subject: params.subject,
+        html: params.html,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { success: false, error: data.message || 'Failed to send email' };
     }
 
-    try {
-        const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                from: FROM_EMAIL,
-                to: params.to,
-                subject: params.subject,
-                html: params.html,
-            }),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-            return { success: false, error: data.message || 'Failed to send email' }
-        }
-
-        return { success: true, messageId: data.id }
-    } catch (error) {
-        console.error('Resend error:', error)
-        return { success: false, error: 'Email service error' }
-    }
+    return { success: true, messageId: data.id };
+  } catch (error) {
+    console.error('Resend error:', error);
+    return { success: false, error: 'Email service error' };
+  }
 }
 
 // ============================================
@@ -57,16 +57,23 @@ export async function sendEmail(params: SendEmailParams): Promise<EmailResult> {
 // ============================================
 
 export function generateTrackingUpdateEmail(params: {
-    resi: string
-    courierCode: string
-    oldStatus: string
-    newStatus: string
-    statusDescription?: string
-    trackingUrl?: string
+  resi: string;
+  courierCode: string;
+  oldStatus: string;
+  newStatus: string;
+  statusDescription?: string;
+  trackingUrl?: string;
 }): string {
-    const { resi, courierCode, oldStatus, newStatus, statusDescription, trackingUrl } = params
+  const {
+    resi,
+    courierCode,
+    oldStatus,
+    newStatus,
+    statusDescription,
+    trackingUrl,
+  } = params;
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -116,11 +123,15 @@ export function generateTrackingUpdateEmail(params: {
           </tr>
         </table>
 
-        ${statusDescription ? `
+        ${
+          statusDescription
+            ? `
         <p style="color: #94a3b8; margin: 20px 0; line-height: 1.6;">
           <strong style="color: white;">Detail:</strong> ${statusDescription}
         </p>
-        ` : ''}
+        `
+            : ''
+        }
         
         <!-- Courier Badge -->
         <p style="color: #64748b; margin: 20px 0 10px 0; font-size: 12px;">
@@ -155,17 +166,17 @@ export function generateTrackingUpdateEmail(params: {
   </table>
 </body>
 </html>
-`
+`;
 }
 
 export function generateDeliveredEmail(params: {
-    resi: string
-    courierCode: string
-    receiverName?: string
+  resi: string;
+  courierCode: string;
+  receiverName?: string;
 }): string {
-    const { resi, courierCode, receiverName } = params
+  const { resi, courierCode, receiverName } = params;
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -224,5 +235,5 @@ export function generateDeliveredEmail(params: {
   </table>
 </body>
 </html>
-`
+`;
 }

@@ -1,0 +1,17 @@
+﻿{
+  "manifest_version": 3,
+  "name": "CekKirim for WhatsApp Web",
+  "version": "1.0.0",
+  "description": "Widget Cek Ongkir & Resi langsung di samping chat WhatsApp.",
+  "icons": {
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "permissions": []
+}

@@ -6,14 +6,14 @@ To use the dynamic SEO generator, update your page component at \`src/app/cek-on
 import { generateRouteMeta } from '@/lib/seo-generator';
 
 type Props = {
-  params: { origin: string; destination: string }
+params: { origin: string; destination: string }
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return generateRouteMeta(params.origin, params.destination);
+return generateRouteMeta(params.origin, params.destination);
 }
 
 export default function RoutePage({ params }: Props) {
-  // Your page content
+// Your page content
 }
 \`\`\`

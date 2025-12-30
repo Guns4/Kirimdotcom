@@ -1,15 +1,4 @@
--- Ensure Withdrawal Requests Table Exists
-CREATE TABLE IF NOT EXISTS public.withdrawal_requests (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id),
-    amount DECIMAL(19,4) NOT NULL,
-    bank_code TEXT,
-    account_number TEXT,
-    status TEXT DEFAULT 'PENDING', -- 'PENDING', 'PROCESSING', 'COMPLETED', 'FAILED'
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Key-Value Store for System Settings (Flags)
+﻿-- Key-Value Store for System Settings (Flags)
 CREATE TABLE IF NOT EXISTS public.system_settings (
     key TEXT PRIMARY KEY,
     value JSONB NOT NULL,
@@ -38,7 +27,6 @@ BEGIN
     END IF;
 
     -- 2. Calculate Total Outflow (Withdrawals) in last 1 Hour
-    -- Status should be 'COMPLETED' or 'PROCESSING' or 'REQUESTED' (if we count attempts)
     SELECT COALESCE(SUM(amount), 0) INTO v_total_outflow
     FROM public.withdrawal_requests
     WHERE created_at > (NOW() - INTERVAL '1 hour');

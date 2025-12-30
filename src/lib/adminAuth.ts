@@ -7,32 +7,32 @@ import { redirect } from 'next/navigation';
  * Check if current user is admin
  */
 export async function checkIsAdmin() {
-    const supabase = await createClient();
+  const supabase = await createClient();
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!user) {
-        redirect('/login?redirect=/admin');
-    }
+  if (!user) {
+    redirect('/login?redirect=/admin');
+  }
 
-    // Check admin role from profiles table
-    const { data: profile } = await (supabase.from('profiles') as any)
-        .select('role')
-        .eq('id', user.id)
-        .single();
+  // Check admin role from profiles table
+  const { data: profile } = await (supabase.from('profiles') as any)
+    .select('role')
+    .eq('id', user.id)
+    .single();
 
-    if (!profile || profile.role !== 'admin') {
-        redirect('/?error=unauthorized');
-    }
+  if (!profile || profile.role !== 'admin') {
+    redirect('/?error=unauthorized');
+  }
 
-    return user;
+  return user;
 }
 
 /**
  * Get admin user or redirect
  */
 export async function requireAdmin() {
-    return await checkIsAdmin();
+  return await checkIsAdmin();
 }
