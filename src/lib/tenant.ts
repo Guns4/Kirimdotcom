@@ -1,34 +1,46 @@
-﻿import { createClient } from '@/utils/supabase/server';
-import { cache } from 'react';
-import { cookies } from 'next/headers';
+﻿// Tenant Service
+// Resolve branding based on user or domain
 
-export interface Tenant {
+export interface TenantConfig {
     id: string;
-    name: string;
-    slug: string;
-    color_primary: string;
-    logo_url: string;
+    userId: string;
+    brandName: string;
+    logoUrl?: string;
+    primaryColor: string;
+    hideFooter: boolean;
 }
 
-// Cached fetcher for high performance
-export const getTenantByHostname = cache(async (hostname: string): Promise<Tenant | null> => {
-    const supabase = createClient(cookies());
+const DEFAULT_BRAND: TenantConfig = {
+    id: 'default',
+    userId: 'system',
+    brandName: 'CekKirim',
+    logoUrl: undefined,
+    primaryColor: '#3B82F6',
+    hideFooter: false
+};
 
-    // 1. Try match by Custom Domain
-    const cleanHostname = hostname.split(':')[0]; // Remove port if present
+// Get tenant by current user (for dashboard)
+export async function getCurrentTenant(): Promise<TenantConfig> {
+    // In production: 
+    // const { data } = await supabase.from('saas_tenants').select('*').eq('user_id', auth.uid()).single();
 
-    let { data } = await supabase
-        .from('tenants')
-        .select('*')
-        .eq('domain', cleanHostname)
-        .single();
+    // Mock Logic
+    // If user is "VIP", return custom branding
+    // For now, return default
+    return DEFAULT_BRAND;
+}
 
-    // 2. Fallback: Check subdomain if using main domain (e.g. slug.cekkirim.com)
-    if (!data && cleanHostname.includes('.cekkirim.com')) {
-        const slug = cleanHostname.split('.')[0];
-        const res = await supabase.from('tenants').select('*').eq('slug', slug).single();
-        data = res.data;
+// Mock function to simulate a tenant context for development
+export function getMockTenant(type: 'DEFAULT' | 'CUSTOM' = 'DEFAULT'): TenantConfig {
+    if (type === 'CUSTOM') {
+        return {
+            id: 'tenant-123',
+            userId: 'user-vip',
+            brandName: 'JNE Agen 007',
+            logoUrl: 'https://placehold.co/100x100/orange/white?text=JNE',
+            primaryColor: '#F26522',
+            hideFooter: true
+        };
     }
-
-    return data;
-});
+    return DEFAULT_BRAND;
+}

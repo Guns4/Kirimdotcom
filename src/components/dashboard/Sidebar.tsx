@@ -4,6 +4,7 @@ import { useState, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { BrandProvider, useBrand } from '@/providers/BrandProvider';
 
 /**
  * Dashboard Sidebar - Collapsible Navigation
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils';
 const SidebarContext = createContext<{
   isCollapsed: boolean;
   setIsCollapsed: (value: boolean) => void;
-}>({ isCollapsed: false, setIsCollapsed: () => {} });
+}>({ isCollapsed: false, setIsCollapsed: () => { } });
 
 export function useSidebar() {
   return useContext(SidebarContext);
@@ -67,6 +68,7 @@ const menuItems = [
 export function DashboardSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
+  const brand = useBrand();
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
@@ -80,10 +82,25 @@ export function DashboardSidebar() {
         <div className="h-16 flex items-center justify-between px-4 border-b border-surface-100">
           {!isCollapsed && (
             <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">CK</span>
-              </div>
-              <span className="font-bold text-surface-900">Dashboard</span>
+              {brand.tenant.logoUrl ? (
+                <img
+                  src={brand.tenant.logoUrl}
+                  alt={brand.tenant.brandName}
+                  className="w-8 h-8 rounded-lg object-cover"
+                />
+              ) : (
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: brand.tenant.primaryColor }}
+                >
+                  <span className="text-white font-bold text-sm">
+                    {brand.tenant.brandName.substring(0, 2).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <span className="font-bold text-surface-900 truncate max-w-[140px]">
+                {brand.tenant.brandName}
+              </span>
             </Link>
           )}
           <button
@@ -152,18 +169,20 @@ export function DashboardSidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-surface-100 bg-white">
-          <Link
-            href="/dashboard/help"
-            className={cn(
-              'flex items-center gap-3 px-3 py-2 text-surface-500 hover:text-surface-700 rounded-lg hover:bg-surface-100 transition-colors',
-              isCollapsed && 'justify-center'
-            )}
-          >
-            <span className="text-lg">❓</span>
-            {!isCollapsed && <span className="text-sm">Bantuan</span>}
-          </Link>
-        </div>
+        {!brand.tenant.hideFooter && (
+          <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-surface-100 bg-white">
+            <Link
+              href="/dashboard/help"
+              className={cn(
+                'flex items-center gap-3 px-3 py-2 text-surface-500 hover:text-surface-700 rounded-lg hover:bg-surface-100 transition-colors',
+                isCollapsed && 'justify-center'
+              )}
+            >
+              <span className="text-lg">❓</span>
+              {!isCollapsed && <span className="text-sm">Bantuan</span>}
+            </Link>
+          </div>
+        )}
       </aside>
     </SidebarContext.Provider>
   );
@@ -174,33 +193,35 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="min-h-screen bg-surface-50">
-        <DashboardSidebar />
-        <main
-          className={cn(
-            'transition-all duration-300',
-            isCollapsed ? 'ml-20' : 'ml-64'
-          )}
-        >
-          {/* Top Bar */}
-          <header className="h-16 bg-white border-b border-surface-100 flex items-center justify-between px-6 sticky top-0 z-30">
-            <h1 className="text-lg font-semibold text-surface-800">
-              Dashboard
-            </h1>
-            <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-surface-100 rounded-lg text-surface-500">
-                🔔
-              </button>
-              <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-semibold text-sm">
-                U
+    <BrandProvider>
+      <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
+        <div className="min-h-screen bg-surface-50">
+          <DashboardSidebar />
+          <main
+            className={cn(
+              'transition-all duration-300',
+              isCollapsed ? 'ml-20' : 'ml-64'
+            )}
+          >
+            {/* Top Bar */}
+            <header className="h-16 bg-white border-b border-surface-100 flex items-center justify-between px-6 sticky top-0 z-30">
+              <h1 className="text-lg font-semibold text-surface-800">
+                Dashboard
+              </h1>
+              <div className="flex items-center gap-4">
+                <button className="p-2 hover:bg-surface-100 rounded-lg text-surface-500">
+                  🔔
+                </button>
+                <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-semibold text-sm">
+                  U
+                </div>
               </div>
-            </div>
-          </header>
-          <div className="p-6">{children}</div>
-        </main>
-      </div>
-    </SidebarContext.Provider>
+            </header>
+            <div className="p-6">{children}</div>
+          </main>
+        </div>
+      </SidebarContext.Provider>
+    </BrandProvider>
   );
 }
 
