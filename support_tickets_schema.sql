@@ -1,8 +1,23 @@
--- Enums
+-- Enums (Separated to ensure all are created even if some exist)
 DO $$ BEGIN
     CREATE TYPE public.ticket_status AS ENUM ('OPEN', 'REPLIED', 'CLOSED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
     CREATE TYPE public.ticket_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
     CREATE TYPE public.message_role AS ENUM ('USER', 'ADMIN', 'SYSTEM');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
     -- Ensure Admin Role Enum exists
     CREATE TYPE public.admin_role_enum AS ENUM ('SUPER_ADMIN', 'FINANCE', 'SUPPORT', 'CONTENT', 'LOGISTICS');
 EXCEPTION
