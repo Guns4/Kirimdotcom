@@ -1,3 +1,17 @@
+-- Ensure Admin Profiles exists (Defensive)
+DO $$ BEGIN
+    CREATE TYPE public.admin_role_enum AS ENUM ('SUPER_ADMIN', 'FINANCE', 'SUPPORT', 'CONTENT', 'LOGISTICS');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+CREATE TABLE IF NOT EXISTS public.admin_profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id),
+    role admin_role_enum NOT NULL DEFAULT 'SUPPORT',
+    full_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Table: Admin Activity Logs
 CREATE TABLE IF NOT EXISTS public.admin_activity_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

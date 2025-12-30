@@ -11,9 +11,23 @@ echo "================================================="
 echo "1. Generating SQL: support_tickets_schema.sql"
 cat <<EOF > support_tickets_schema.sql
 -- Enums
-CREATE TYPE public.ticket_status AS ENUM ('OPEN', 'REPLIED', 'CLOSED');
-CREATE TYPE public.ticket_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
-CREATE TYPE public.message_role AS ENUM ('USER', 'ADMIN', 'SYSTEM');
+DO \$\$ BEGIN
+    CREATE TYPE public.ticket_status AS ENUM ('OPEN', 'REPLIED', 'CLOSED');
+    CREATE TYPE public.ticket_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
+    CREATE TYPE public.message_role AS ENUM ('USER', 'ADMIN', 'SYSTEM');
+    -- Ensure Admin Role Enum exists
+    CREATE TYPE public.admin_role_enum AS ENUM ('SUPER_ADMIN', 'FINANCE', 'SUPPORT', 'CONTENT', 'LOGISTICS');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END \$\$;
+
+-- Ensure Admin Profiles exists (Defensive)
+CREATE TABLE IF NOT EXISTS public.admin_profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id),
+    role admin_role_enum NOT NULL DEFAULT 'SUPPORT',
+    full_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
 -- Table: Tickets
 CREATE TABLE IF NOT EXISTS public.support_tickets (
