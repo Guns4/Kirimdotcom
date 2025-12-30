@@ -43,6 +43,19 @@ CREATE TABLE IF NOT EXISTS public.support_tickets (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Defensive Column Addition (in case table exists but column doesn't)
+DO $$ BEGIN
+    ALTER TABLE public.support_tickets ADD COLUMN IF NOT EXISTS status ticket_status DEFAULT 'OPEN';
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+DO $$ BEGIN
+    ALTER TABLE public.support_tickets ADD COLUMN IF NOT EXISTS priority ticket_priority DEFAULT 'MEDIUM';
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
 -- Table: Messages
 CREATE TABLE IF NOT EXISTS public.support_messages (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
