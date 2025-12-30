@@ -18,4 +18,5 @@ values
 on conflict (keyword) do nothing;
 
 alter table public.affiliate_keywords enable row level security;
+drop policy if exists "Public read active keywords" on public.affiliate_keywords;
 create policy "Public read active keywords" on public.affiliate_keywords for select using (is_active = true);

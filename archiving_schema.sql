@@ -8,6 +8,7 @@ ALTER TABLE public.orders_archive ADD COLUMN IF NOT EXISTS archived_at timestamp
 
 -- 2. Archiving Function
 -- Moves data older than 1 year in a single transaction
+DROP FUNCTION IF EXISTS public.archive_old_orders();
 CREATE OR REPLACE FUNCTION public.archive_old_orders()
 RETURNS void AS $$
 DECLARE

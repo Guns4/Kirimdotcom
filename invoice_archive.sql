@@ -21,11 +21,13 @@ VALUES ('secure-invoices', 'secure-invoices', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- RLS for Storage (Strict)
+DROP POLICY IF EXISTS "Admin Upload Invoices" ON storage.objects;
 CREATE POLICY "Admin Upload Invoices"
 ON storage.objects FOR INSERT
 TO service_role
 WITH CHECK (bucket_id = 'secure-invoices');
 
+DROP POLICY IF EXISTS "Users View Own Invoices" ON storage.objects;
 CREATE POLICY "Users View Own Invoices"
 ON storage.objects FOR SELECT
 USING (

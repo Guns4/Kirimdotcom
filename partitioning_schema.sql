@@ -14,14 +14,18 @@ CREATE TABLE IF NOT EXISTS public.tracking_logs (
 ) PARTITION BY RANGE (created_at);
 
 -- 3. Create Partitions for 2024 and 2025
+DROP TABLE IF EXISTS public.tracking_logs_2024;
 CREATE TABLE public.tracking_logs_2024 PARTITION OF public.tracking_logs
     FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
 
+DROP TABLE IF EXISTS public.tracking_logs_2025;
 CREATE TABLE public.tracking_logs_2025 PARTITION OF public.tracking_logs
     FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
     
 -- 4. Enable RLS (Must be done on Parent)
 ALTER TABLE public.tracking_logs ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users view own logs" ON public.tracking_logs;
 CREATE POLICY "Users view own logs" ON public.tracking_logs
     FOR SELECT USING (auth.uid() = user_id);
 

@@ -12,12 +12,6 @@ export const runtime = 'edge';
 // Supported payment gateways
 type PaymentGateway = 'midtrans' | 'xendit' | 'lemonsqueezy' | 'manual';
 
-interface WebhookPayload {
-  gateway: PaymentGateway;
-  event: string;
-  data: any;
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Get gateway from query or header
@@ -94,7 +88,7 @@ async function handleMidtransWebhook(body: any, signature: string) {
       return { success: false, error: 'Missing user ID' };
     }
 
-    const { data: wallet } = await supabase.from('wallets').select('id').eq('user_id', userId).single();
+    const { data: wallet } = await (supabase as any).from('wallets').select('id').eq('user_id', userId).single();
     if (!wallet) {
       return { success: false, error: 'Wallet not found' };
     }
@@ -189,7 +183,6 @@ async function handleManualPayment(body: any) {
 async function activateSubscription(
   userId: string,
   planId: string,
-  transactionId?: string,
   gateway?: PaymentGateway
 ) {
   const supabase = await createClient();
@@ -222,7 +215,7 @@ async function activateSubscription(
       start_date: startDate.toISOString(),
       end_date: endDate.toISOString(),
       payment_gateway: gateway || 'manual',
-      last_payment_id: transactionId,
+      last_payment_id: null,
       updated_at: new Date().toISOString(),
     },
     {
@@ -239,8 +232,7 @@ async function activateSubscription(
   // Using server-side logEvent since this is background API
   await logEvent('complete_purchase', {
     planId,
-    gateway: gateway || 'manual',
-    transactionId,
+    gateway: gateway || 'manual'
   });
 
   return true;

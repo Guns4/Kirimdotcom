@@ -17,9 +17,11 @@ CREATE TABLE IF NOT EXISTS public.saved_bank_accounts (
 -- RLS
 ALTER TABLE public.saved_bank_accounts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users view own accounts" ON public.saved_bank_accounts;
 CREATE POLICY "Users view own accounts" ON public.saved_bank_accounts
 FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users delete own accounts" ON public.saved_bank_accounts;
 CREATE POLICY "Users delete own accounts" ON public.saved_bank_accounts
 FOR DELETE USING (auth.uid() = user_id);
 

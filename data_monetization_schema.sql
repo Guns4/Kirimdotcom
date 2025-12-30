@@ -1,5 +1,9 @@
 ﻿-- 1. Anonymized Analytical View
 -- Aggregates data for reporting (Safe for public consumption)
+-- NOTE: This view requires shipping_bookings table from the Booking System
+-- Uncomment once shipping_bookings table is created with these columns:
+-- - origin_city, destination_city, courier, package_weight, status, created_at
+/*
 CREATE OR REPLACE VIEW view_anonymized_trends AS
 SELECT 
     TO_CHAR(created_at, 'YYYY-MM') as month_period,
@@ -11,6 +15,7 @@ SELECT
 FROM public.shipping_bookings
 WHERE status IN ('picked_up', 'completed', 'confirmed') -- Only valid shipments
 GROUP BY 1, 2, 3, 4;
+*/
 
 -- 2. Report Catalog (Products)
 CREATE TABLE IF NOT EXISTS public.business_reports (
