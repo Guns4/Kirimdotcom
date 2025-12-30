@@ -1,20 +1,20 @@
 ﻿import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { sendAdminAlert } from '@/lib/admin-alert'; // Reusing alerter for demo
+import { sendAdminAlert } from '@/lib/admin-alert';
 
 export async function GET(request: Request) {
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-         return new NextResponse('Unauthorized', { status: 401 });
+        return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const supabase = createClient();
-    
+
     // 1. Find Targets
     // CHURN_RISK, and haven't received a campaign in 30 days
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     const { data: targets } = await supabase
         .from('user_segments')
         .select('user_id')
@@ -42,20 +42,20 @@ export async function GET(request: Request) {
             max_usage: 1,
             expires_at: expires.toISOString()
         }, { onConflict: 'code' }); // If code exists, skip/update (idempotent)
-        
+
         if (!error) {
             // 3. Mark Campaign Sent
             await supabase.from('user_segments')
                 .update({ last_campaign_at: new Date().toISOString() })
                 .eq('user_id', target.user_id);
-                
+
             // 4. Mock Send
             // await whatsapp.send(target.user_id, "We miss you! Use " + code);
             console.log(`[WINBACK] Sent ${code} to ${target.user_id}`);
             sentCount++;
         }
     }
-    
+
     if (sentCount > 0) {
         await sendAdminAlert('Winback Campaign Run', `Sent ${sentCount} vouchers to Churn Risk users.`);
     }
