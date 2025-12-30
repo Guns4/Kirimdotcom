@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { generateCSVTemplate } from '@/lib/route-optimizer';
+import BulkLabelGenerator from './BulkLabelGenerator';
 
 interface OptimizationResult {
   id: string;
@@ -298,6 +299,12 @@ export default function RouteOptimizer() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Bulk Label Generator */}
+          <BulkLabelGenerator
+            optimizationId={result.id}
+            packages={result.packages}
+          />
         </>
       )}
     </div>
