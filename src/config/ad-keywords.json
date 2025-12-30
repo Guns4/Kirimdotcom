@@ -1,0 +1,89 @@
+{
+    "mappings": [
+        {
+            "category": "Fashion",
+            "keywords": [
+                "baju",
+                "kaos",
+                "celana",
+                "jaket",
+                "sepatu",
+                "tas",
+                "dompet",
+                "kemeja",
+                "dress",
+                "fashion"
+            ],
+            "ad_title": "Lengkapi Gayamu!",
+            "ad_image": "/ads/fashion-promo.jpg",
+            "affiliate_link": "/shop/fashion"
+        },
+        {
+            "category": "Gadget",
+            "keywords": [
+                "hp",
+                "handphone",
+                "case",
+                "charger",
+                "kabel",
+                "headset",
+                "earphone",
+                "laptop",
+                "mouse",
+                "keyboard"
+            ],
+            "ad_title": "Aksesoris Gadget Termurah",
+            "ad_image": "/ads/gadget-promo.jpg",
+            "affiliate_link": "/shop/gadget"
+        },
+        {
+            "category": "Beauty",
+            "keywords": [
+                "skincare",
+                "serum",
+                "toner",
+                "lipstik",
+                "bedak",
+                "cream",
+                "masker",
+                "kosmetik"
+            ],
+            "ad_title": "Cantik Hemat Budget",
+            "ad_image": "/ads/beauty-promo.jpg",
+            "affiliate_link": "/shop/beauty"
+        },
+        {
+            "category": "Home",
+            "keywords": [
+                "bantal",
+                "sprei",
+                "alat",
+                "dapur",
+                "sapu",
+                "pel",
+                "rak"
+            ],
+            "ad_title": "Perkakas Rumah Diskon 50%",
+            "ad_image": "/ads/home-promo.jpg",
+            "affiliate_link": "/shop/home"
+        },
+        {
+            "category": "Logistics",
+            "keywords": [
+                "dokumen",
+                "surat",
+                "kardus",
+                "packing"
+            ],
+            "ad_title": "Butuh Lakban & Plastik?",
+            "ad_image": "/ads/logistics-promo.jpg",
+            "affiliate_link": "/services/supplies"
+        }
+    ],
+    "fallback": {
+        "category": "General",
+        "ad_title": "Promo Spesial Hari Ini",
+        "ad_image": "/ads/general-promo.jpg",
+        "affiliate_link": "/shop/flash-sale"
+    }
+}
