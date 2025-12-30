@@ -4,6 +4,13 @@ import { getRegionBySlug, getAllLocationPaths } from '@/lib/seo-locations';
 import { MapPin, Truck, CheckCircle } from 'lucide-react';
 import LocalLeaderboard from '@/components/community/LocalLeaderboard';
 import { getTopSellers } from '@/lib/community-ranking';
+import dynamic from 'next/dynamic';
+
+// Dynamic Import for Map (Client Side Only)
+const AgentMap = dynamic(() => import('@/components/maps/AgentMap'), {
+    ssr: false,
+    loading: () => <div className="h-[400px] bg-gray-100 rounded-xl flex items-center justify-center">Loading Map...</div>
+});
 
 interface Props {
     params: Promise<{
@@ -143,6 +150,9 @@ export default async function AreaPage({ params }: Props) {
 
                 {/* Local Community Leaderboard */}
                 <LocalLeaderboard district={region.district} topSellers={topSellers} />
+
+                {/* Agent Finder Map */}
+                <AgentMap districtName={region.district} />
 
                 {/* CTA */}
                 <div className="text-center mt-12 mb-8">
