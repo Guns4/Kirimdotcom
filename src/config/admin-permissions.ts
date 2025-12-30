@@ -10,6 +10,7 @@ export const PROTECTED_ROUTES: Record<string, AdminRole[]> = {
     '/admin/orders': ['SUPER_ADMIN', 'LOGISTICS'],
     '/admin/supply': ['SUPER_ADMIN', 'LOGISTICS'],
     '/admin/inventory': ['SUPER_ADMIN', 'LOGISTICS'],
+    '/admin/disputes': ['SUPER_ADMIN', 'SUPPORT'],
     '/admin/logs': ['SUPER_ADMIN'],
     '/admin/settings': ['SUPER_ADMIN'],
 };
@@ -23,6 +24,7 @@ export const SIDEBAR_ITEMS = [
     { label: 'Orders', href: '/admin/orders', icon: 'Package', roles: ['SUPER_ADMIN', 'LOGISTICS'] },
     { label: 'Supply', href: '/admin/supply', icon: 'Truck', roles: ['SUPER_ADMIN', 'LOGISTICS'] },
     { label: 'Content', href: '/admin/blog', icon: 'FileText', roles: ['SUPER_ADMIN', 'CONTENT'] },
+    { label: 'Disputes', href: '/admin/disputes', icon: 'AlertTriangle', roles: ['SUPER_ADMIN', 'SUPPORT'] },
     { label: 'Activity Logs', href: '/admin/logs', icon: 'Shield', roles: ['SUPER_ADMIN'] },
     { label: 'Settings', href: '/admin/settings', icon: 'Settings', roles: ['SUPER_ADMIN'] },
 ];
