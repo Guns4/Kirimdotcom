@@ -187,7 +187,7 @@ export function FinanceTower() {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, `${year}-${month.toString().padStart(2, '0')}`);
 
-        XLSX.writeFile(workbook, `Finance_Report_${year}_${month.toString().padStart(2, '0')}.xlsx`);
+        XLSX.writeFile(workbook, `Finance_Report_${year}_${month.toString().padStart(2, '0')}`);
         toast.dismiss();
         toast.success('Report downloaded!');
     };
