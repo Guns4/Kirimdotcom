@@ -457,3 +457,27 @@ body.debug-mode::after {
     content: 'Desktop (2XL)';
   }
 }
+
+/* ============================================
+   DARK MODE ASSET ADAPTATION
+   ============================================ */
+@layer utilities {
+  .invert-on-dark {
+    /* Default: No filter */
+    filter: none;
+    transition: filter 0.3s ease;
+  }
+  
+  .dark .invert-on-dark {
+    /* Dark Mode: Invert colors (Black -> White) and boost brightness */
+    filter: invert(1) brightness(200%);
+  }
+
+  /* Version specific for strictly white logos needing black in light mode, etc */
+  .invert-on-light {
+    filter: invert(1);
+  }
+  .dark .invert-on-light {
+    filter: none;
+  }
+}

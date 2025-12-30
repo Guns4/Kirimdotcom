@@ -140,6 +140,12 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+
+    // Production optimizations
+    compiler: {
+        // Remove console.log in production for cleaner logs
+        removeConsole: process.env.NODE_ENV === 'production',
+    },
 }
 
 // PWA Configuration

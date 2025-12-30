@@ -1,0 +1,4383 @@
+{
+  "timestamp": "2025-12-30T08:36:48.905Z",
+  "structure": [
+    {
+      "type": "folder",
+      "name": "app",
+      "children": [
+        {
+          "type": "folder",
+          "name": "actions",
+          "children": [
+            {
+              "type": "file",
+              "name": "addressActions.ts",
+              "size": 335
+            },
+            {
+              "type": "file",
+              "name": "admin-metrics.ts",
+              "size": 2691
+            },
+            {
+              "type": "file",
+              "name": "adminProductActions.ts",
+              "size": 6884
+            },
+            {
+              "type": "file",
+              "name": "adminTransactionActions.ts",
+              "size": 6230
+            },
+            {
+              "type": "file",
+              "name": "ads.ts",
+              "size": 2468
+            },
+            {
+              "type": "file",
+              "name": "adsActions.ts",
+              "size": 6557
+            },
+            {
+              "type": "file",
+              "name": "affiliateActions.ts",
+              "size": 10065
+            },
+            {
+              "type": "file",
+              "name": "ai-consultant.ts",
+              "size": 2328
+            },
+            {
+              "type": "file",
+              "name": "aiAdminActions.ts",
+              "size": 6698
+            },
+            {
+              "type": "file",
+              "name": "aiWriterActions.ts",
+              "size": 2435
+            },
+            {
+              "type": "file",
+              "name": "analytics.ts",
+              "size": 2487
+            },
+            {
+              "type": "file",
+              "name": "analyticsActions.ts",
+              "size": 1908
+            },
+            {
+              "type": "file",
+              "name": "api-key.ts",
+              "size": 1532
+            },
+            {
+              "type": "file",
+              "name": "api-keys.ts",
+              "size": 5774
+            },
+            {
+              "type": "file",
+              "name": "apiKeyActions.ts",
+              "size": 4843
+            },
+            {
+              "type": "file",
+              "name": "articleActions.ts",
+              "size": 6238
+            },
+            {
+              "type": "file",
+              "name": "bank-account.ts",
+              "size": 1018
+            },
+            {
+              "type": "file",
+              "name": "biometric.ts",
+              "size": 3500
+            },
+            {
+              "type": "file",
+              "name": "blacklistActions.ts",
+              "size": 4322
+            },
+            {
+              "type": "file",
+              "name": "bookingActions.ts",
+              "size": 7318
+            },
+            {
+              "type": "file",
+              "name": "bulkTrackingActions.ts",
+              "size": 4958
+            },
+            {
+              "type": "file",
+              "name": "bundleActions.ts",
+              "size": 4770
+            },
+            {
+              "type": "file",
+              "name": "cod.ts",
+              "size": 3833
+            },
+            {
+              "type": "file",
+              "name": "creditScoreActions.ts",
+              "size": 5442
+            },
+            {
+              "type": "file",
+              "name": "crm.ts",
+              "size": 2435
+            },
+            {
+              "type": "file",
+              "name": "developerActions.ts",
+              "size": 2876
+            },
+            {
+              "type": "file",
+              "name": "digital-store.ts",
+              "size": 5127
+            },
+            {
+              "type": "file",
+              "name": "dispute.ts",
+              "size": 4223
+            },
+            {
+              "type": "file",
+              "name": "dropshipActions.ts",
+              "size": 9519
+            },
+            {
+              "type": "file",
+              "name": "errorLoggingActions.ts",
+              "size": 874
+            },
+            {
+              "type": "file",
+              "name": "escrow.ts",
+              "size": 1568
+            },
+            {
+              "type": "file",
+              "name": "escrowActions.ts",
+              "size": 8419
+            },
+            {
+              "type": "file",
+              "name": "expenseActions.ts",
+              "size": 1231
+            },
+            {
+              "type": "file",
+              "name": "expenses.ts",
+              "size": 1492
+            },
+            {
+              "type": "file",
+              "name": "featureFlagActions.ts",
+              "size": 1328
+            },
+            {
+              "type": "file",
+              "name": "feedback.ts",
+              "size": 2515
+            },
+            {
+              "type": "file",
+              "name": "finance.ts",
+              "size": 3765
+            },
+            {
+              "type": "file",
+              "name": "flagActions.ts",
+              "size": 1009
+            },
+            {
+              "type": "file",
+              "name": "forumActions.ts",
+              "size": 5753
+            },
+            {
+              "type": "file",
+              "name": "funnelActions.ts",
+              "size": 1785
+            },
+            {
+              "type": "file",
+              "name": "gacha.ts",
+              "size": 3189
+            },
+            {
+              "type": "file",
+              "name": "gamification.ts",
+              "size": 7223
+            },
+            {
+              "type": "file",
+              "name": "goodsCheckerActions.ts",
+              "size": 324
+            },
+            {
+              "type": "file",
+              "name": "gsheets.ts",
+              "size": 2129
+            },
+            {
+              "type": "file",
+              "name": "history.ts",
+              "size": 1293
+            },
+            {
+              "type": "file",
+              "name": "insurance.ts",
+              "size": 2113
+            },
+            {
+              "type": "file",
+              "name": "insuranceActions.ts",
+              "size": 8860
+            },
+            {
+              "type": "file",
+              "name": "inventory.ts",
+              "size": 2315
+            },
+            {
+              "type": "file",
+              "name": "inventoryActions.ts",
+              "size": 1481
+            },
+            {
+              "type": "file",
+              "name": "invoiceActions.ts",
+              "size": 5063
+            },
+            {
+              "type": "file",
+              "name": "invoices.ts",
+              "size": 1947
+            },
+            {
+              "type": "file",
+              "name": "issues.ts",
+              "size": 2513
+            },
+            {
+              "type": "file",
+              "name": "jastip.ts",
+              "size": 1820
+            },
+            {
+              "type": "file",
+              "name": "jobs.ts",
+              "size": 967
+            },
+            {
+              "type": "file",
+              "name": "labelActions.ts",
+              "size": 4317
+            },
+            {
+              "type": "file",
+              "name": "localCourierActions.ts",
+              "size": 8731
+            },
+            {
+              "type": "file",
+              "name": "localOrderActions.ts",
+              "size": 9116
+            },
+            {
+              "type": "file",
+              "name": "logistics.ts",
+              "size": 10160
+            },
+            {
+              "type": "file",
+              "name": "loyalty.ts",
+              "size": 2313
+            },
+            {
+              "type": "file",
+              "name": "maintenance.ts",
+              "size": 2174
+            },
+            {
+              "type": "file",
+              "name": "marketplace.ts",
+              "size": 948
+            },
+            {
+              "type": "file",
+              "name": "omniImportActions.ts",
+              "size": 8069
+            },
+            {
+              "type": "file",
+              "name": "orders.ts",
+              "size": 6616
+            },
+            {
+              "type": "file",
+              "name": "payLaterActions.ts",
+              "size": 8395
+            },
+            {
+              "type": "file",
+              "name": "paymentActions.ts",
+              "size": 4871
+            },
+            {
+              "type": "file",
+              "name": "pointsActions.ts",
+              "size": 6818
+            },
+            {
+              "type": "file",
+              "name": "popular-routes.ts",
+              "size": 8511
+            },
+            {
+              "type": "file",
+              "name": "prediction.ts",
+              "size": 2314
+            },
+            {
+              "type": "file",
+              "name": "profitActions.ts",
+              "size": 8075
+            },
+            {
+              "type": "file",
+              "name": "push.ts",
+              "size": 1405
+            },
+            {
+              "type": "file",
+              "name": "referral.ts",
+              "size": 1353
+            },
+            {
+              "type": "file",
+              "name": "renewalActions.ts",
+              "size": 3190
+            },
+            {
+              "type": "file",
+              "name": "revalidate.ts",
+              "size": 2000
+            },
+            {
+              "type": "file",
+              "name": "reviewActions.ts",
+              "size": 1139
+            },
+            {
+              "type": "file",
+              "name": "reviews.ts",
+              "size": 4244
+            },
+            {
+              "type": "file",
+              "name": "rewards.ts",
+              "size": 1875
+            },
+            {
+              "type": "file",
+              "name": "roadmap.ts",
+              "size": 1340
+            },
+            {
+              "type": "file",
+              "name": "security-pin.ts",
+              "size": 2653
+            },
+            {
+              "type": "file",
+              "name": "security.ts",
+              "size": 2155
+            },
+            {
+              "type": "file",
+              "name": "securityActions.ts",
+              "size": 7205
+            },
+            {
+              "type": "file",
+              "name": "stuckDetectorActions.ts",
+              "size": 6090
+            },
+            {
+              "type": "file",
+              "name": "supplierActions.ts",
+              "size": 8403
+            },
+            {
+              "type": "file",
+              "name": "teamActions.ts",
+              "size": 6111
+            },
+            {
+              "type": "file",
+              "name": "tenantActions.ts",
+              "size": 1363
+            },
+            {
+              "type": "file",
+              "name": "tracking-notify.ts",
+              "size": 4644
+            },
+            {
+              "type": "file",
+              "name": "trends.ts",
+              "size": 1189
+            },
+            {
+              "type": "file",
+              "name": "unboxing.ts",
+              "size": 1490
+            },
+            {
+              "type": "file",
+              "name": "waGatewayActions.ts",
+              "size": 8832
+            },
+            {
+              "type": "file",
+              "name": "walletActions.ts",
+              "size": 8393
+            },
+            {
+              "type": "file",
+              "name": "waRotatorActions.ts",
+              "size": 6043
+            },
+            {
+              "type": "file",
+              "name": "webhooks.ts",
+              "size": 2204
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "admin",
+          "children": [
+            {
+              "type": "folder",
+              "name": "ads",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 11092
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "finance",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "withdrawals",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "AdminWithdrawalClient.tsx",
+                      "size": 1009
+                    },
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 3559
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "products",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 11851
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "roadmap",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3069
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "transactions",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 14083
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "affiliate-demo",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 1057
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "api",
+          "children": [
+            {
+              "type": "folder",
+              "name": "admin",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "analytics",
+                  "children": [
+                    {
+                      "type": "folder",
+                      "name": "segments",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "route.ts",
+                          "size": 888
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "invoices",
+                  "children": [
+                    {
+                      "type": "folder",
+                      "name": "generate",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "route.ts",
+                          "size": 1935
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "affiliate",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "track",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2207
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "ai",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "generate-advice",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 7136
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "check-premium",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "route.ts",
+                  "size": 692
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "cron",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "analytics",
+                  "children": [
+                    {
+                      "type": "folder",
+                      "name": "rfm",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "route.ts",
+                          "size": 1861
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "billing",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 3582
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "cart-recovery",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2110
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "cleanup",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 5524
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "marketing",
+                  "children": [
+                    {
+                      "type": "folder",
+                      "name": "winback",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "route.ts",
+                          "size": 2454
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "monitor-vendor",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2342
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "reconcile",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 3205
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "renewal-reminder",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 520
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "report",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1360
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "sync-prices",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2810
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "finance",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "disburse",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2474
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "validate-bank",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1082
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "health",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "route.ts",
+                  "size": 1367
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "og",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "route.tsx",
+                  "size": 5295
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "push",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "send",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 3202
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "subscribe",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1759
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "site-settings",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "route.ts",
+                  "size": 1092
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "telegram",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "webhook",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 6861
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "tracking",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "global",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1855
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "v1",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "example",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 805
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "track",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 4881
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "webhooks",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "auto-post",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1090
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "blog-published",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1499
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "disbursement",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 1409
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "midtrans",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 6085
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "payment",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 7408
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "ppob",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "route.ts",
+                      "size": 2236
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "auth",
+          "children": [
+            {
+              "type": "folder",
+              "name": "callback",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "route.ts",
+                  "size": 524
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "blacklist",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 8561
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "blog",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 6673
+            },
+            {
+              "type": "folder",
+              "name": "[slug]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 10297
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "bulk-tracking",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 18733
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "business",
+          "children": [
+            {
+              "type": "folder",
+              "name": "data",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3485
+                },
+                {
+                  "type": "file",
+                  "name": "PurchaseButton.tsx",
+                  "size": 845
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "cek-ongkir",
+          "children": [
+            {
+              "type": "folder",
+              "name": "[...route]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 12324
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "[kota]",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "[kecamatan]",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 13231
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "cek-resi",
+          "children": [
+            {
+              "type": "folder",
+              "name": "[...slug]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 4056
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "cetak-label",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 765
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "dashboard",
+          "children": [
+            {
+              "type": "folder",
+              "name": "admin",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "blog",
+                  "children": [
+                    {
+                      "type": "folder",
+                      "name": "generator",
+                      "children": [
+                        {
+                          "type": "file",
+                          "name": "page.tsx",
+                          "size": 14612
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "folder",
+                  "name": "disputes",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 4896
+                    }
+                  ]
+                },
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3137
+                },
+                {
+                  "type": "folder",
+                  "name": "social-studio",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 7947
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "affiliate",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 10194
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "credit-score",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 15418
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "customers",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3871
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "developer",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "layout.tsx",
+                  "size": 354
+                },
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 11002
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "expenses",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 6069
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "history",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 2560
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "insurance",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 14199
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "inventory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 5305
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "invoices",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 6397
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "orders",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 2845
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 4007
+            },
+            {
+              "type": "folder",
+              "name": "paylater",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 13041
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "settings",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1096
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "wallet",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 11354
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "debug-sentry",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 887
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "docs",
+          "children": [
+            {
+              "type": "folder",
+              "name": "api",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 5025
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 1191
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "embed",
+          "children": [
+            {
+              "type": "folder",
+              "name": "widget",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1439
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "error.tsx",
+          "size": 3216
+        },
+        {
+          "type": "folder",
+          "name": "faq",
+          "children": [
+            {
+              "type": "file",
+              "name": "layout.tsx",
+              "size": 388
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 5803
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "finance",
+          "children": [
+            {
+              "type": "folder",
+              "name": "history",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 240
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "withdraw",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1255
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "forum",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 8653
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "global-error.tsx",
+          "size": 4962
+        },
+        {
+          "type": "folder",
+          "name": "kamus",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 2154
+            },
+            {
+              "type": "folder",
+              "name": "[slug]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 4467
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "komunitas",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 2845
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "layout.tsx",
+          "size": 5240
+        },
+        {
+          "type": "folder",
+          "name": "login",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 6436
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "lokasi",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 1045
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "maintenance",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 1515
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "marketplace",
+          "children": [
+            {
+              "type": "folder",
+              "name": "jobs",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 2925
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 4309
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "not-found.tsx",
+          "size": 4943
+        },
+        {
+          "type": "folder",
+          "name": "offline",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 1789
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ongkir",
+          "children": [
+            {
+              "type": "folder",
+              "name": "[origin]",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "[destination]",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 9192
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "page.tsx",
+          "size": 10033
+        },
+        {
+          "type": "folder",
+          "name": "pay",
+          "children": [
+            {
+              "type": "folder",
+              "name": "create",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 6591
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "[code]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3436
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ppob",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 3279
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "pricing",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 15406
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "register",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 8717
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "rewards",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 2711
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "robots.ts",
+          "size": 558
+        },
+        {
+          "type": "folder",
+          "name": "settings",
+          "children": [
+            {
+              "type": "folder",
+              "name": "billing",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3746
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 5365
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "share-target",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 2784
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "shop",
+          "children": [
+            {
+              "type": "folder",
+              "name": "download",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "[id]",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 3883
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "my-purchases",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 2876
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 6305
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "sitemap.ts",
+          "size": 2242
+        },
+        {
+          "type": "folder",
+          "name": "starter-kit",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 9414
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "statistics",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 2463
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "template-chat",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 4686
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "terms",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 4111
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "too-many-requests",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 5509
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "tools",
+          "children": [
+            {
+              "type": "folder",
+              "name": "bulk-tracking",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 6907
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "caption-generator",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 6430
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "cek-cod",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1473
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "generator-caption",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1390
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "kalkulator-marketplace",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1082
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "kompres-foto",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1399
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "label-maker",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 7583
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "magic-qr",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 529
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "smart-paste",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1241
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "wa-rotator",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 3690
+                }
+              ]
+            },
+            {
+              "type": "folder",
+              "name": "widget-generator",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 1371
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "track",
+          "children": [
+            {
+              "type": "folder",
+              "name": "[courier]",
+              "children": [
+                {
+                  "type": "folder",
+                  "name": "[resi]",
+                  "children": [
+                    {
+                      "type": "file",
+                      "name": "page.tsx",
+                      "size": 4371
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "trends",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 4978
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "verified",
+          "children": [
+            {
+              "type": "file",
+              "name": "page.tsx",
+              "size": 5946
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "wa",
+          "children": [
+            {
+              "type": "folder",
+              "name": "[slug]",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 5347
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "widget",
+          "children": [
+            {
+              "type": "folder",
+              "name": "search",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "page.tsx",
+                  "size": 656
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "components",
+      "children": [
+        {
+          "type": "folder",
+          "name": "admin",
+          "children": [
+            {
+              "type": "file",
+              "name": "AdminTable.tsx",
+              "size": 12061
+            },
+            {
+              "type": "file",
+              "name": "AdminTabs.tsx",
+              "size": 0
+            },
+            {
+              "type": "file",
+              "name": "AIWriterWidget.tsx",
+              "size": 1918
+            },
+            {
+              "type": "file",
+              "name": "AnalyticsDashboard.tsx",
+              "size": 8011
+            },
+            {
+              "type": "file",
+              "name": "BusinessHealthCard.tsx",
+              "size": 4177
+            },
+            {
+              "type": "file",
+              "name": "DraftListWidget.tsx",
+              "size": 1355
+            },
+            {
+              "type": "file",
+              "name": "FeatureManager.tsx",
+              "size": 4593
+            },
+            {
+              "type": "file",
+              "name": "FeedbackFeedWidget.tsx",
+              "size": 4970
+            },
+            {
+              "type": "file",
+              "name": "FunnelAnalysisWidget.tsx",
+              "size": 4393
+            },
+            {
+              "type": "file",
+              "name": "LiveRevenueWidget.tsx",
+              "size": 4272
+            },
+            {
+              "type": "file",
+              "name": "LogoUploader.tsx",
+              "size": 5667
+            },
+            {
+              "type": "file",
+              "name": "MaintenanceSwitch.tsx",
+              "size": 3276
+            },
+            {
+              "type": "file",
+              "name": "PerformanceWidget.tsx",
+              "size": 2584
+            },
+            {
+              "type": "file",
+              "name": "RecentErrorsWidget.tsx",
+              "size": 2108
+            },
+            {
+              "type": "file",
+              "name": "TopCouriersWidget.tsx",
+              "size": 2109
+            },
+            {
+              "type": "file",
+              "name": "UserManagement.tsx",
+              "size": 9314
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ads",
+          "children": [
+            {
+              "type": "file",
+              "name": "AdPlaceholder.tsx",
+              "size": 2300
+            },
+            {
+              "type": "file",
+              "name": "AdUnit.tsx",
+              "size": 2161
+            },
+            {
+              "type": "file",
+              "name": "ContextualAdBanner.tsx",
+              "size": 3697
+            },
+            {
+              "type": "file",
+              "name": "InternalBanner.tsx",
+              "size": 3379
+            },
+            {
+              "type": "file",
+              "name": "LazyAd.tsx",
+              "size": 2854
+            },
+            {
+              "type": "file",
+              "name": "LocalAdBanner.tsx",
+              "size": 8420
+            },
+            {
+              "type": "folder",
+              "name": "manager",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "AdsDashboard.tsx",
+                  "size": 2595
+                },
+                {
+                  "type": "file",
+                  "name": "CreateCampaignForm.tsx",
+                  "size": 2333
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "NativeAds.tsx",
+              "size": 9679
+            },
+            {
+              "type": "file",
+              "name": "SmartRecommendation.tsx",
+              "size": 2912
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "affiliate",
+          "children": [
+            {
+              "type": "file",
+              "name": "ActionButton.tsx",
+              "size": 3005
+            },
+            {
+              "type": "file",
+              "name": "AffiliateButton.tsx",
+              "size": 1963
+            },
+            {
+              "type": "file",
+              "name": "AffiliateLinkedText.tsx",
+              "size": 2608
+            },
+            {
+              "type": "file",
+              "name": "AffiliateLinkGenerator.tsx",
+              "size": 4053
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ai",
+          "children": [
+            {
+              "type": "file",
+              "name": "ComplaintGenerator.tsx",
+              "size": 8375
+            },
+            {
+              "type": "file",
+              "name": "ConsultantChat.tsx",
+              "size": 4369
+            },
+            {
+              "type": "file",
+              "name": "ShippingInsight.tsx",
+              "size": 5115
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "analytics",
+          "children": [
+            {
+              "type": "file",
+              "name": "ClarityAnalytics.tsx",
+              "size": 4268
+            },
+            {
+              "type": "file",
+              "name": "CourierPerformanceChart.tsx",
+              "size": 5421
+            },
+            {
+              "type": "file",
+              "name": "ErrorMonitor.tsx",
+              "size": 973
+            },
+            {
+              "type": "file",
+              "name": "WebVitalsReporter.tsx",
+              "size": 636
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "animations",
+          "children": [
+            {
+              "type": "file",
+              "name": "PageTransition.tsx",
+              "size": 3723
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "auth",
+          "children": [
+            {
+              "type": "file",
+              "name": "BiometricSettings.tsx",
+              "size": 2067
+            },
+            {
+              "type": "file",
+              "name": "FeatureGate.tsx",
+              "size": 434
+            },
+            {
+              "type": "file",
+              "name": "Protect.tsx",
+              "size": 510
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "AutoBreadcrumbs.tsx",
+          "size": 2048
+        },
+        {
+          "type": "folder",
+          "name": "billing",
+          "children": [
+            {
+              "type": "file",
+              "name": "InvoiceList.tsx",
+              "size": 3350
+            },
+            {
+              "type": "file",
+              "name": "PlanSwitcher.tsx",
+              "size": 651
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "blacklist",
+          "children": [
+            {
+              "type": "file",
+              "name": "TrustSpeedometer.tsx",
+              "size": 2143
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "blog",
+          "children": [
+            {
+              "type": "file",
+              "name": "BlogCTA.tsx",
+              "size": 3665
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "BottomNav.tsx",
+          "size": 10520
+        },
+        {
+          "type": "file",
+          "name": "Breadcrumbs.tsx",
+          "size": 3809
+        },
+        {
+          "type": "folder",
+          "name": "caption-gen",
+          "children": [
+            {
+              "type": "file",
+              "name": "CaptionGenerator.tsx",
+              "size": 8680
+            },
+            {
+              "type": "file",
+              "name": "ScrollToTopButton.tsx",
+              "size": 321
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "ChatbotWidget.tsx",
+          "size": 6055
+        },
+        {
+          "type": "file",
+          "name": "CommandPalette.tsx",
+          "size": 12145
+        },
+        {
+          "type": "folder",
+          "name": "common",
+          "children": [
+            {
+              "type": "file",
+              "name": "SmartText.tsx",
+              "size": 1572
+            },
+            {
+              "type": "file",
+              "name": "VoiceSearchButton.tsx",
+              "size": 2598
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "community",
+          "children": [
+            {
+              "type": "file",
+              "name": "GiscusWidget.tsx",
+              "size": 1742
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "complaint",
+          "children": [
+            {
+              "type": "file",
+              "name": "ComplaintButton.tsx",
+              "size": 2102
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "dashboard",
+          "children": [
+            {
+              "type": "file",
+              "name": "AffiliateCard.tsx",
+              "size": 2357
+            },
+            {
+              "type": "file",
+              "name": "CreateOrderDialog.tsx",
+              "size": 5524
+            },
+            {
+              "type": "file",
+              "name": "DashboardLayout.tsx",
+              "size": 7797
+            },
+            {
+              "type": "file",
+              "name": "DataTable.tsx",
+              "size": 8413
+            },
+            {
+              "type": "file",
+              "name": "DeveloperApiDashboard.tsx",
+              "size": 10476
+            },
+            {
+              "type": "file",
+              "name": "OrderList.tsx",
+              "size": 4532
+            },
+            {
+              "type": "file",
+              "name": "PersonalizedWelcome.tsx",
+              "size": 6400
+            },
+            {
+              "type": "file",
+              "name": "Sidebar.tsx",
+              "size": 7349
+            },
+            {
+              "type": "file",
+              "name": "StatCard.tsx",
+              "size": 3176
+            },
+            {
+              "type": "file",
+              "name": "StickyNotes.tsx",
+              "size": 8643
+            },
+            {
+              "type": "file",
+              "name": "UserSettings.tsx",
+              "size": 3636
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "DebugMode.tsx",
+          "size": 1730
+        },
+        {
+          "type": "folder",
+          "name": "demo",
+          "children": [
+            {
+              "type": "file",
+              "name": "PromoBanner.tsx",
+              "size": 1177
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "dev",
+          "children": [
+            {
+              "type": "file",
+              "name": "DebugPanel.tsx",
+              "size": 4438
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "ErrorBoundary.tsx",
+          "size": 4540
+        },
+        {
+          "type": "folder",
+          "name": "feedback",
+          "children": [
+            {
+              "type": "file",
+              "name": "RoadmapWidget.tsx",
+              "size": 3887
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "finance",
+          "children": [
+            {
+              "type": "file",
+              "name": "BankAccountManager.tsx",
+              "size": 10845
+            },
+            {
+              "type": "file",
+              "name": "ExpenseTracker.tsx",
+              "size": 7754
+            },
+            {
+              "type": "file",
+              "name": "HistoryTable.tsx",
+              "size": 6348
+            },
+            {
+              "type": "file",
+              "name": "WithdrawForm.tsx",
+              "size": 1746
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "FloatingActionButton.tsx",
+          "size": 6155
+        },
+        {
+          "type": "file",
+          "name": "Footer.tsx",
+          "size": 6747
+        },
+        {
+          "type": "folder",
+          "name": "forms",
+          "children": [
+            {
+              "type": "file",
+              "name": "SmartAddressInput.tsx",
+              "size": 9485
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "game",
+          "children": [
+            {
+              "type": "file",
+              "name": "GachaMachine.tsx",
+              "size": 5706
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "gamification",
+          "children": [
+            {
+              "type": "file",
+              "name": "GamificationComponents.tsx",
+              "size": 12268
+            },
+            {
+              "type": "file",
+              "name": "UserBadge.tsx",
+              "size": 2334
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "home",
+          "children": [
+            {
+              "type": "file",
+              "name": "HeroSection.tsx",
+              "size": 3237
+            },
+            {
+              "type": "file",
+              "name": "IssueTicker.tsx",
+              "size": 1920
+            },
+            {
+              "type": "file",
+              "name": "RecentSearchSection.tsx",
+              "size": 3827
+            },
+            {
+              "type": "file",
+              "name": "ServiceTabs.tsx",
+              "size": 5508
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "i18n",
+          "children": [
+            {
+              "type": "file",
+              "name": "LanguageSwitcher.tsx",
+              "size": 2500
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "insurance",
+          "children": [
+            {
+              "type": "file",
+              "name": "InsuranceBadge.tsx",
+              "size": 774
+            },
+            {
+              "type": "file",
+              "name": "InsurancePopup.tsx",
+              "size": 2670
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "integrations",
+          "children": [
+            {
+              "type": "file",
+              "name": "SheetsSync.tsx",
+              "size": 2469
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "inventory",
+          "children": [
+            {
+              "type": "file",
+              "name": "InventoryGrid.tsx",
+              "size": 8538
+            },
+            {
+              "type": "file",
+              "name": "ProductForm.tsx",
+              "size": 3724
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "invoices",
+          "children": [
+            {
+              "type": "file",
+              "name": "InvoiceTemplate.tsx",
+              "size": 4382
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "jastip",
+          "children": [
+            {
+              "type": "file",
+              "name": "PostTripForm.tsx",
+              "size": 1684
+            },
+            {
+              "type": "file",
+              "name": "TripList.tsx",
+              "size": 3798
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "label",
+          "children": [
+            {
+              "type": "file",
+              "name": "LabelGenerator.tsx",
+              "size": 21634
+            },
+            {
+              "type": "file",
+              "name": "LabelGeneratorWrapper.tsx",
+              "size": 423
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "label-maker",
+          "children": [
+            {
+              "type": "file",
+              "name": "LabelMakerCanvas.tsx",
+              "size": 10197
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "layout",
+          "children": [
+            {
+              "type": "file",
+              "name": "BottomNav.tsx",
+              "size": 3170
+            },
+            {
+              "type": "file",
+              "name": "Container.tsx",
+              "size": 820
+            },
+            {
+              "type": "file",
+              "name": "Footer.tsx",
+              "size": 9041
+            },
+            {
+              "type": "file",
+              "name": "Navbar.tsx",
+              "size": 5831
+            },
+            {
+              "type": "file",
+              "name": "Section.tsx",
+              "size": 1206
+            },
+            {
+              "type": "file",
+              "name": "Spacing.tsx",
+              "size": 3180
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "location",
+          "children": [
+            {
+              "type": "file",
+              "name": "LocationMap.tsx",
+              "size": 6718
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "logistics",
+          "children": [
+            {
+              "type": "file",
+              "name": "AIInsight.tsx",
+              "size": 1987
+            },
+            {
+              "type": "file",
+              "name": "CekOngkirForm.tsx",
+              "size": 6327
+            },
+            {
+              "type": "file",
+              "name": "CekResiForm.tsx",
+              "size": 6714
+            },
+            {
+              "type": "file",
+              "name": "ErrorState.tsx",
+              "size": 4570
+            },
+            {
+              "type": "file",
+              "name": "FailSafeFallback.tsx",
+              "size": 2424
+            },
+            {
+              "type": "file",
+              "name": "index.ts",
+              "size": 242
+            },
+            {
+              "type": "file",
+              "name": "IssueReportButton.tsx",
+              "size": 7568
+            },
+            {
+              "type": "file",
+              "name": "OngkirComparisonTable.tsx",
+              "size": 6984
+            },
+            {
+              "type": "file",
+              "name": "OngkirResults.tsx",
+              "size": 8146
+            },
+            {
+              "type": "file",
+              "name": "TrackingResults.tsx",
+              "size": 13237
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "loyalty",
+          "children": [
+            {
+              "type": "file",
+              "name": "CoinBalance.tsx",
+              "size": 1385
+            },
+            {
+              "type": "file",
+              "name": "PointsDisplay.tsx",
+              "size": 1456
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "MagicTrackingHeader.tsx",
+          "size": 1490
+        },
+        {
+          "type": "folder",
+          "name": "marketplace",
+          "children": [
+            {
+              "type": "file",
+              "name": "EscrowStatus.tsx",
+              "size": 2772
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "MinimalFooter.tsx",
+          "size": 9601
+        },
+        {
+          "type": "folder",
+          "name": "missions",
+          "children": [
+            {
+              "type": "file",
+              "name": "DailyCheckInWidget.tsx",
+              "size": 8307
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "mobile",
+          "children": [
+            {
+              "type": "file",
+              "name": "NativeSheets.tsx",
+              "size": 12513
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "monitoring",
+          "children": [
+            {
+              "type": "file",
+              "name": "VercelInsights.tsx",
+              "size": 817
+            },
+            {
+              "type": "file",
+              "name": "VercelMonitoring.tsx",
+              "size": 260
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "Navbar.tsx",
+          "size": 4447
+        },
+        {
+          "type": "folder",
+          "name": "navigation",
+          "children": [
+            {
+              "type": "file",
+              "name": "NavbarDesktop.tsx",
+              "size": 7532
+            },
+            {
+              "type": "file",
+              "name": "NavbarMobile.tsx",
+              "size": 9150
+            },
+            {
+              "type": "file",
+              "name": "NavbarWrapper.tsx",
+              "size": 4088
+            },
+            {
+              "type": "file",
+              "name": "UserNavActions.tsx",
+              "size": 9743
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "notifications",
+          "children": [
+            {
+              "type": "file",
+              "name": "PushNotificationBell.tsx",
+              "size": 6400
+            },
+            {
+              "type": "file",
+              "name": "PushToggle.tsx",
+              "size": 2305
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ongkir",
+          "children": [
+            {
+              "type": "file",
+              "name": "RegionSelect.tsx",
+              "size": 7649
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "PageHeader.tsx",
+          "size": 6440
+        },
+        {
+          "type": "folder",
+          "name": "ppob",
+          "children": [
+            {
+              "type": "file",
+              "name": "PPOBTopupForm.tsx",
+              "size": 9406
+            },
+            {
+              "type": "file",
+              "name": "RecentNumbers.tsx",
+              "size": 2924
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "premium",
+          "children": [
+            {
+              "type": "file",
+              "name": "PremiumLock.tsx",
+              "size": 2328
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "providers",
+          "children": [
+            {
+              "type": "file",
+              "name": "FeatureFlagProvider.tsx",
+              "size": 685
+            },
+            {
+              "type": "file",
+              "name": "QueryProvider.tsx",
+              "size": 1215
+            },
+            {
+              "type": "file",
+              "name": "SiteSettingsProvider.tsx",
+              "size": 874
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "pwa",
+          "children": [
+            {
+              "type": "file",
+              "name": "InstallBanner.tsx",
+              "size": 2538
+            },
+            {
+              "type": "file",
+              "name": "InstallPrompt.tsx",
+              "size": 3499
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "reviews",
+          "children": [
+            {
+              "type": "file",
+              "name": "CourierLeaderboard.tsx",
+              "size": 8682
+            },
+            {
+              "type": "file",
+              "name": "CourierReviewForm.tsx",
+              "size": 6579
+            },
+            {
+              "type": "file",
+              "name": "VerifiedBadge.tsx",
+              "size": 482
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "security",
+          "children": [
+            {
+              "type": "file",
+              "name": "PinKeypad.tsx",
+              "size": 3839
+            },
+            {
+              "type": "file",
+              "name": "TurnstileWidget.tsx",
+              "size": 1812
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "seo",
+          "children": [
+            {
+              "type": "file",
+              "name": "CourierFAQ.tsx",
+              "size": 3611
+            },
+            {
+              "type": "file",
+              "name": "DynamicPopularRoutes.tsx",
+              "size": 1797
+            },
+            {
+              "type": "file",
+              "name": "FAQJsonLd.tsx",
+              "size": 757
+            },
+            {
+              "type": "file",
+              "name": "JsonLd.tsx",
+              "size": 305
+            },
+            {
+              "type": "file",
+              "name": "OngkirResultsSSR.tsx",
+              "size": 4073
+            },
+            {
+              "type": "file",
+              "name": "PopularRoutesSection.tsx",
+              "size": 1770
+            },
+            {
+              "type": "file",
+              "name": "RichSnippets.tsx",
+              "size": 4414
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "settings",
+          "children": [
+            {
+              "type": "file",
+              "name": "WebhookManager.tsx",
+              "size": 2955
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "share",
+          "children": [
+            {
+              "type": "file",
+              "name": "ShareableCard.tsx",
+              "size": 5516
+            },
+            {
+              "type": "file",
+              "name": "ShareButton.tsx",
+              "size": 7829
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "ShareableCard.tsx",
+          "size": 7616
+        },
+        {
+          "type": "folder",
+          "name": "social",
+          "children": [
+            {
+              "type": "file",
+              "name": "FlexShareGenerator.tsx",
+              "size": 6346
+            },
+            {
+              "type": "file",
+              "name": "LeaderboardWidget.tsx",
+              "size": 4387
+            },
+            {
+              "type": "file",
+              "name": "UnboxingFeed.tsx",
+              "size": 1949
+            },
+            {
+              "type": "file",
+              "name": "UnboxingUploader.tsx",
+              "size": 5895
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "starter-kit",
+          "children": [
+            {
+              "type": "file",
+              "name": "BundlePricingCard.tsx",
+              "size": 3399
+            },
+            {
+              "type": "file",
+              "name": "PurchaseButton.tsx",
+              "size": 555
+            },
+            {
+              "type": "file",
+              "name": "TestimonialSection.tsx",
+              "size": 3793
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "ThirdPartyScripts.tsx",
+          "size": 3507
+        },
+        {
+          "type": "folder",
+          "name": "tools",
+          "children": [
+            {
+              "type": "file",
+              "name": "CalculatorWrapper.tsx",
+              "size": 434
+            },
+            {
+              "type": "file",
+              "name": "CaptionGenerator.tsx",
+              "size": 9558
+            },
+            {
+              "type": "file",
+              "name": "CODRiskChecker.tsx",
+              "size": 16862
+            },
+            {
+              "type": "file",
+              "name": "DangerousGoodsChecker.tsx",
+              "size": 5385
+            },
+            {
+              "type": "file",
+              "name": "DisputeWizard.tsx",
+              "size": 9103
+            },
+            {
+              "type": "file",
+              "name": "ImageCompressor.tsx",
+              "size": 12302
+            },
+            {
+              "type": "file",
+              "name": "ImageCompressorWrapper.tsx",
+              "size": 429
+            },
+            {
+              "type": "file",
+              "name": "MagicQrGenerator.tsx",
+              "size": 7749
+            },
+            {
+              "type": "file",
+              "name": "MarketplaceCalculator.tsx",
+              "size": 12202
+            },
+            {
+              "type": "file",
+              "name": "SmartPasteTool.tsx",
+              "size": 4946
+            },
+            {
+              "type": "file",
+              "name": "WhatsAppShareButton.tsx",
+              "size": 5737
+            },
+            {
+              "type": "file",
+              "name": "WidgetGenerator.tsx",
+              "size": 5278
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "tracking",
+          "children": [
+            {
+              "type": "file",
+              "name": "ResiScanner.tsx",
+              "size": 10110
+            },
+            {
+              "type": "file",
+              "name": "SmartETABanner.tsx",
+              "size": 2007
+            },
+            {
+              "type": "file",
+              "name": "TrackingMap.tsx",
+              "size": 3711
+            },
+            {
+              "type": "file",
+              "name": "TrackingNotifyButton.tsx",
+              "size": 7666
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "ui",
+          "children": [
+            {
+              "type": "file",
+              "name": "AddressInput.tsx",
+              "size": 2986
+            },
+            {
+              "type": "file",
+              "name": "badge.tsx",
+              "size": 1175
+            },
+            {
+              "type": "file",
+              "name": "button.tsx",
+              "size": 4762
+            },
+            {
+              "type": "file",
+              "name": "card.tsx",
+              "size": 2057
+            },
+            {
+              "type": "file",
+              "name": "dialog.tsx",
+              "size": 2912
+            },
+            {
+              "type": "file",
+              "name": "EmptyState.tsx",
+              "size": 1221
+            },
+            {
+              "type": "file",
+              "name": "FeedbackWidget.tsx",
+              "size": 7620
+            },
+            {
+              "type": "file",
+              "name": "input.tsx",
+              "size": 1475
+            },
+            {
+              "type": "file",
+              "name": "label.tsx",
+              "size": 582
+            },
+            {
+              "type": "file",
+              "name": "LiteModeToggle.tsx",
+              "size": 923
+            },
+            {
+              "type": "file",
+              "name": "NetworkStatus.tsx",
+              "size": 1035
+            },
+            {
+              "type": "file",
+              "name": "NPSSurvey.tsx",
+              "size": 3990
+            },
+            {
+              "type": "file",
+              "name": "OptimizedImage.tsx",
+              "size": 7796
+            },
+            {
+              "type": "file",
+              "name": "ScrollToButton.tsx",
+              "size": 433
+            },
+            {
+              "type": "file",
+              "name": "select.tsx",
+              "size": 5820
+            },
+            {
+              "type": "file",
+              "name": "skeleton.tsx",
+              "size": 6384
+            },
+            {
+              "type": "file",
+              "name": "SwipeableItem.tsx",
+              "size": 1259
+            },
+            {
+              "type": "file",
+              "name": "table.tsx",
+              "size": 2899
+            },
+            {
+              "type": "file",
+              "name": "tabs.tsx",
+              "size": 2343
+            },
+            {
+              "type": "file",
+              "name": "textarea.tsx",
+              "size": 800
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "verified",
+          "children": [
+            {
+              "type": "file",
+              "name": "VerifiedBadge.tsx",
+              "size": 513
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "voice",
+          "children": [
+            {
+              "type": "file",
+              "name": "VoiceCommander.tsx",
+              "size": 2924
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "wa-rotator",
+          "children": [
+            {
+              "type": "file",
+              "name": "RotatorCard.tsx",
+              "size": 3448
+            },
+            {
+              "type": "file",
+              "name": "WARotatorForm.tsx",
+              "size": 7354
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "widget",
+          "children": [
+            {
+              "type": "file",
+              "name": "WidgetSearchForm.tsx",
+              "size": 3548
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "config",
+      "children": [
+        {
+          "type": "file",
+          "name": "ad-rules.ts",
+          "size": 1637
+        },
+        {
+          "type": "file",
+          "name": "ads.ts",
+          "size": 828
+        },
+        {
+          "type": "file",
+          "name": "affiliates.ts",
+          "size": 3771
+        },
+        {
+          "type": "file",
+          "name": "navigation.ts",
+          "size": 6758
+        },
+        {
+          "type": "file",
+          "name": "recommendation-rules.ts",
+          "size": 2250
+        },
+        {
+          "type": "file",
+          "name": "site.ts",
+          "size": 1630
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "content",
+      "children": [
+        {
+          "type": "folder",
+          "name": "blog",
+          "children": []
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "context",
+      "children": [
+        {
+          "type": "file",
+          "name": "LiteModeContext.tsx",
+          "size": 1363
+        },
+        {
+          "type": "file",
+          "name": "SystemStatusContext.tsx",
+          "size": 1290
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "data",
+      "children": [
+        {
+          "type": "file",
+          "name": "caption-templates.ts",
+          "size": 2667
+        },
+        {
+          "type": "file",
+          "name": "cities.ts",
+          "size": 4299
+        },
+        {
+          "type": "file",
+          "name": "city-coordinates.ts",
+          "size": 3733
+        },
+        {
+          "type": "file",
+          "name": "couriers.ts",
+          "size": 6107
+        },
+        {
+          "type": "file",
+          "name": "footer-links.ts",
+          "size": 4177
+        },
+        {
+          "type": "file",
+          "name": "indonesia-regions.ts",
+          "size": 18971
+        },
+        {
+          "type": "file",
+          "name": "marketplace-fees.ts",
+          "size": 2434
+        },
+        {
+          "type": "file",
+          "name": "popular-routes.ts",
+          "size": 4914
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "hooks",
+      "children": [
+        {
+          "type": "file",
+          "name": "useFeature.ts",
+          "size": 234
+        },
+        {
+          "type": "file",
+          "name": "useFormValidation.tsx",
+          "size": 7138
+        },
+        {
+          "type": "file",
+          "name": "useMergeHistory.ts",
+          "size": 1927
+        },
+        {
+          "type": "file",
+          "name": "usePermission.ts",
+          "size": 1379
+        },
+        {
+          "type": "file",
+          "name": "useScrollNavbar.ts",
+          "size": 3193
+        },
+        {
+          "type": "file",
+          "name": "useSearchHistory.ts",
+          "size": 2412
+        },
+        {
+          "type": "file",
+          "name": "useUserPresets.tsx",
+          "size": 11293
+        },
+        {
+          "type": "file",
+          "name": "useVoiceInput.ts",
+          "size": 5426
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "i18n",
+      "children": [
+        {
+          "type": "file",
+          "name": "currency.ts",
+          "size": 1193
+        },
+        {
+          "type": "file",
+          "name": "request.ts",
+          "size": 741
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "lib",
+      "children": [
+        {
+          "type": "file",
+          "name": "ab-testing.ts",
+          "size": 2754
+        },
+        {
+          "type": "file",
+          "name": "admin-alert.ts",
+          "size": 2564
+        },
+        {
+          "type": "file",
+          "name": "adminAuth.ts",
+          "size": 792
+        },
+        {
+          "type": "folder",
+          "name": "ai",
+          "children": [
+            {
+              "type": "file",
+              "name": "writer.ts",
+              "size": 3784
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "api",
+          "children": [
+            {
+              "type": "file",
+              "name": "logistics.ts",
+              "size": 8264
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "api-auth.ts",
+          "size": 2930
+        },
+        {
+          "type": "file",
+          "name": "api-metering.ts",
+          "size": 4632
+        },
+        {
+          "type": "file",
+          "name": "api-security.ts",
+          "size": 1081
+        },
+        {
+          "type": "file",
+          "name": "blog.ts",
+          "size": 3601
+        },
+        {
+          "type": "folder",
+          "name": "cache",
+          "children": [
+            {
+              "type": "file",
+              "name": "logistics.ts",
+              "size": 6172
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "cache.ts",
+          "size": 5550
+        },
+        {
+          "type": "file",
+          "name": "circuit-breaker.ts",
+          "size": 525
+        },
+        {
+          "type": "file",
+          "name": "courier-links.ts",
+          "size": 991
+        },
+        {
+          "type": "folder",
+          "name": "db",
+          "children": [
+            {
+              "type": "file",
+              "name": "system_settings.sql",
+              "size": 1284
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "db-dispatch.ts",
+          "size": 1257
+        },
+        {
+          "type": "file",
+          "name": "dictionary.ts",
+          "size": 1507
+        },
+        {
+          "type": "file",
+          "name": "domain-mapper.ts",
+          "size": 1195
+        },
+        {
+          "type": "file",
+          "name": "domain-rewrite.ts",
+          "size": 2636
+        },
+        {
+          "type": "file",
+          "name": "draft-manager.ts",
+          "size": 1425
+        },
+        {
+          "type": "file",
+          "name": "dynamicImports.tsx",
+          "size": 2902
+        },
+        {
+          "type": "folder",
+          "name": "email",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.ts",
+              "size": 8391
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "email-templates",
+          "children": [
+            {
+              "type": "file",
+              "name": "RenewalEmail.tsx",
+              "size": 1152
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "error-handler.ts",
+          "size": 1371
+        },
+        {
+          "type": "file",
+          "name": "feature-flags.ts",
+          "size": 2877
+        },
+        {
+          "type": "file",
+          "name": "fetchSiteSettings.ts",
+          "size": 1461
+        },
+        {
+          "type": "file",
+          "name": "flags.ts",
+          "size": 653
+        },
+        {
+          "type": "file",
+          "name": "fraud-check.ts",
+          "size": 255
+        },
+        {
+          "type": "file",
+          "name": "fuzzy-search.ts",
+          "size": 1843
+        },
+        {
+          "type": "file",
+          "name": "goods-rules.ts",
+          "size": 1456
+        },
+        {
+          "type": "file",
+          "name": "hash.ts",
+          "size": 1482
+        },
+        {
+          "type": "file",
+          "name": "image-compression.ts",
+          "size": 5247
+        },
+        {
+          "type": "file",
+          "name": "invoice-generator.ts",
+          "size": 1683
+        },
+        {
+          "type": "file",
+          "name": "invoiceGenerator.ts",
+          "size": 8657
+        },
+        {
+          "type": "file",
+          "name": "omniParser.ts",
+          "size": 7455
+        },
+        {
+          "type": "folder",
+          "name": "payment",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.ts",
+              "size": 4558
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "payment.ts",
+          "size": 702
+        },
+        {
+          "type": "file",
+          "name": "prediction-engine.ts",
+          "size": 1987
+        },
+        {
+          "type": "file",
+          "name": "rateLimit.ts",
+          "size": 3633
+        },
+        {
+          "type": "file",
+          "name": "risk-scoring.ts",
+          "size": 1426
+        },
+        {
+          "type": "file",
+          "name": "safe-action.ts",
+          "size": 1309
+        },
+        {
+          "type": "file",
+          "name": "sanitize.ts",
+          "size": 5123
+        },
+        {
+          "type": "file",
+          "name": "security.ts",
+          "size": 4998
+        },
+        {
+          "type": "file",
+          "name": "securityHeaders.ts",
+          "size": 3896
+        },
+        {
+          "type": "file",
+          "name": "seo-cities.ts",
+          "size": 1611
+        },
+        {
+          "type": "file",
+          "name": "seo-generator.ts",
+          "size": 1473
+        },
+        {
+          "type": "file",
+          "name": "seo.ts",
+          "size": 2905
+        },
+        {
+          "type": "file",
+          "name": "social-publisher.ts",
+          "size": 2582
+        },
+        {
+          "type": "file",
+          "name": "spacing.ts",
+          "size": 4086
+        },
+        {
+          "type": "folder",
+          "name": "supabase",
+          "children": [
+            {
+              "type": "file",
+              "name": "server.ts",
+              "size": 1014
+            }
+          ]
+        },
+        {
+          "type": "folder",
+          "name": "swagger",
+          "children": []
+        },
+        {
+          "type": "file",
+          "name": "systemHealth.ts",
+          "size": 6134
+        },
+        {
+          "type": "file",
+          "name": "telegram-notifier.ts",
+          "size": 1366
+        },
+        {
+          "type": "file",
+          "name": "tenant.ts",
+          "size": 1062
+        },
+        {
+          "type": "file",
+          "name": "thermalLabel.ts",
+          "size": 8914
+        },
+        {
+          "type": "file",
+          "name": "tracking-engine.ts",
+          "size": 3486
+        },
+        {
+          "type": "file",
+          "name": "tracking-utils.ts",
+          "size": 394
+        },
+        {
+          "type": "file",
+          "name": "tracking.ts",
+          "size": 378
+        },
+        {
+          "type": "file",
+          "name": "utils.ts",
+          "size": 1542
+        },
+        {
+          "type": "file",
+          "name": "validations.ts",
+          "size": 7957
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "middleware",
+      "children": [
+        {
+          "type": "file",
+          "name": "rateLimit.ts",
+          "size": 3456
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "middleware.ts",
+      "size": 7364
+    },
+    {
+      "type": "folder",
+      "name": "providers",
+      "children": [
+        {
+          "type": "file",
+          "name": "FeatureFlagProvider.tsx",
+          "size": 961
+        },
+        {
+          "type": "file",
+          "name": "TenantProvider.tsx",
+          "size": 1277
+        },
+        {
+          "type": "file",
+          "name": "ThemeProvider.tsx",
+          "size": 4544
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "store",
+      "children": [
+        {
+          "type": "file",
+          "name": "useSiteSettings.ts",
+          "size": 1572
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "styles",
+      "children": []
+    },
+    {
+      "type": "folder",
+      "name": "types",
+      "children": [
+        {
+          "type": "file",
+          "name": "database.ts",
+          "size": 4419
+        },
+        {
+          "type": "file",
+          "name": "database.types.ts",
+          "size": 465146
+        },
+        {
+          "type": "file",
+          "name": "index.ts",
+          "size": 246
+        },
+        {
+          "type": "file",
+          "name": "logistics.ts",
+          "size": 772
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "utils",
+      "children": [
+        {
+          "type": "file",
+          "name": "affiliateTracking.ts",
+          "size": 2044
+        },
+        {
+          "type": "file",
+          "name": "bundleDiscountEngine.ts",
+          "size": 2626
+        },
+        {
+          "type": "file",
+          "name": "carbon-calculator.ts",
+          "size": 4326
+        },
+        {
+          "type": "file",
+          "name": "clipboard.ts",
+          "size": 3019
+        },
+        {
+          "type": "file",
+          "name": "helpers.ts",
+          "size": 4443
+        },
+        {
+          "type": "folder",
+          "name": "supabase",
+          "children": [
+            {
+              "type": "file",
+              "name": "client.ts",
+              "size": 289
+            },
+            {
+              "type": "file",
+              "name": "middleware.ts",
+              "size": 1620
+            },
+            {
+              "type": "folder",
+              "name": "migrations",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "20241227_ai_admin.sql",
+                  "size": 10604
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_api_gateway.sql",
+                  "size": 1395
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_audit_fixes.sql",
+                  "size": 577
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_biometrics.sql",
+                  "size": 661
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_blacklist_engine.sql",
+                  "size": 8663
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_booking_resi.sql",
+                  "size": 10431
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_bulk_tracking.sql",
+                  "size": 6085
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_caption_templates.sql",
+                  "size": 7018
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_cod_disputes.sql",
+                  "size": 1345
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_cod_risk.sql",
+                  "size": 1981
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_credit_scoring.sql",
+                  "size": 12475
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_crm.sql",
+                  "size": 915
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_daily_missions.sql",
+                  "size": 7243
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_digital_affiliate.sql",
+                  "size": 6022
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_digital_store.sql",
+                  "size": 4862
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_digital_wallet.sql",
+                  "size": 11111
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_dropship_flow.sql",
+                  "size": 11360
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_escrow.sql",
+                  "size": 996
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_expenses.sql",
+                  "size": 720
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_insurance_module.sql",
+                  "size": 12651
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_internal_ads.sql",
+                  "size": 8272
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_inventory.sql",
+                  "size": 767
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_invoices.sql",
+                  "size": 1232
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_invoice_system.sql",
+                  "size": 3903
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_jobs.sql",
+                  "size": 1053
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_local_courier.sql",
+                  "size": 8735
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_local_order.sql",
+                  "size": 7621
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_loyalty.sql",
+                  "size": 1030
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_loyalty_points.sql",
+                  "size": 6479
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_marketplace.sql",
+                  "size": 1551
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_omni_import.sql",
+                  "size": 10827
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_orders_feature.sql",
+                  "size": 1782
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_paylater_system.sql",
+                  "size": 15088
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_payment_gateway.sql",
+                  "size": 7635
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_predictive_eta.sql",
+                  "size": 534
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_premium_subscription.sql",
+                  "size": 10054
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_profit_calculator.sql",
+                  "size": 10276
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_public_api.sql",
+                  "size": 8748
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_referrals.sql",
+                  "size": 1066
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_rekber_escrow.sql",
+                  "size": 10867
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_rewards.sql",
+                  "size": 1762
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_reward_center.sql",
+                  "size": 9902
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_security_audit.sql",
+                  "size": 1940
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_security_hardening.sql",
+                  "size": 11908
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_seller_forum.sql",
+                  "size": 10671
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_seo_pages.sql",
+                  "size": 5184
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_smart_caching.sql",
+                  "size": 1523
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_starter_kit_bundles.sql",
+                  "size": 9196
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_stuck_detector.sql",
+                  "size": 11677
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_supplier_directory.sql",
+                  "size": 10581
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_team_management.sql",
+                  "size": 12946
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_trends.sql",
+                  "size": 1925
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_verified_badge.sql",
+                  "size": 6723
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_wa_gateway.sql",
+                  "size": 9448
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_wa_rotator.sql",
+                  "size": 8365
+                },
+                {
+                  "type": "file",
+                  "name": "20241227_webhooks.sql",
+                  "size": 1109
+                },
+                {
+                  "type": "file",
+                  "name": "20241228_analytics.sql",
+                  "size": 1051
+                },
+                {
+                  "type": "file",
+                  "name": "20241229_error_logs.sql",
+                  "size": 843
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "schema.sql",
+              "size": 27639
+            },
+            {
+              "type": "file",
+              "name": "server.ts",
+              "size": 1825
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "telegram-search.ts",
+          "size": 807
+        },
+        {
+          "type": "file",
+          "name": "text-cleaner.ts",
+          "size": 1797
+        }
+      ]
+    }
+  ],
+  "erd": "erDiagram\n    affiliate_keywords {\n        uuid id PK\n        timestamp created_at\n    }\n    api_keys {\n        uuid id PK\n        timestamp created_at\n    }\n    api_keys {\n        uuid id PK\n        timestamp created_at\n    }\n    api_keys {\n        uuid id PK\n        timestamp created_at\n    }\n    user_wallets {\n        uuid id PK\n        timestamp created_at\n    }\n    api_usage_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    orders_archive {\n        uuid id PK\n        timestamp created_at\n    }\n    refunds {\n        uuid id PK\n        timestamp created_at\n    }\n    saved_bank_accounts {\n        uuid id PK\n        timestamp created_at\n    }\n    transactions {\n        uuid id PK\n        timestamp created_at\n    }\n    cart_recovery_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    system_settings {\n        uuid id PK\n        timestamp created_at\n    }\n    provider_products {\n        uuid id PK\n        timestamp created_at\n    }\n    product_margins {\n        uuid id PK\n        timestamp created_at\n    }\n    business_reports {\n        uuid id PK\n        timestamp created_at\n    }\n    report_purchases {\n        uuid id PK\n        timestamp created_at\n    }\n    expenses {\n        uuid id PK\n        timestamp created_at\n    }\n    feature_flags {\n        uuid id PK\n        timestamp created_at\n    }\n    feature_flags {\n        uuid id PK\n        timestamp created_at\n    }\n    operational_expenses {\n        uuid id PK\n        timestamp created_at\n    }\n    analytics_events {\n        uuid id PK\n        timestamp created_at\n    }\n    gacha_history {\n        uuid id PK\n        timestamp created_at\n    }\n    inventory_items {\n        uuid id PK\n        timestamp created_at\n    }\n    transaction_invoices {\n        uuid id PK\n        timestamp created_at\n    }\n    jastip_trips {\n        uuid id PK\n        timestamp created_at\n    }\n    wallets {\n        uuid id PK\n        timestamp created_at\n    }\n    api_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    package_insurances {\n        uuid id PK\n        timestamp created_at\n    }\n    tracking_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    tracking_logs_2024 {\n        uuid id PK\n        timestamp created_at\n    }\n    tracking_logs_2025 {\n        uuid id PK\n        timestamp created_at\n    }\n    public {\n        uuid id PK\n        timestamp created_at\n    }\n    user_security {\n        uuid id PK\n        timestamp created_at\n    }\n    user_favorites {\n        uuid id PK\n        timestamp created_at\n    }\n    delivery_history {\n        uuid id PK\n        timestamp created_at\n    }\n    roles {\n        uuid id PK\n        timestamp created_at\n    }\n    permissions {\n        uuid id PK\n        timestamp created_at\n    }\n    role_permissions {\n        uuid id PK\n        timestamp created_at\n    }\n    user_roles {\n        uuid id PK\n        timestamp created_at\n    }\n    reviews {\n        uuid id PK\n        timestamp created_at\n    }\n    user_segments {\n        uuid id PK\n        timestamp created_at\n    }\n    feature_requests {\n        uuid id PK\n        timestamp created_at\n    }\n    feature_votes {\n        uuid id PK\n        timestamp created_at\n    }\n    social_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    subscription_plans {\n        uuid id PK\n        timestamp created_at\n    }\n    user_subscriptions {\n        uuid id PK\n        timestamp created_at\n    }\n    api_keys {\n        uuid id PK\n        timestamp created_at\n    }\n    api_request_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    cached_resi {\n        uuid id PK\n        timestamp created_at\n    }\n    cached_ongkir {\n        uuid id PK\n        timestamp created_at\n    }\n    xp_activities {\n        uuid id PK\n        timestamp created_at\n    }\n    ranks {\n        uuid id PK\n        timestamp created_at\n    }\n    subscriptions {\n        uuid id PK\n        timestamp created_at\n    }\n    transactions {\n        uuid id PK\n        timestamp created_at\n    }\n    affiliate_clicks {\n        uuid id PK\n        timestamp created_at\n    }\n    provinces {\n        uuid id PK\n        timestamp created_at\n    }\n    cities {\n        uuid id PK\n        timestamp created_at\n    }\n    districts {\n        uuid id PK\n        timestamp created_at\n    }\n    courier_reviews {\n        uuid id PK\n        timestamp created_at\n    }\n    profiles {\n        uuid id PK\n        timestamp created_at\n    }\n    site_settings {\n        uuid id PK\n        timestamp created_at\n    }\n    search_history {\n        uuid id PK\n        timestamp created_at\n    }\n    tracking_subscriptions {\n        uuid id PK\n        timestamp created_at\n    }\n    notification_logs {\n        uuid id PK\n        timestamp created_at\n    }\n    tenants {\n        uuid id PK\n        timestamp created_at\n    }\n    tenants {\n        uuid id PK\n        timestamp created_at\n    }\n    unboxing_reviews {\n        uuid id PK\n        timestamp created_at\n    }\n    if {\n        uuid id PK\n        timestamp created_at\n    }\n    tenants {\n        uuid id PK\n        timestamp created_at\n    }\n    marketing_vouchers {\n        uuid id PK\n        timestamp created_at\n    }\n    withdrawal_requests {\n        uuid id PK\n        timestamp created_at\n    }\n    feature_requests ||--o{ feature_votes : \"receives\"\n"
+}

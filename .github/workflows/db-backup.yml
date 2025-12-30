@@ -1,0 +1,71 @@
+name: Database Backup
+
+on:
+  schedule:
+    # Run at 03:00 AM UTC daily (10:00 AM WIB)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  backup:
+    name: Dump and Upload to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Create Database Dump
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Starting backup..."
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          FILENAME="backup_$TIMESTAMP.sql.gz"
+          
+          # Run pg_dump, pipelined to gzip for compression
+          pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
+          
+          echo "Backup created: $FILENAME"
+          echo "BACKUP_FILENAME=$FILENAME" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: |
+          echo "Uploading to S3..."
+          aws s3 cp "$BACKUP_FILENAME" "s3://${{ secrets.AWS_BUCKET_NAME }}/db-backups/$BACKUP_FILENAME"
+          echo "Upload complete: s3://${{ secrets.AWS_BUCKET_NAME }}/db-backups/$BACKUP_FILENAME"
+
+      - name: Verify Upload
+        run: |
+          echo "Verifying backup upload..."
+          aws s3 ls "s3://${{ secrets.AWS_BUCKET_NAME }}/db-backups/$BACKUP_FILENAME"
+          echo "Backup verified successfully!"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "::error::Database backup failed! Check logs for details."
+          # Optional: Add Slack/Discord webhook notification here
+
+      - name: Cleanup Local Backup
+        if: always()
+        run: |
+          echo "Cleaning up local backup file..."
+          rm -f "$BACKUP_FILENAME"
+          echo "Cleanup complete."
+
+# Note: Set up S3 Lifecycle Rules in AWS Console for automatic retention:
+# - Move backups older than 7 days to Glacier
+# - Delete backups older than 90 days
