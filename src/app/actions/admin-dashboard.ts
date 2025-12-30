@@ -38,8 +38,12 @@ export async function getAdminDashboardMetrics() {
     if (!wError) pendingWithdrawals = withdrawalCount || 0;
 
     let openComplaints = 0;
-    // Mock tickets check standard table structure
-    // const { count: ticketCount } = ... 
+    // Query support_tickets for open tickets
+    const { count: ticketCount, error: tError } = await supabase
+        .from('support_tickets')
+        .select('*', { count: 'exact', head: true })
+        .neq('status', 'CLOSED');
+    if (!tError) openComplaints = ticketCount || 0;
 
     // 3. Critical Checks (Vendor Balance)
     // Mock check for now
