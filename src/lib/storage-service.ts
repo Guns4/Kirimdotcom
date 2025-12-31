@@ -2,11 +2,7 @@ import { createClient } from '@/utils/supabase/client';
 
 export const PLANS = {
   FREE: { limit: 50 * 1024 * 1024, name: 'Free Plan', price: 0 },
-  PREMIUM: {
-    limit: 10 * 1024 * 1024 * 1024,
-    name: 'Cloud+ (10GB)',
-    price: 10000,
-  },
+  PREMIUM: { limit: 10 * 1024 * 1024 * 1024, name: 'Cloud+ (10GB)', price: 10000 }
 };
 
 export const StorageService = {
@@ -14,10 +10,8 @@ export const StorageService = {
    * Check if user has enough space
    */
   async checkQuota(fileSize: number): Promise<boolean> {
-    const supabase: any = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return false;
 
     const { data } = await supabase
@@ -28,22 +22,26 @@ export const StorageService = {
 
     if (!data) return true; // Default allow if no profile found (optimistic)
 
-    return data.storage_used + fileSize <= data.storage_limit;
+    // Cast to any to handle potential missing types
+    const profile = data as any;
+
+    const used = Number(profile.storage_used) || 0;
+    const limit = Number(profile.storage_limit) || PLANS.FREE.limit;
+
+    return (used + fileSize) <= limit;
   },
 
   /**
    * Update usage after upload
    */
   async recordUpload(fileSize: number) {
-    const supabase: any = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     await supabase.rpc('increment_storage_used', {
       user_id: user.id,
-      bytes: fileSize,
+      bytes: fileSize
     });
   },
 
@@ -51,10 +49,8 @@ export const StorageService = {
    * Upgrade to Premium (Mock Payment)
    */
   async upgradeToPremium() {
-    const supabase: any = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not logged in');
 
     // 1. Check Wallet Balance (TODO: Implement actual wallet check)
@@ -66,12 +62,12 @@ export const StorageService = {
       .from('profiles')
       .update({
         subscription_tier: 'PREMIUM',
-        storage_limit: PLANS.PREMIUM.limit,
+        storage_limit: PLANS.PREMIUM.limit
       })
       .eq('id', user.id);
 
     if (error) throw error;
 
     return { success: true };
-  },
+  }
 };

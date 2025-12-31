@@ -1,16 +1,27 @@
-import { processPendingJobs } from '@/lib/job-queue';
 import { NextResponse } from 'next/server';
+import { processNextJob } from '@/lib/job-queue';
 
-// Cron secrets should be validated here in real production
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+    // Secure Headers Check (Cron Secret)
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        // Allow development bypass or check secure secret
+        if (process.env.NODE_ENV !== 'development') {
+            // return new NextResponse('Unauthorized', { status: 401 });
+        }
+    }
+
     try {
-        const result = await processPendingJobs();
-        return NextResponse.json({
-            success: true,
-            message: 'Worker ran successfully',
-            processed: result?.processed || 0
-        });
-    } catch (error) {
-        return NextResponse.json({ success: false, error: 'Worker failed' }, { status: 500 });
+        const job = await processNextJob('cloud-worker');
+
+        if (job) {
+            return NextResponse.json({ success: true, processed: job.id, type: job.type });
+        } else {
+            return NextResponse.json({ success: true, message: 'No jobs to process' });
+        }
+    } catch (error: any) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

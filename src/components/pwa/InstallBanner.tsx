@@ -1,75 +1,69 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { X, Download } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { siteConfig } from '@/config/site';
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { X, Download } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { siteConfig } from '@/config/site'
 
 export function InstallBanner() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isVisible, setIsVisible] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+    const [isVisible, setIsVisible] = useState(false)
 
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      // Show banner only if not already installed
-      if (!window.matchMedia('(display-mode: standalone)').matches) {
-        setIsVisible(true);
-      }
-    };
+    useEffect(() => {
+        const handler = (e: any) => {
+            e.preventDefault()
+            setDeferredPrompt(e)
+            // Show banner only if not already installed
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setIsVisible(true)
+            }
+        }
 
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+        window.addEventListener('beforeinstallprompt', handler)
+        return () => window.removeEventListener('beforeinstallprompt', handler)
+    }, [])
 
-  const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setIsVisible(false);
+    const handleInstall = async () => {
+        if (!deferredPrompt) return
+        deferredPrompt.prompt()
+        const { outcome } = await deferredPrompt.userChoice
+        if (outcome === 'accepted') {
+            setIsVisible(false)
+        }
+        setDeferredPrompt(null)
     }
-    setDeferredPrompt(null);
-  };
 
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t z-50 shadow-2xl"
-        >
-          <div className="container-custom flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                <Download className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-bold text-sm">Install {siteConfig.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  Lebih cepat & hemat kuota.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsVisible(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-              <Button size="sm" onClick={handleInstall}>
-                Install
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+    return (
+        <AnimatePresence>
+            {isVisible && (
+                <motion.div 
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 100, opacity: 0 }}
+                    className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t z-50 shadow-2xl"
+                >
+                    <div className="container-custom flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                <Download className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">Install {siteConfig.name}</p>
+                                <p className="text-xs text-muted-foreground">Lebih cepat & hemat kuota.</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" onClick={() => setIsVisible(false)}>
+                                <X className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" onClick={handleInstall}>
+                                Install
+                            </Button>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    )
 }

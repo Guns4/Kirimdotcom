@@ -8,15 +8,9 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://web.whatsapp.com/*"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "css": [
-        "styles.css"
-      ]
+      "matches": ["*://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
     }
   ],
   "permissions": []

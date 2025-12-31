@@ -1,278 +1,120 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Gift, Check, Clock, Zap, Target } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { Button } from '@/components/ui/Button';
+import { CheckCircle, Clock, Gift } from 'lucide-react';
+import { claimMissionAction } from '@/app/actions/mission-actions'; // We need to create this action wrapper
 import { toast } from 'sonner';
-import {
-    getDifficultyColor,
-    getMissionIcon,
-    claimMissionReward,
-    type DailyMission
-} from '@/lib/mission-engine';
 
-interface DailyMissionsWidgetProps {
-    missions?: DailyMission[];
+interface MissionUI {
+    id: string;
+    title: string;
+    description: string;
+    progress: number;
+    target_count: number;
+    xp_reward: number;
+    status: string;
 }
 
-export default function DailyMissionsWidget({ missions: propMissions }: DailyMissionsWidgetProps) {
-    const [missions, setMissions] = useState<DailyMission[]>([]);
-    const [claiming, setClaiming] = useState<string | null>(null);
+export function DailyMissionsWidget() {
+    const [missions, setMissions] = useState<MissionUI[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Mock missions for demo
-    useEffect(() => {
-        if (propMissions) {
-            setMissions(propMissions);
-        } else {
-            // Mock data
-            setMissions([
-                {
-                    id: '1',
-                    user_id: '1',
-                    mission_template_id: '1',
-                    current_progress: 1,
-                    target_count: 1,
-                    is_completed: true,
-                    is_claimed: true,
-                    xp_reward: 5,
-                    coin_reward: 10,
-                    mission_date: new Date().toISOString().split('T')[0],
-                    mission_templates: {
-                        id: '1',
-                        mission_type: 'LOGIN',
-                        title: 'Login Hari Ini',
-                        description: 'Masuk ke akun CekKirim',
-                        target_count: 1,
-                        xp_reward: 5,
-                        coin_reward: 10,
-                        difficulty: 'EASY'
-                    }
-                },
-                {
-                    id: '2',
-                    user_id: '1',
-                    mission_template_id: '2',
-                    current_progress: 2,
-                    target_count: 3,
-                    is_completed: false,
-                    is_claimed: false,
-                    xp_reward: 20,
-                    coin_reward: 30,
-                    mission_date: new Date().toISOString().split('T')[0],
-                    mission_templates: {
-                        id: '2',
-                        mission_type: 'CEK_RESI',
-                        title: 'Cek 3 Resi',
-                        description: 'Tracking 3 nomor resi berbeda',
-                        target_count: 3,
-                        xp_reward: 20,
-                        coin_reward: 30,
-                        difficulty: 'EASY'
-                    }
-                },
-                {
-                    id: '3',
-                    user_id: '1',
-                    mission_template_id: '3',
-                    current_progress: 0,
-                    target_count: 1,
-                    is_completed: false,
-                    is_claimed: false,
-                    xp_reward: 30,
-                    coin_reward: 50,
-                    mission_date: new Date().toISOString().split('T')[0],
-                    mission_templates: {
-                        id: '3',
-                        mission_type: 'SHARE',
-                        title: 'Share ke WhatsApp',
-                        description: 'Bagikan hasil tracking ke WA',
-                        target_count: 1,
-                        xp_reward: 30,
-                        coin_reward: 50,
-                        difficulty: 'EASY'
-                    }
-                },
-                {
-                    id: '4',
-                    user_id: '1',
-                    mission_template_id: '4',
-                    current_progress: 1,
-                    target_count: 1,
-                    is_completed: true,
-                    is_claimed: false,
-                    xp_reward: 50,
-                    coin_reward: 100,
-                    mission_date: new Date().toISOString().split('T')[0],
-                    mission_templates: {
-                        id: '4',
-                        mission_type: 'TOPUP',
-                        title: 'Topup Saldo Rp 50rb',
-                        description: 'Isi saldo minimal Rp 50.000',
-                        target_count: 1,
-                        xp_reward: 50,
-                        coin_reward: 100,
-                        difficulty: 'MEDIUM'
-                    }
-                }
-            ]);
-        }
-    }, [propMissions]);
+    const fetchMissions = async () => {
+        setLoading(true);
+        // Call server action to get missions (to avoid exposing direct DB logic if we wanted, but here we can use client or server action. 
+        // For simplicity, let's assume we fetch via an API route or server action.
+        // Let's use a server action wrapper for consistency.)
 
-    const handleClaim = async (missionId: string) => {
-        setClaiming(missionId);
         try {
-            // In production, use actual API
-            // const result = await claimMissionReward(missionId);
-
-            // Mock claim
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            setMissions(prev =>
-                prev.map(m => m.id === missionId ? { ...m, is_claimed: true } : m)
-            );
-
-            const mission = missions.find(m => m.id === missionId);
-            toast.success('Reward Claimed!', {
-                description: `+${mission?.xp_reward} XP, +${mission?.coin_reward} Coins`
-            });
-        } catch (error) {
-            toast.error('Failed to claim reward');
+            const res = await fetch('/api/missions'); // Or direct action
+            if (res.ok) {
+                const data = await res.json();
+                setMissions(data);
+            }
+        } catch (e) {
+            console.error(e);
         } finally {
-            setClaiming(null);
+            setLoading(false);
         }
     };
 
-    const completedCount = missions.filter(m => m.is_completed).length;
-    const totalXP = missions.filter(m => m.is_claimed).reduce((sum, m) => sum + m.xp_reward, 0);
+    useEffect(() => {
+        fetchMissions();
+    }, []);
 
-    // Time until reset
-    const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0);
-    const hoursLeft = Math.floor((midnight.getTime() - now.getTime()) / (1000 * 60 * 60));
-    const minutesLeft = Math.floor(((midnight.getTime() - now.getTime()) % (1000 * 60 * 60)) / (1000 * 60));
+    const handleClaim = async (missionId: string) => {
+        try {
+            const result = await claimMissionAction(missionId);
+            if (result.success) {
+                toast.success(`Claimed +${result.xp} XP!`);
+                fetchMissions(); // Refresh
+            } else {
+                toast.error(result.error || 'Failed to claim');
+            }
+        } catch (e) {
+            toast.error('Error claiming reward');
+        }
+    };
+
+    if (loading) return <div className="p-4 bg-gray-50 rounded-lg animate-pulse h-40">Loading Missions...</div>;
 
     return (
-        <Card>
-            <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-bold flex items-center gap-2">
-                        <Target className="w-5 h-5 text-orange-500" />
-                        Misi Harian
-                    </CardTitle>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        Reset: {hoursLeft}j {minutesLeft}m
-                    </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="font-bold flex items-center gap-2">
+                    <Gift className="text-purple-500 w-5 h-5" />
+                    Daily Missions
+                </h3>
+                <div className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Ends in 00:00
                 </div>
-                {/* Progress summary */}
-                <div className="flex items-center gap-2 mt-2">
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
-                            style={{ width: `${(completedCount / missions.length) * 100}%` }}
-                        />
-                    </div>
-                    <span className="text-sm font-medium">{completedCount}/{missions.length}</span>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-                {missions.map(mission => {
-                    const template = mission.mission_templates;
-                    const progress = (mission.current_progress / mission.target_count) * 100;
+            </div>
+
+            <div className="space-y-3">
+                {missions.map((m) => {
+                    const pct = Math.min(100, (m.progress / m.target_count) * 100);
+                    const isCompleted = m.status === 'COMPLETED';
+                    const isClaimed = m.status === 'CLAIMED';
 
                     return (
-                        <div
-                            key={mission.id}
-                            className={`p-3 rounded-lg border transition-all ${mission.is_claimed
-                                    ? 'bg-gray-50 border-gray-100 opacity-60'
-                                    : mission.is_completed
-                                        ? 'bg-green-50 border-green-200 ring-2 ring-green-200'
-                                        : 'bg-white border-gray-200 hover:border-orange-200'
-                                }`}
-                        >
-                            <div className="flex items-start gap-3">
-                                {/* Icon */}
-                                <div className={`text-2xl flex-shrink-0 ${mission.is_claimed ? 'grayscale' : ''}`}>
-                                    {getMissionIcon(template?.mission_type || '')}
+                        <div key={m.id} className="border border-gray-100 rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                                <div>
+                                    <div className="font-semibold text-sm text-gray-800">{m.title}</div>
+                                    <div className="text-xs text-gray-500">{m.description}</div>
                                 </div>
+                                <div className="text-xs font-bold text-orange-500">+{m.xp_reward} XP</div>
+                            </div>
 
-                                {/* Content */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-sm truncate">{template?.title}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${getDifficultyColor(template?.difficulty || '')}`}>
-                                            {template?.difficulty}
-                                        </span>
-                                    </div>
-
-                                    {/* Progress bar */}
-                                    {!mission.is_claimed && (
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full transition-all ${mission.is_completed ? 'bg-green-500' : 'bg-orange-400'
-                                                        }`}
-                                                    style={{ width: `${progress}%` }}
-                                                />
-                                            </div>
-                                            <span className="text-[10px] text-gray-500">
-                                                {mission.current_progress}/{mission.target_count}
-                                            </span>
-                                        </div>
-                                    )}
-
-                                    {/* Rewards */}
-                                    <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-600">
-                                        <span className="flex items-center gap-0.5">
-                                            <Zap className="w-3 h-3 text-yellow-500" />
-                                            +{mission.xp_reward} XP
-                                        </span>
-                                        <span className="flex items-center gap-0.5">
-                                            🪙 +{mission.coin_reward}
-                                        </span>
-                                    </div>
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="h-full bg-purple-500 transition-all" style={{ width: `${pct}%` }} />
                                 </div>
-
-                                {/* Action */}
-                                <div className="flex-shrink-0">
-                                    {mission.is_claimed ? (
-                                        <div className="flex items-center gap-1 text-xs text-gray-400">
-                                            <Check className="w-4 h-4" />
-                                        </div>
-                                    ) : mission.is_completed ? (
-                                        <Button
-                                            size="sm"
-                                            className="bg-green-500 hover:bg-green-600 text-xs px-3"
-                                            onClick={() => handleClaim(mission.id)}
-                                            disabled={claiming === mission.id}
-                                        >
-                                            {claiming === mission.id ? '...' : (
-                                                <>
-                                                    <Gift className="w-3 h-3 mr-1" />
-                                                    Claim
-                                                </>
-                                            )}
-                                        </Button>
-                                    ) : (
-                                        <Button size="sm" variant="outline" className="text-xs px-3" disabled>
-                                            {Math.round(progress)}%
-                                        </Button>
-                                    )}
+                                <div className="text-xs text-gray-500 w-12 text-right">
+                                    {m.progress}/{m.target_count}
                                 </div>
                             </div>
+
+                            {isCompleted && !isClaimed && (
+                                <Button
+                                    onClick={() => handleClaim(m.id)}
+                                    size="sm"
+                                    className="w-full mt-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white h-8"
+                                >
+                                    Claim Reward
+                                </Button>
+                            )}
+                            {isClaimed && (
+                                <div className="w-full mt-2 text-center text-xs font-semibold text-green-500 flex items-center justify-center gap-1">
+                                    <CheckCircle className="w-3 h-3" /> Claimed
+                                </div>
+                            )}
                         </div>
                     );
                 })}
-
-                {/* Total XP earned today */}
-                {totalXP > 0 && (
-                    <div className="text-center pt-2 border-t text-sm text-gray-600">
-                        Hari ini: <span className="font-bold text-orange-600">+{totalXP} XP</span>
-                    </div>
-                )}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

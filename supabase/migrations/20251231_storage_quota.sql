@@ -1,4 +1,4 @@
--- Add Storage Columns to Profiles (assuming 'profiles' table exists, if not create basic structure)
+-- Add Storage Columns to Profiles (assuming 'profiles' table exists)
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   full_name TEXT

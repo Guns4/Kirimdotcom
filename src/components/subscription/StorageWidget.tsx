@@ -3,20 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Cloud, ArrowUpCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { StorageService, PLANS } from '@/lib/storage-service';
+import { useRouter } from 'next/navigation';
 
 export function StorageWidget() {
   const [usage, setUsage] = useState(0);
   const [limit, setLimit] = useState(PLANS.FREE.limit);
   const [tier, setTier] = useState('FREE');
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUsage = async () => {
-      const supabase: any = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data } = await supabase
@@ -54,9 +54,7 @@ export function StorageWidget() {
           <Cloud className="w-5 h-5" />
           <span className="font-semibold text-sm">Penyimpanan</span>
         </div>
-        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full font-medium">
-          {tier}
-        </span>
+        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full font-medium">{tier}</span>
       </div>
 
       <div className="w-full bg-gray-100 rounded-full h-2.5 mb-2 overflow-hidden">
@@ -73,18 +71,11 @@ export function StorageWidget() {
 
       {tier === 'FREE' && (
         <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
-          <h4 className="font-semibold text-orange-800 text-sm mb-1">
-            Penyimpanan Hampir Penuh?
-          </h4>
+          <h4 className="font-semibold text-orange-800 text-sm mb-1">Penyimpanan Hampir Penuh?</h4>
           <p className="text-orange-600 text-[10px] mb-3">
-            Upgrade ke <strong>Cloud+ (10GB)</strong> hanya{' '}
-            <strong>Rp 10rb/thn</strong> untuk simpan ribuan foto garansi.
+            Upgrade ke <strong>Cloud+ (10GB)</strong> hanya <strong>Rp 10rb/thn</strong> untuk simpan ribuan foto garansi.
           </p>
-          <Button
-            onClick={handleUpgrade}
-            size="sm"
-            className="w-full bg-orange-500 hover:bg-orange-600 border-none text-white"
-          >
+          <Button onClick={handleUpgrade} size="sm" className="w-full bg-orange-500 hover:bg-orange-600 border-none text-white">
             <ArrowUpCircle className="w-4 h-4 mr-1" />
             Upgrade Sekarang
           </Button>

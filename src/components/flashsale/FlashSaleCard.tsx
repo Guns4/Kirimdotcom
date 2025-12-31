@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Lock, Smartphone, ShoppingCart, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FlashSaleItemProps {
   id: string;
@@ -19,31 +19,28 @@ interface FlashSaleItemProps {
 export default function FlashSaleCard({ item }: { item: FlashSaleItemProps }) {
   const [isApp, setIsApp] = useState(false);
   const searchParams = useSearchParams();
-  // router removed
+  const router = useRouter();
 
   useEffect(() => {
     // Detect environment: Check for 'source=app' query param or custom UserAgent
     // Real-world: You might have a specific header or WebView token.
     const userAgent = window.navigator.userAgent;
-    const isAppCheck =
-      userAgent.includes('CekKirimApp') || searchParams.get('source') === 'app';
-    // eslint-disable-next-line
+    const isAppCheck = userAgent.includes('CekKirimApp') || searchParams.get('source') === 'app';
     setIsApp(isAppCheck);
   }, [searchParams]);
 
-  const discount = Math.round(
-    ((item.originalPrice - item.price) / item.originalPrice) * 100
-  );
+  const discount = Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100);
   const percentSold = (item.sold / item.stock) * 100;
 
   const handleBuy = () => {
     if (isApp) {
       // Proceed to checkout
+      console.log('Proceeding to checkout for item', item.id);
+      // router.push(/checkout/${item.id});
       alert('Berhasil masuk ke checkout (Simulasi)');
     } else {
       // Should not be reachable if button is disabled, but safety check
-      window.location.href =
-        'https://play.google.com/store/apps/details?id=com.cekkirim.app';
+      window.location.href = 'https://play.google.com/store/apps/details?id=com.cekkirim.app';
     }
   };
 
@@ -51,7 +48,8 @@ export default function FlashSaleCard({ item }: { item: FlashSaleItemProps }) {
     <div className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Discount Badge */}
       <div className="absolute top-3 left-3 z-10 bg-yellow-500 text-black font-bold text-xs px-2 py-1 rounded-full flex items-center gap-1">
-        <Zap size={12} fill="currentColor" />-{discount}% OFF
+        <Zap size={12} fill="currentColor" />
+        -{discount}% OFF
       </div>
 
       {/* Image Container */}

@@ -13,11 +13,10 @@
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
     font-size: 24px;
     cursor: pointer;
-    transition: transform 0.2s, right 0.3s, background 0.3s;
+    transition: transform 0.2s, right 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: sans-serif;
 }
 
 #cekkirim-toggle:hover {
@@ -29,13 +28,12 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 350px;
-    /* Mobile width usually fits well */
+    width: 350px; /* Mobile width usually fits well */
     height: 100vh;
     background: white;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     z-index: 99998;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s ease-in-out;
 }
 
 #cekkirim-sidebar.hidden {
@@ -49,12 +47,12 @@
     border: none;
 }
 
-/* Active State (Open) */
+/* Push toggle button when sidebar is open */
 #cekkirim-toggle.active {
-    right: 370px;
-    /* 350px sidebar width + 20px margin */
-    background: #ef4444;
-    /* Red close button */
-    transform: rotate(90deg);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    right: 370px; /* 350px width + 20px margin */
+    background: #ef4444; /* Change to close button color */
+    transform: rotate(45deg); /* Turn icon into X */
+}
+#cekkirim-toggle.active::before {
+    content: '+'; 
 }

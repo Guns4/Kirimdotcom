@@ -1,38 +1,28 @@
--- Account Deletion & Anonymization Schema
--- Compliance for App Store / Play Store (GDPR)
+-- Add deleted_at column to profiles if not exists
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ DEFAULT NULL;
 
--- 1. Ensure we have a deleted_at column on agents (if not exist)
-ALTER TABLE public.agents 
-ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE;
-
--- 2. Create RPC function to Soft Delete & Anonymize
-CREATE OR REPLACE FUNCTION soft_delete_user(target_user_id UUID)
+-- Function to Soft Delete User
+CREATE OR REPLACE FUNCTION public.soft_delete_user()
 RETURNS VOID AS $$
+DECLARE
+    current_user_id UUID;
 BEGIN
-    -- Check if user exists (implicit via update)
+    current_user_id := auth.uid();
     
-    -- Anonymize Agent Data (if agent exists)
-    UPDATE public.agents
-    SET 
-        shop_name = 'Deleted User',
-        shop_address = 'Data Deleted',
-        phone_number = '0000000000',
-        ktp_url = NULL,
-        shop_photo_url = NULL,
-        status = 'DELETED',
-        deleted_at = NOW(),
-        updated_at = NOW()
-    WHERE user_id = target_user_id;
+    IF current_user_id IS NULL THEN
+        RAISE EXCEPTION 'Not authenticated';
+    END IF;
 
-    -- If there were other public profile tables, update them here too
-    -- UPDATE public.profiles SET full_name = 'Deleted', ...
+    -- Mark profile as deleted
+    UPDATE public.profiles
+    SET deleted_at = NOW(),
+        email = 'deleted_' || current_user_id || '@deleted.com', -- Anonymize PII
+        username = 'deleted_user_' || current_user_id,
+        full_name = 'Deleted User'
+    WHERE id = current_user_id;
 
-    -- Note: We do NOT delete the row to maintain financial integrity (Foreign Keys).
-    -- But PII like names/phones are gone.
-
-    -- Optional: Log the deletion
-    INSERT INTO public.system_logs (level, message, metadata)
-    VALUES ('INFO', 'User Account Deleted', jsonb_build_object('user_id', target_user_id));
-
+    -- Ideally, we should also handle auth.users soft deletion or banning.
+    -- Calling Supabase Admin API from Edge Functions is safer for managing auth.users.
+    -- This function handles the public profile data anonymization.
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

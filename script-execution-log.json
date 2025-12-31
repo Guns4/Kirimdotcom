@@ -1,0 +1,50 @@
+{
+    "executed": [],
+    "failed": [],
+    "skipped": [],
+    "startTime": "2026-01-01T02:55:42+07:00",
+    "categories": {
+        "category1": {
+            "status": "pending",
+            "batches": {
+                "1A": {
+                    "status": "pending",
+                    "scripts": 10
+                },
+                "1B": {
+                    "status": "pending",
+                    "scripts": 17
+                },
+                "1C": {
+                    "status": "pending",
+                    "scripts": 6
+                },
+                "1D": {
+                    "status": "pending",
+                    "scripts": 8
+                }
+            }
+        },
+        "category2": {
+            "status": "pending"
+        },
+        "category3": {
+            "status": "pending"
+        },
+        "category4": {
+            "status": "pending"
+        },
+        "category5": {
+            "status": "pending"
+        },
+        "category6": {
+            "status": "pending"
+        },
+        "category7": {
+            "status": "pending"
+        },
+        "category8": {
+            "status": "pending"
+        }
+    }
+}[2026-01-01 02:57:21] setup-db-rls.sh - SKIPPED: File not found

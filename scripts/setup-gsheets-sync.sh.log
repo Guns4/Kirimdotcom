@@ -1,0 +1,127 @@
+🚀 Setting up Google Sheets Sync...
+📦 Installing googleapis...
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   peer react-dom@">=16.8.0" from @floating-ui/react-dom@2.1.6
+npm warn   node_modules/@floating-ui/react-dom
+npm warn     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.8
+npm warn     node_modules/@radix-ui/react-popper
+npm warn   32 more (@prisma/studio-core, @radix-ui/react-arrow, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-copy-to-clipboard@5.1.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn   react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn     react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-debounce-input@3.3.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn   react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn     react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-inspector@6.0.2
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn   react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn   node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn     react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+
+up to date, audited 2056 packages in 21s
+
+395 packages are looking for funding
+  run `npm fund` for details
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+⚡ Creating Sync Logic...
+🎨 Creating Sync Button...
+✅ Google Sheets Sync Setup Complete!

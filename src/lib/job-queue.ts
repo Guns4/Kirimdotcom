@@ -1,105 +1,106 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
-export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'DEAD';
+// Initialize Supabase Client (Service Role needed for worker)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // Must use service role for worker
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-export interface Job {
-    id: string;
-    job_type: string;
-    payload: any;
-    status: JobStatus;
-    attempt_count: number;
+export interface JobPayload {
+    [key: string]: any;
 }
 
-// Map job types to actual handler functions
-const JOB_HANDLERS: Record<string, (payload: any) => Promise<void>> = {
+export type JobHandler = (payload: any) => Promise<void>;
+
+// Registry of Job Handlers
+const jobHandlers: Record<string, JobHandler> = {
     'send-email': async (payload) => {
-        console.log(`[Worker] Sending email to ${payload.to}...`);
-        // Simulate failure for demo if payload has 'fail: true'
-        if (payload.fail) throw new Error('Simulated Email Server Error');
-        await new Promise(r => setTimeout(r, 500));
-        console.log('[Worker] Email sent!');
+        console.log('📧 Sending email to:', payload.email);
+        // Simulate work
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('✅ Email sent!');
     },
-    'webhook-trigger': async (payload) => {
-        console.log(`[Worker] Triggering webhook: ${payload.url}`);
-        await new Promise(r => setTimeout(r, 500));
-    }
+    'generate-report': async (payload) => {
+        console.log('fj Generating report for:', payload.userId);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('✅ Report generated!');
+    },
+    // Add more handlers here
 };
 
-export async function enqueueJob(jobType: string, payload: any) {
-    const supabase = await createClient();
-    const { error } = await supabase.from('job_queues').insert({
-        job_type: jobType,
-        payload
-    });
-    if (error) console.error('Failed to enqueue job:', error);
-}
-
-export async function processPendingJobs() {
-    const supabase = await createClient();
-
-    // 1. Fetch available jobs (Simple poller)
-    // In high scale, use RPC 'select_for_update' to prevent race conditions.
-    // For this MVP, we fetch one by one.
-    const { data: jobs, error } = await supabase
-        .from('job_queues')
-        .select('*')
-        .in('status', ['PENDING', 'FAILED'])
-        .lte('next_run_at', new Date().toISOString())
-        .limit(5);
+export async function enqueueJob(type: string, payload: JobPayload) {
+    const { data, error } = await supabase
+        .from('jobs')
+        .insert({ type, payload, status: 'pending' })
+        .select()
+        .single();
 
     if (error) {
-        console.error('Error fetching jobs:', error);
-        return;
+        console.error('Failed to enqueue job:', error);
+        throw error;
     }
 
-    if (!jobs || jobs.length === 0) {
-        return { processed: 0 };
+    return data;
+}
+
+export async function processNextJob(workerId: string = 'worker-1') {
+    // 1. Fetch and Lock a Job (Postgres SKIP LOCKED is best, but simulated here via update/select)
+    // Simple strategy: Update the first 'pending' job to 'processing'
+
+    // Note: For high concurrency, use a stored procedure or proper locking.
+    // This is a simplified reliable-fetch implementation.
+
+    const { data: job, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('status', 'pending')
+        .lt('attempts', 3) // Assuming max_attempts logic in query or handled later
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+
+    if (error || !job) {
+        return null; // No jobs found
     }
 
-    let processedCount = 0;
+    // Lock the job
+    const { error: lockError } = await supabase
+        .from('jobs')
+        .update({
+            status: 'processing',
+            locked_at: new Date().toISOString(),
+            locked_by: workerId,
+            attempts: job.attempts + 1
+        })
+        .eq('id', job.id)
+        .eq('status', 'pending'); // Optimistic lock
 
-    for (const job of jobs) {
-        // Locking: Mark as PROCESSING immediately
-        await supabase.from('job_queues').update({ status: 'PROCESSING' }).eq('id', job.id);
+    if (lockError) {
+        // Race condition lost
+        return null;
+    }
 
-        try {
-            const handler = JOB_HANDLERS[job.job_type];
-            if (!handler) {
-                throw new Error(`No handler for job type: ${job.job_type}`);
-            }
+    console.log(`🔨 Processing Job [${job.id}] Type: ${job.type}`);
 
-            // Execute
-            await handler(job.payload);
-
-            // Success
-            await supabase.from('job_queues').update({
-                status: 'COMPLETED',
-                updated_at: new Date().toISOString()
-            }).eq('id', job.id);
-
-            processedCount++;
-
-        } catch (err: any) {
-            // Failure Logic
-            const newAttempts = (job.attempt_count || 0) + 1;
-            const isDead = newAttempts >= 5;
-
-            // Exponential Backoff: 1m, 2m, 4m, 8m, 16m
-            // Formula: Now + (60 * 2^(attempts-1)) seconds
-            const backoffSeconds = 60 * Math.pow(2, newAttempts - 1);
-            const nextRun = new Date(Date.now() + backoffSeconds * 1000);
-
-            await supabase.from('job_queues').update({
-                status: isDead ? 'DEAD' : 'FAILED',
-                attempt_count: newAttempts,
-                next_run_at: isDead ? null : nextRun.toISOString(),
-                last_error: err.message,
-                updated_at: new Date().toISOString()
-            }).eq('id', job.id);
-
-            console.error(`[Worker] Job ${job.id} failed (Attempt ${newAttempts}). Retry at ${nextRun.toISOString()}`);
+    try {
+        const handler = jobHandlers[job.type];
+        if (!handler) {
+            throw new Error(`No handler for job type: ${job.type}`);
         }
-    }
 
-    return { processed: processedCount };
+        await handler(job.payload);
+
+        // Complete
+        await supabase.from('jobs').update({ status: 'completed' }).eq('id', job.id);
+        console.log(`✅ Job [${job.id}] Completed`);
+        return job;
+
+    } catch (err: any) {
+        console.error(`❌ Job [${job.id}] Failed:`, err);
+        await supabase.from('jobs').update({
+            status: 'failed',
+            last_error: err.message,
+            // If max attempts reached, keep failed, else maybe reset to pending (retry logic can be here)
+        }).eq('id', job.id);
+        return job;
+    }
 }

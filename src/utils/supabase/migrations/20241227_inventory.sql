@@ -12,9 +12,13 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, sku)
 );
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_products_user_id ON products(user_id);
 CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku);
+
 -- RLS
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can manage their own products" ON products FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage their own products" ON products
+    FOR ALL USING (auth.uid() = user_id);

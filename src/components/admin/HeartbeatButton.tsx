@@ -1,39 +1,47 @@
 'use client';
 
 import { useState } from 'react';
-import { HeartPulse, CheckCircle } from 'lucide-react';
-import { sendHeartbeatAction } from '@/app/actions/dms-action'; // We need a server action for client comp
+import { Button } from '@/components/ui/Button';
+import { Activity, CheckCircle, AlertTriangle } from 'lucide-react'; // Assuming you have lucide-react
+import { checkInAction } from '@/app/actions/dms-action';
+import { toast } from 'sonner';
 
-export default function HeartbeatButton() {
-    const [pulsing, setPulsing] = useState(false);
-    const [done, setDone] = useState(false);
+export function HeartbeatButton() {
+    const [loading, setLoading] = useState(false);
 
-    const handlePulse = async () => {
-        setPulsing(true);
+    const handleCheckIn = async () => {
+        setLoading(true);
         try {
-            await sendHeartbeatAction();
-            setDone(true);
-            setTimeout(() => setDone(false), 3000);
-        } catch (e) {
-            alert('Failed to send heartbeat');
+            const res = await checkInAction();
+            if (res.success) {
+                toast.success('Heartbeat sent! Business continuity timer reset.');
+            } else {
+                toast.error('Failed to send heartbeat.');
+            }
+        } catch (err) {
+            toast.error('An unexpected error occurred.');
         } finally {
-            setPulsing(false);
+            setLoading(false);
         }
     };
 
     return (
-        <button
-            onClick={handlePulse}
-            disabled={pulsing}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all shadow-md
-            ${done
-                    ? 'bg-green-100 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-600 border border-red-100 hover:bg-red-100'
-                }
-        `}
-        >
-            {done ? <CheckCircle className="w-5 h-5" /> : <HeartPulse className={`w-5 h-5 ${pulsing ? 'animate-ping' : ''}`} />}
-            {done ? 'Responded' : "I'm Alive"}
-        </button>
+        <div className="flex items-center gap-4 bg-zinc-900/50 border border-zinc-800 p-4 rounded-xl">
+            <div className="bg-emerald-500/10 p-3 rounded-lg text-emerald-500">
+                <Activity className="w-6 h-6 animate-pulse" />
+            </div>
+            <div className="flex-1">
+                <h3 className="font-semibold text-zinc-100">Dead Man's Switch</h3>
+                <p className="text-sm text-zinc-400">Confirm you are active to reset the contingency timer.</p>
+            </div>
+            <Button
+                onClick={handleCheckIn}
+                disabled={loading}
+                variant="outline"
+                className="border-emerald-500/20 hover:bg-emerald-500/10 text-emerald-500 hover:text-emerald-400"
+            >
+                {loading ? 'Signaling...' : 'I am Here'}
+            </Button>
+        </div>
     );
 }

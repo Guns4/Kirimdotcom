@@ -1,0 +1,3 @@
+🛡️  Generating RLS Hardening Script...
+✅ Generated: supabase/security/enable_rls.sql
+👉 Run this SQL file in Supabase Dashboard > SQL Editor to apply protection.

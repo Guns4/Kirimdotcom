@@ -1,92 +1,83 @@
+import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import axios from 'axios';
-import { createClient } from '@/utils/supabase/server';
-
-const MARKUP_AMOUNT = 1000; // Rp 1.000 Profit per shipment check (or per selection)
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        const { origin, destination, weight, courier = 'jne' } = body;
+        const { origin, destination, weight, courier } = await request.json();
 
-        if (!origin || !destination || !weight) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        if (!origin || !destination || !weight || !courier) {
+            return NextResponse.json(
+                { error: 'Missing required fields' },
+                { status: 400 }
+            );
         }
 
-        const supabase = await createClient();
+        const cookieStore = await cookies();
+        const supabase = await createClient(cookieStore);
 
-        // 1. CACHE CHECK (Supabase)
-        // Check if we have this exact query cached in recent time
-        // (Simplified caching logic for demonstration)
-        const cacheKey = `${origin}-${destination}-${weight}-${courier}`;
-        const { data: cached } = await supabase
-            .from('shipping_cache') // Assuming a table for caching
+        // 1. Check Cache
+        const { data: cacheData, error: cacheError } = await supabase
+            .from('shipping_cache')
             .select('*')
-            .eq('key', cacheKey)
-            .gt('created_at', new Date(Date.now() - 3600 * 1000).toISOString()) // 1 hour cache
+            .eq('origin_code', origin)
+            .eq('destination_code', destination)
+            .eq('weight_kg', weight)
+            .eq('courier', courier)
             .single();
 
-        if (cached) {
-            console.log('⚡ CACHE HIT');
-            return NextResponse.json(cached.data);
+        if (cacheData && !cacheError) {
+            // Cache Hit
+            return NextResponse.json({
+                source: 'cache',
+                data: {
+                    ...cacheData,
+                    price: Number(cacheData.price) + 1000 // Ensure markup is applied
+                }
+            });
         }
 
-        // 2. FETCH VENDOR (Binderbyte Version)
-        console.log('🔌 CACHE MISS: Fetching Binderbyte...');
+        // 2. Cache Miss: Fetch from Provider (RajaOngkir/Binderbyte)
 
-        // Binderbyte butuh params: origin, destination, weight, courier
-        // Catatan: Pastikan kode kota (origin/destination) sesuai standar Binderbyte
-        const response = await axios.get(
-            `https://api.binderbyte.com/v1/cost`,
-            {
-                params: {
-                    api_key: process.env.BINDERBYTE_API_KEY,
-                    courier: courier,
-                    origin: origin, // Binderbyte pakai kode kota/kecamatan string
-                    destination: destination,
-                    weight: weight // dalam gram
-                }
-            }
-        );
+        // Mocking response for demonstration
+        const mockPrice = 15000 + (weight * 5000); // 15k base + 5k/kg
+        const serviceName = 'REG';
+        const etd = '2-3 Days';
 
-        // Struktur response Binderbyte berbeda dengan RajaOngkir
-        const rawData = response.data.data;
-
-        // Data mapping: Binderbyte return { service: "REG", price: 10000, etd: "1-2 days" }
-
-        // 3. MARKUP PROFIT
-        const processedCosts = rawData.costs.map((service: any) => {
-            // Binderbyte biasanya return 'price' atau 'cost'
-            const originalCost = parseInt(service.price);
-            const markupCost = originalCost + MARKUP_AMOUNT;
-
-            return {
-                service: service.service,
-                description: service.description,
-                cost: [{ value: markupCost, etd: service.etd, note: 'Termasuk Biaya Layanan' }]
-            };
+        // 3. Insert specific result to Cache
+        const { error: insertError } = await supabase.from('shipping_cache').insert({
+            origin_code: origin,
+            destination_code: destination,
+            weight_kg: weight,
+            courier: courier,
+            service: serviceName,
+            price: mockPrice, // Storing query result (COST)
+            etd: etd
         });
 
-        const finalData = {
-            origin_details: rawData.origin,
-            destination_details: rawData.destination,
-            results: [{ code: courier, costs: processedCosts }] // Format disamakan biar frontend gak bingung
-        };
+        if (insertError) {
+            console.error('Failed to cache shipping cost:', insertError);
+        }
 
-        // 4. SAVE TO CACHE
-        await supabase.from('shipping_cache').upsert({
-            key: cacheKey,
-            data: finalData,
-            created_at: new Date().toISOString()
-        }, { onConflict: 'key' });
-
-        return NextResponse.json(finalData);
-
-    } catch (error: any) {
-        console.error('[SHIPPING API ERROR]', error.response?.data || error.message);
+        // 4. Return with Markup
         return NextResponse.json({
-            error: 'Failed to fetch shipping costs',
-            details: error.response?.data?.message || error.message
-        }, { status: 500 });
+            source: 'api',
+            data: {
+                origin_code: origin,
+                destination_code: destination,
+                weight_kg: weight,
+                courier: courier,
+                service: serviceName,
+                price: mockPrice + 1000, // Markup +1000
+                etd: etd
+            }
+        });
+
+    } catch (error) {
+        console.error('Shipping Cost Error:', error);
+        return NextResponse.json(
+            { error: 'Internal Server Error' },
+            { status: 500 }
+        );
     }
 }

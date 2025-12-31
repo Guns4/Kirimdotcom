@@ -1,0 +1,116 @@
+==> setup-dependency-lock.sh
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.0.0" from the root project
+npm warn   89 more (@emotion/react, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.0.0" from the root project
+npm warn   32 more (@floating-ui/react-dom, @prisma/studio-core, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-copy-to-clipboard@5.1.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.0.0" from the root project
+npm warn   89 more (@emotion/react, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn   react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn     react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-debounce-input@3.3.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.0.0" from the root project
+npm warn   89 more (@emotion/react, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn   react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn     react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-inspector@6.0.2
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.0.0" from the root project
+npm warn   89 more (@emotion/react, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn   react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn   node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn     react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated rimraf@2.7.1: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+npm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+npm warn deprecated workbox-google-analytics@6.6.0: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+> ws-cek-kirim@1.0.0 prepare
+> husky
+
+
+added 2055 packages in 8m
+
+395 packages are looking for funding
+  run `npm fund` for details
+✓ Done

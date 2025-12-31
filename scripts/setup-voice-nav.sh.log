@@ -1,0 +1,16 @@
+🚀 Setting up Voice Navigation...
+📦 Installing react-speech-recognition...
+
+added 1 package, removed 242 packages, and audited 1815 packages in 28s
+
+383 packages are looking for funding
+  run `npm fund` for details
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+🎤 Creating Voice Overlay...
+✅ Voice Module Setup Complete!

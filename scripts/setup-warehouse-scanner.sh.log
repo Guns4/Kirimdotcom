@@ -1,0 +1,128 @@
+🚀 Setting up Warehouse Barcode Scanner System...
+📦 Installing QuaggaJS...
+npm notice Access token expired or revoked. Please try logging in again.
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @react-spring/zdog@10.0.3
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   peer react-dom@">=16.8.0" from @floating-ui/react-dom@2.1.6
+npm warn   node_modules/@floating-ui/react-dom
+npm warn     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.8
+npm warn     node_modules/@radix-ui/react-popper
+npm warn   32 more (@prisma/studio-core, @radix-ui/react-arrow, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn   @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn   node_modules/react-spring
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8.0 || ^17.0.0 || ^18.0.0" from @react-spring/zdog@10.0.3
+npm warn   node_modules/react-spring/node_modules/@react-spring/zdog
+npm warn     @react-spring/zdog@"~10.0.3" from react-spring@10.0.3
+npm warn     node_modules/react-spring
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-copy-to-clipboard@5.1.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn   react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-copy-to-clipboard@5.1.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-copy-to-clipboard
+npm warn     react-copy-to-clipboard@"5.1.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-debounce-input@3.3.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn   react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^15.3.0 || 16 || 17 || 18" from react-debounce-input@3.3.0
+npm warn   node_modules/swagger-ui-react/node_modules/react-debounce-input
+npm warn     react-debounce-input@"=3.3.0" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-inspector@6.0.2
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @emotion/react@11.14.0
+npm warn   node_modules/@emotion/react
+npm warn     @emotion/react@"^11.8.1" from react-select@5.10.2
+npm warn     node_modules/react-select
+npm warn   89 more (@emotion/use-insertion-effect-with-fallbacks, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn   react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn   node_modules/swagger-ui-react
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.4 || ^17.0.0 || ^18.0.0" from react-inspector@6.0.2
+npm warn   node_modules/swagger-ui-react/node_modules/react-inspector
+npm warn     react-inspector@"^6.0.1" from swagger-ui-react@5.31.0
+npm warn     node_modules/swagger-ui-react
+npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@types%2fquagga - Not found
+npm error 404
+npm error 404  The requested resource '@types/quagga@*' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Liguns\AppData\Local\npm-cache\_logs\2025-12-31T20_25_41_545Z-debug-0.log
+📸 Creating Scanner Logic...
+⚡ Creating Warehouse Actions...
+🎨 Creating Warehouse Dashboard...
+🔊 Creating sound asset placeholder...
+👉 Place a beep.mp3 file in public/sounds/ for scan feedback
+✅ Warehouse Scanner Setup Complete!
+📱 Seller dapat menggunakan HP sebagai barcode scanner untuk tracking inventory!

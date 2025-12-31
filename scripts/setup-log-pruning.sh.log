@@ -1,0 +1,3 @@
+==> setup-log-pruning.sh
+# Auto-delete logs >90 days
+✓ Done

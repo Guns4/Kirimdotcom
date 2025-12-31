@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Button } from '@/components/ui/button';
-import { Camera as CameraIcon, Save, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Camera as CameraIcon, X } from 'lucide-react';
 
 export function WarrantyCamera({ onCapture }: { onCapture: (base64: string) => void }) {
     const [preview, setPreview] = useState<string | null>(null);
@@ -35,6 +35,7 @@ export function WarrantyCamera({ onCapture }: { onCapture: (base64: string) => v
         <div className="w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 relative overflow-hidden">
             {preview ? (
                 <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={preview} alt="Warranty Doc" className="w-full h-full object-cover" />
                     <button
                         onClick={reset}

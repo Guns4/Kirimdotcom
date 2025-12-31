@@ -1,0 +1,22 @@
+Setting up Developer Dashboard...
+=================================================
+
+1. Generating SQL Schema...
+   [!] Run this in Supabase SQL Editor:
+   [?] api_keys_schema.sql created.
+
+2. Creating Security Lib: src/lib/api-security.ts
+   [?] Security library created.
+
+3. Creating Actions: src/app/actions/developerActions.ts
+   [?] Server actions created.
+
+4. Creating Page: src/app/dashboard/developer/page.tsx
+   [?] Dashboard UI created.
+
+=================================================
+Setup Complete!
+
+Next Steps:
+1. Run the SQL schema in Supabase.
+2. Visit /dashboard/developer to manage keys.

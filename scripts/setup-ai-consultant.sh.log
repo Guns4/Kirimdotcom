@@ -1,0 +1,31 @@
+🚀 Setting up AI Business Consultant...
+📦 Installing AI SDKs...
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: ws-cek-kirim@1.0.0
+npm error Found: openai@6.15.0
+npm error node_modules/openai
+npm error   openai@"^6.15.0" from the root project
+npm error   peer openai@"*" from @langchain/community@1.1.1
+npm error   node_modules/@langchain/community
+npm error     @langchain/community@"*" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer openai@"^4.62.1" from @browserbasehq/stagehand@1.14.0
+npm error node_modules/@browserbasehq/stagehand
+npm error   peer @browserbasehq/stagehand@"^1.0.0" from @langchain/community@1.1.1
+npm error   node_modules/@langchain/community
+npm error     @langchain/community@"*" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry
+npm error this command with --force or --legacy-peer-deps
+npm error to accept an incorrect (and potentially broken) dependency resolution.
+npm error
+npm error
+npm error For a full report see:
+npm error C:\Users\Liguns\AppData\Local\npm-cache\_logs\2025-12-31T20_05_59_292Z-eresolve-report.txt
+npm error A complete log of this run can be found in: C:\Users\Liguns\AppData\Local\npm-cache\_logs\2025-12-31T20_05_59_292Z-debug-0.log
+🧠 Creating AI Logic...
+🎨 Creating Chat Interface...
+✅ AI Consultant Setup Complete!

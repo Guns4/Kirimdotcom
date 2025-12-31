@@ -12,7 +12,7 @@ const Components: any = {
     PromoCarousel: () => <div className="h-32 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4">Super Promo!</div>,
     DailySpin: () => <div className="h-40 bg-yellow-100 text-center p-4">🎰 Spin & Win</div>,
     CommissionChart: () => <div className="h-40 bg-green-100 p-4">Total Earnings: Rp 5.000.000</div>,
-    RouteStats: () => <div className="h-40 bg-gray-50 p-4">Jkt -> Bdg is trending</div>,
+    RouteStats: () => <div className="h-40 bg-gray-50 p-4">Jkt &rarr; Bdg is trending</div>,
     NewsFeed: () => <div className="h-40 bg-white p-4">New Agent Policy...</div>,
     WelcomeGuide: () => <div className="h-60 bg-indigo-50 p-8 text-center text-lg">Welcome! Let's verify your identity.</div>
 };

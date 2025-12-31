@@ -1,16 +1,11 @@
 import { createClient } from '@/utils/supabase/server';
 import BundlePricingCard from '@/components/starter-kit/BundlePricingCard';
 import TestimonialSection from '@/components/starter-kit/TestimonialSection';
-import { PurchaseButton } from '@/components/starter-kit/PurchaseButton';
 import { redirect } from 'next/navigation';
-
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Paket Siap Jualan - Starter Kit Pemula | CekKirim',
-  description:
-    'Paket lengkap untuk memulai bisnis online. Hemat 30% dengan bundling E-book + Premium + Template. Garansi uang kembali!',
+  description: 'Paket lengkap untuk memulai bisnis online. Hemat 30% dengan bundling E-book + Premium + Template. Garansi uang kembali!',
 };
 
 async function getStarterKitData() {
@@ -42,9 +37,6 @@ export default async function StarterKitPage() {
   if (!bundle) {
     redirect('/shop');
   }
-
-  // Type assertion - bundle is guaranteed to exist after redirect
-  const bundleData = bundle as any;
 
   const handlePurchase = async () => {
     'use server';
@@ -116,23 +108,19 @@ export default async function StarterKitPage() {
               <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 text-xl">✅</span>
-                  <span className="font-semibold">E-book 150 Halaman</span> -
-                  Panduan step-by-step
+                  <span className="font-semibold">E-book 150 Halaman</span> - Panduan step-by-step
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 text-xl">✅</span>
-                  <span className="font-semibold">Akses Premium 1 Bulan</span> -
-                  Auto tracking & analytics
+                  <span className="font-semibold">Akses Premium 1 Bulan</span> - Auto tracking & analytics
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 text-xl">✅</span>
-                  <span className="font-semibold">Template Nota</span> - Siap
-                  pakai, profesional
+                  <span className="font-semibold">Template Nota</span> - Siap pakai, profesional
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-500 text-xl">✅</span>
-                  <span className="font-semibold">Bonus Komunitas</span> -
-                  Networking seller sukses
+                  <span className="font-semibold">Bonus Komunitas</span> - Networking seller sukses
                 </li>
               </ul>
             </div>
@@ -148,20 +136,19 @@ export default async function StarterKitPage() {
               Investasi Terbaik untuk Bisnis Anda 💎
             </h2>
             <p className="text-xl text-gray-600">
-              Hemat <span className="font-bold text-green-600">30%</span> dengan
-              paket bundling!
+              Hemat <span className="font-bold text-green-600">30%</span> dengan paket bundling!
             </p>
           </div>
 
           <BundlePricingCard
-            bundleName={bundleData.bundle_name}
-            description={bundleData.description}
-            originalPrice={bundleData.original_price}
-            bundlePrice={bundleData.bundle_price}
-            discountPercentage={bundleData.discount_percentage}
-            items={bundleData.items}
-            features={bundleData.features}
-            badgeText={bundleData.badge_text}
+            bundleName={bundle.bundle_name}
+            description={bundle.description}
+            originalPrice={bundle.original_price}
+            bundlePrice={bundle.bundle_price}
+            discountPercentage={bundle.discount_percentage}
+            items={bundle.items}
+            features={bundle.features}
+            badgeText={bundle.badge_text}
             onPurchase={handlePurchase}
           />
         </div>
@@ -219,7 +206,12 @@ export default async function StarterKitPage() {
             Jangan tunda lagi! Ribuan seller sudah membuktikan hasilnya.
             Sekarang giliran Anda!
           </p>
-          <PurchaseButton />
+          <button
+            onClick={handlePurchase}
+            className="bg-white text-blue-600 font-bold px-12 py-4 rounded-full text-lg hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+          >
+            🚀 Ambil Paket Sekarang - Hemat 30%!
+          </button>
           <p className="mt-6 text-blue-100">
             ⏰ Promo terbatas! Stok tersisa hanya untuk 50 pembeli pertama
           </p>

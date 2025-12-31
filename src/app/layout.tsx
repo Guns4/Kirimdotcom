@@ -1,5 +1,4 @@
 import { VercelMonitoring } from '@/components/monitoring/VercelMonitoring';
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
@@ -22,6 +21,9 @@ import { getPublicFlags } from '@/app/actions/flagActions';
 import { FeatureFlagProvider } from '@/components/providers/FeatureFlagProvider';
 import { ThirdPartyScripts } from '@/components/ThirdPartyScripts';
 import { VercelInsights } from '@/components/monitoring/VercelInsights';
+import EmulatorGuard from '@/components/security/EmulatorGuard';
+import LiveUpdateManager from '@/components/system/LiveUpdateManager';
+import ShakeFeedback from '@/components/qa/ShakeFeedback';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -126,34 +128,40 @@ export default function RootLayout({
       <body
         className={`font-sans antialiased min-h-screen flex flex-col ${isWidget ? 'bg-transparent' : 'bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30'}`}
       >
-        <SystemStatusProvider>
-          <FeatureFlagProvider initialFlags={flags}>
-            <LiteModeProvider>
-              {!isWidget && <Navbar />}
-              <main
-                className={
-                  isWidget
-                    ? 'min-h-screen flex items-center justify-center p-4'
-                    : 'flex-1 pb-16 md:pb-0'
-                }
-              >
-                {children}
-              </main>
-              {!isWidget && <FeedbackWidget />}
-              <ClarityAnalytics />
-              <ErrorMonitor />
-              <WebVitalsReporter />
-              <NPSSurvey />
-              {!isWidget && <Footer />}
+        <EmulatorGuard>
+          <SystemStatusProvider>
+            <FeatureFlagProvider initialFlags={flags}>
+              <LiteModeProvider>
+                {!isWidget && <Navbar />}
+                <main
+                  className={
+                    isWidget
+                      ? 'min-h-screen flex items-center justify-center p-4'
+                      : 'flex-1 pb-16 md:pb-0'
+                  }
+                >
+                  {children}
+                </main>
+                {!isWidget && <FeedbackWidget />}
+                <ClarityAnalytics />
+                <ErrorMonitor />
+                <WebVitalsReporter />
+                <NPSSurvey />
+                {!isWidget && <Footer />}
 
-              {/* Web Bottom Nav (Hidden in Native App via CSS) */}
-              {!isWidget && <div className="web-bottom-nav"><BottomNav /></div>}
+                {/* Web Bottom Nav (Hidden in Native App via CSS) */}
+                {!isWidget && (
+                  <div className="web-bottom-nav">
+                    <BottomNav />
+                  </div>
+                )}
 
-              {/* Native Mobile Nav (Only in App) */}
-              <MobileNav />
-            </LiteModeProvider>
-          </FeatureFlagProvider>
-        </SystemStatusProvider>
+                {/* Native Mobile Nav (Only in App) */}
+                <MobileNav />
+              </LiteModeProvider>
+            </FeatureFlagProvider>
+          </SystemStatusProvider>
+        </EmulatorGuard>
 
         {/* Third-party scripts with optimized loading */}
         <ThirdPartyScripts
@@ -165,6 +173,8 @@ export default function RootLayout({
         <VercelInsights />
 
         <VercelMonitoring />
+        <LiveUpdateManager />
+        <ShakeFeedback />
       </body>
     </html>
   );

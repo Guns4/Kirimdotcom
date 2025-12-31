@@ -1,230 +1,119 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Sparkles, Trophy, Truck, Gift, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-    LEVEL_CONFIG,
-    getLevelInfo,
-    getXPProgress,
-    getRarityColor,
-    type TycoonProfile,
-    type Unlockable
-} from '@/lib/tycoon-engine';
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { Button } from '@/components/ui/Button';
+import { Trophy, TrendingUp, Truck, Package } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-interface TycoonDashboardProps {
-    profile?: TycoonProfile;
-    unlockables?: Unlockable[];
-}
+// Duplicate LEVELS here or import shared config if possible. 
+// For client side, keeping simple copy for display to avoid server imports issues if any.
+const LEVELS = [
+    { level: 1, min_xp: 0, name: 'Garasi Rumah', perk: 'Starter Pack' },
+    { level: 2, min_xp: 100, name: 'Garasi Rumah (Upgrade)', perk: 'None' },
+    { level: 3, min_xp: 300, name: 'Toko Kecil', perk: 'Diskon 5%' },
+    { level: 4, min_xp: 600, name: 'Toko Kecil (Ramai)', perk: 'Skin: Blue Truck' },
+    { level: 5, min_xp: 1000, name: 'Gudang Sedang', perk: 'Prioritas CS' },
+    { level: 6, min_xp: 1500, name: 'Gudang Sedang (Full)', perk: 'Diskon 10%' },
+    { level: 7, min_xp: 2200, name: 'Gudang Besar', perk: 'Skin: Gold Truck' },
+    { level: 8, min_xp: 3000, name: 'Gudang Besar (Auto)', perk: 'Analisis Bisnis' },
+    { level: 9, min_xp: 4000, name: 'Gudang Raksasa', perk: 'Diskon 15%' },
+    { level: 10, min_xp: 5500, name: 'Gudang Raksasa (Sultan)', perk: 'FREE ADMIN FEES' },
+];
 
-export default function TycoonDashboard({ profile, unlockables = [] }: TycoonDashboardProps) {
-    // Mock profile for demo
-    const mockProfile: TycoonProfile = profile || {
-        id: '1',
-        user_id: '1',
-        current_level: 4,
-        current_xp: 450,
-        total_xp: 750,
-        total_shipments: 45,
-        total_spent: 2500000,
-        total_savings: 375000,
-        unlocked_skins: ['truck_default', 'truck_blue'],
-        active_skin: 'truck_blue',
-        admin_fee_discount: 5
-    };
+export function TycoonDashboard() {
+    const [profile, setProfile] = useState<any>(null);
+    const [nextLevel, setNextLevel] = useState<any>(null);
+    const [progress, setProgress] = useState(0);
 
-    const levelInfo = getLevelInfo(mockProfile.current_level);
-    const xpProgress = getXPProgress(mockProfile.total_xp);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
 
-    // Warehouse images based on level tier
-    const getWarehouseEmoji = (level: number) => {
-        if (level <= 2) return '🏠';
-        if (level <= 4) return '🏪';
-        if (level <= 6) return '🏭';
-        if (level <= 8) return '🏢';
-        return '🏗️';
-    };
+            const { data } = await supabase
+                .from('tycoon_profiles')
+                .select('*')
+                .eq('user_id', user.id)
+                .single();
+
+            if (data) {
+                setProfile(data);
+
+                const currentLvlIdx = LEVELS.findIndex(l => l.level === data.level);
+                const nextLvl = LEVELS[currentLvlIdx + 1];
+                setNextLevel(nextLvl);
+
+                if (nextLvl) {
+                    const currentLevelMin = LEVELS[currentLvlIdx].min_xp;
+                    const range = nextLvl.min_xp - currentLevelMin;
+                    const val = data.xp - currentLevelMin;
+                    setProgress(Math.min(100, (val / range) * 100));
+                } else {
+                    setProgress(100); // Max level
+                }
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
+    if (!profile) return <div className="p-4 text-center text-gray-500">Loading Game Data...</div>;
 
     return (
-        <div className="space-y-6">
-            {/* Main Tycoon Card */}
-            <Card className="bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 text-white overflow-hidden relative">
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                <CardContent className="relative z-10 p-6">
-                    <div className="flex flex-col md:flex-row items-center gap-6">
-                        {/* Warehouse Visual */}
-                        <div className="relative">
-                            <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center text-7xl border border-white/20 shadow-2xl">
-                                {getWarehouseEmoji(mockProfile.current_level)}
-                            </div>
-                            <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black font-bold px-3 py-1 rounded-full text-sm shadow-lg">
-                                Lv.{mockProfile.current_level}
-                            </div>
-                        </div>
-
-                        {/* Level Info */}
-                        <div className="flex-1 text-center md:text-left">
-                            <div className="text-sm text-purple-200 mb-1">Logistics Tycoon</div>
-                            <h2 className="text-3xl font-bold mb-2">{levelInfo.name}</h2>
-
-                            {/* XP Progress Bar */}
-                            <div className="mb-4">
-                                <div className="flex justify-between text-xs text-purple-200 mb-1">
-                                    <span>XP Progress</span>
-                                    <span>{xpProgress.current} / {xpProgress.required}</span>
-                                </div>
-                                <div className="h-3 bg-white/20 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all duration-500"
-                                        style={{ width: `${xpProgress.percentage}%` }}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Stats Row */}
-                            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                                    <div className="text-xs text-purple-200">Pengiriman</div>
-                                    <div className="text-lg font-bold">{mockProfile.total_shipments}</div>
-                                </div>
-                                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                                    <div className="text-xs text-purple-200">Total Hemat</div>
-                                    <div className="text-lg font-bold">Rp {(mockProfile.total_savings / 1000).toFixed(0)}K</div>
-                                </div>
-                                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                                    <div className="text-xs text-purple-200">Diskon Admin</div>
-                                    <div className="text-lg font-bold text-green-400">{mockProfile.admin_fee_discount}%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Unlockables Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Truck Skins */}
-                <Card>
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-blue-600" />
-                            Koleksi Truk
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        {[
-                            { id: 'truck_default', name: 'Truk Standar', level: 1, rarity: 'COMMON', unlocked: true },
-                            { id: 'truck_blue', name: 'Truk Biru', level: 2, rarity: 'COMMON', unlocked: true },
-                            { id: 'truck_gold', name: 'Truk Emas', level: 5, rarity: 'RARE', unlocked: mockProfile.current_level >= 5 },
-                            { id: 'truck_diamond', name: 'Truk Berlian', level: 8, rarity: 'EPIC', unlocked: mockProfile.current_level >= 8 },
-                            { id: 'truck_legendary', name: 'Truk Legenda', level: 10, rarity: 'LEGENDARY', unlocked: mockProfile.current_level >= 10 },
-                        ].map(skin => (
-                            <div
-                                key={skin.id}
-                                className={`flex items-center justify-between p-2 rounded-lg border ${skin.unlocked ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100 opacity-60'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xl">🚚</span>
-                                    <div>
-                                        <div className="text-sm font-medium">{skin.name}</div>
-                                        <div className={`text-xs px-2 py-0.5 rounded-full inline-block ${getRarityColor(skin.rarity)}`}>
-                                            {skin.rarity}
-                                        </div>
-                                    </div>
-                                </div>
-                                {skin.unlocked ? (
-                                    <Button size="sm" variant={mockProfile.active_skin === skin.id ? 'default' : 'outline'}>
-                                        {mockProfile.active_skin === skin.id ? '✓ Aktif' : 'Pakai'}
-                                    </Button>
-                                ) : (
-                                    <span className="text-xs text-gray-500">🔒 Lv.{skin.level}</span>
-                                )}
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
-
-                {/* Discounts */}
-                <Card>
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
-                            <Gift className="w-4 h-4 text-green-600" />
-                            Benefit & Diskon
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        {[
-                            { id: 'discount_5', name: 'Diskon 5%', level: 3, rarity: 'COMMON', value: 5, unlocked: mockProfile.current_level >= 3 },
-                            { id: 'discount_10', name: 'Diskon 10%', level: 6, rarity: 'RARE', value: 10, unlocked: mockProfile.current_level >= 6 },
-                            { id: 'discount_15', name: 'Diskon 15%', level: 9, rarity: 'EPIC', value: 15, unlocked: mockProfile.current_level >= 9 },
-                            { id: 'discount_max', name: 'FREE Admin!', level: 10, rarity: 'LEGENDARY', value: 100, unlocked: mockProfile.current_level >= 10 },
-                        ].map(discount => (
-                            <div
-                                key={discount.id}
-                                className={`flex items-center justify-between p-2 rounded-lg border ${discount.unlocked ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-100 opacity-60'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xl">{discount.unlocked ? '💰' : '🔒'}</span>
-                                    <div>
-                                        <div className="text-sm font-medium">{discount.name}</div>
-                                        <div className={`text-xs px-2 py-0.5 rounded-full inline-block ${getRarityColor(discount.rarity)}`}>
-                                            {discount.rarity}
-                                        </div>
-                                    </div>
-                                </div>
-                                {discount.unlocked ? (
-                                    <span className="text-green-600 font-bold text-sm">✓ Aktif</span>
-                                ) : (
-                                    <span className="text-xs text-gray-500">Level {discount.level}</span>
-                                )}
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 text-white shadow-xl">
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <Trophy className="text-yellow-400" />
+                        Logistics Tycoon
+                    </h2>
+                    <p className="text-slate-400 text-sm">Bangun kerajaan logistikmu!</p>
+                </div>
+                <div className="text-right">
+                    <div className="text-3xl font-bold text-yellow-400">Lv. {profile.level}</div>
+                    <div className="text-sm text-slate-300">{profile.warehouse_name}</div>
+                </div>
             </div>
 
-            {/* Level Roadmap */}
-            <Card>
-                <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-purple-600" />
-                        Level Roadmap
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex overflow-x-auto gap-2 pb-2">
-                        {Object.entries(LEVEL_CONFIG).map(([level, info]) => {
-                            const lvl = parseInt(level);
-                            const isCurrentLevel = lvl === mockProfile.current_level;
-                            const isUnlocked = lvl <= mockProfile.current_level;
-
-                            return (
-                                <div
-                                    key={level}
-                                    className={`flex-shrink-0 w-20 p-2 rounded-lg text-center border-2 transition-all ${isCurrentLevel
-                                            ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200'
-                                            : isUnlocked
-                                                ? 'border-green-300 bg-green-50'
-                                                : 'border-gray-200 bg-gray-50 opacity-60'
-                                        }`}
-                                >
-                                    <div className="text-2xl mb-1">{info.emoji}</div>
-                                    <div className="text-xs font-bold">Lv.{level}</div>
-                                    <div className="text-[10px] text-gray-600 truncate">{info.name}</div>
-                                    {isCurrentLevel && (
-                                        <div className="mt-1">
-                                            <Sparkles className="w-3 h-3 text-purple-500 mx-auto" />
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+            {/* Progress */}
+            <div className="mb-6">
+                <div className="flex justify-between text-xs mb-1 text-slate-400">
+                    <span>XP: {profile.xp}</span>
+                    <span>Next: {nextLevel ? nextLevel.min_xp : 'MAX'} XP</span>
+                </div>
+                <div className="h-4 bg-slate-700 rounded-full overflow-hidden border border-slate-600">
+                    <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+                {nextLevel && (
+                    <div className="mt-2 text-xs text-center text-yellow-300">
+                        Next Reward: {nextLevel.perk}
                     </div>
-                </CardContent>
-            </Card>
+                )}
+            </div>
+
+            {/* Stats / Actions */}
+            <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white/5 p-3 rounded-lg text-center border border-white/10">
+                    <Truck className="w-5 h-5 mx-auto mb-1 text-blue-400" />
+                    <div className="text-xs text-slate-400">Truck Skin</div>
+                    <div className="font-semibold text-sm truncate">{profile.truck_skin}</div>
+                </div>
+                <div className="bg-white/5 p-3 rounded-lg text-center border border-white/10">
+                    <TrendingUp className="w-5 h-5 mx-auto mb-1 text-green-400" />
+                    <div className="text-xs text-slate-400">Multiplier</div>
+                    <div className="font-semibold text-sm">1.0x</div>
+                </div>
+                <div className="bg-white/5 p-3 rounded-lg text-center border border-white/10">
+                    <Package className="w-5 h-5 mx-auto mb-1 text-purple-400" />
+                    <div className="text-xs text-slate-400">Total XP</div>
+                    <div className="font-semibold text-sm">{profile.xp}</div>
+                </div>
+            </div>
         </div>
     );
 }

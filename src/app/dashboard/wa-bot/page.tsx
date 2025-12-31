@@ -1,27 +1,13 @@
-import WADashboard from '@/components/wa/WADashboard';
-
-export const metadata = {
-    title: 'WhatsApp Bot Manager | CekKirim',
-    description: 'Hubungkan dan kelola bot WhatsApp Anda untuk otomatisasi bisnis.',
-};
+import { WADashboard } from '@/components/wa/WADashboard';
 
 export default function WABotPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-green-600 to-green-500 text-white py-8 px-4">
-                <div className="max-w-6xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-2">WhatsApp Bot SaaS</h1>
-                    <p className="text-green-100">
-                        Hubungkan nomor WhatsApp Anda dan otomatisasi notifikasi pengiriman
-                    </p>
-                </div>
+        <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center justify-center">
+            <div className="w-full max-w-2xl mb-8 text-center">
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">Bot Server Manager</h1>
+                <p className="text-gray-600">Manage your automated WhatsApp instances</p>
             </div>
-
-            {/* Main Content */}
-            <div className="max-w-6xl mx-auto px-4 py-8">
-                <WADashboard />
-            </div>
+            <WADashboard />
         </div>
     );
 }

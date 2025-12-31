@@ -15,7 +15,7 @@ async function runMaintenance() {
         .from('webhook_logs')
         .delete()
         .lt('created_at', twoWeeksAgo.toISOString());
-
+    
     if (logError) console.error('Failed to clear logs:', logError.message);
     else console.log('Cleared old webhook logs.');
 

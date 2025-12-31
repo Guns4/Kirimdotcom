@@ -1,88 +1,105 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/Button';
+import { AlertTriangle, Trash2, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 export function DeleteAccountZone({ userId }: { userId: string }) {
-    const [isConfirming, setIsConfirming] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [confirmText, setConfirmText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleDelete = async () => {
         if (confirmText !== 'DELETE') return;
+        setLoading(true);
 
-        setIsLoading(true);
         try {
-            const res = await fetch('/api/user/delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId }),
-            });
-
+            const res = await fetch('/api/user/delete', { method: 'DELETE' });
             if (res.ok) {
-                // Logout & Redirect
-                alert('Akun berhasil dihapus. Sampai jumpa!');
-                // window.location.href = '/logout'; // or NextAuth signout
-                router.push('/login');
+                toast.success('Account deleted. Goodbye!');
+                router.push('/');
+                router.refresh();
             } else {
-                alert('Gagal menghapus akun. Silakan hubungi support.');
+                const data = await res.json();
+                toast.error(data.error || 'Failed to delete account');
             }
         } catch (e) {
-            console.error(e);
-            alert('Terjadi kesalahan sistem.');
+            toast.error('An error occurred');
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
-    if (!isConfirming) {
-        return (
-            <div className="mt-10 p-6 border border-red-200 rounded-xl bg-red-50 dark:bg-red-900/10">
-                <h3 className="text-lg font-bold text-red-600">Danger Zone</h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                    Menghapus akun bersifat permanen. Data profil Anda akan dihapus dan transaksi dianonymize.
-                </p>
-                <button
-                    onClick={() => setIsConfirming(true)}
-                    className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm"
-                >
-                    Hapus Akun Saya
-                </button>
-            </div>
-        );
-    }
-
     return (
-        <div className="mt-10 p-6 border border-red-500 rounded-xl bg-white dark:bg-zinc-900 shadow-lg">
-            <h3 className="text-lg font-bold text-red-600 mb-2">Konfirmasi Penghapusan</h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-                Ketik <strong>DELETE</strong> di bawah ini untuk mengonfirmasi. Tindakan ini TIDAK BISA DIBATALKAN.
+        <div className="border border-red-200 bg-red-50 rounded-lg p-6 mt-8">
+            <h3 className="text-red-700 font-bold mb-2 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Danger Zone
+            </h3>
+            <p className="text-sm text-red-600 mb-4">
+                Once you delete your account, there is no going back. Please be certain.
             </p>
+            <Button
+                variant="destructive"
+                onClick={() => setIsOpen(true)}
+                className="bg-red-600 hover:bg-red-700 text-white"
+            >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Account
+            </Button>
 
-            <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder="Type DELETE"
-                className="w-full p-2 border border-zinc-300 rounded mb-4"
-            />
+            {/* Modal */}
+            {isOpen && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 relative animate-in fade-in zoom-in duration-200">
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
 
-            <div className="flex gap-3">
-                <button
-                    onClick={handleDelete}
-                    disabled={confirmText !== 'DELETE' || isLoading}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium text-sm"
-                >
-                    {isLoading ? 'Processing...' : 'Konfirmasi Hapus'}
-                </button>
-                <button
-                    onClick={() => { setIsConfirming(false); setConfirmText(''); }}
-                    className="px-4 py-2 text-zinc-600 hover:bg-zinc-100 rounded-lg text-sm"
-                >
-                    Batal
-                </button>
-            </div>
+                        <h4 className="font-bold text-lg mb-2">Delete Account?</h4>
+                        <p className="text-sm text-gray-500 mb-4">
+                            This action cannot be undone. All your data will be permanently removed.
+                        </p>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                    Type "DELETE" to confirm
+                                </label>
+                                <input
+                                    type="text"
+                                    value={confirmText}
+                                    onChange={(e) => setConfirmText(e.target.value)}
+                                    className="w-full border p-2 rounded-md text-sm"
+                                    placeholder="DELETE"
+                                />
+                            </div>
+
+                            <Button
+                                onClick={handleDelete}
+                                disabled={confirmText !== 'DELETE' || loading}
+                                className="w-full bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                {loading ? 'Deleting...' : 'Confirm Delete'}
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsOpen(false)}
+                                className="w-full"
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

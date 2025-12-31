@@ -9,11 +9,7 @@ interface CountdownProps {
 }
 
 export default function Countdown({ targetDate }: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<{
-    h: number;
-    m: number;
-    s: number;
-  } | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
     const target = new Date(targetDate);
@@ -33,7 +29,6 @@ export default function Countdown({ targetDate }: CountdownProps) {
       return { h, m, s };
     };
 
-    // eslint-disable-next-line
     setTimeLeft(calculateTime());
 
     const timer = setInterval(() => {
@@ -47,17 +42,11 @@ export default function Countdown({ targetDate }: CountdownProps) {
 
   return (
     <div className="flex items-center gap-2 text-white font-mono font-bold text-sm md:text-base">
-      <div className="bg-red-600 px-2 py-1 rounded">
-        {String(timeLeft.h).padStart(2, '0')}
-      </div>
+      <div className="bg-red-600 px-2 py-1 rounded">{String(timeLeft.h).padStart(2, '0')}</div>
       <span>:</span>
-      <div className="bg-red-600 px-2 py-1 rounded">
-        {String(timeLeft.m).padStart(2, '0')}
-      </div>
+      <div className="bg-red-600 px-2 py-1 rounded">{String(timeLeft.m).padStart(2, '0')}</div>
       <span>:</span>
-      <div className="bg-red-600 px-2 py-1 rounded">
-        {String(timeLeft.s).padStart(2, '0')}
-      </div>
+      <div className="bg-red-600 px-2 py-1 rounded">{String(timeLeft.s).padStart(2, '0')}</div>
     </div>
   );
 }

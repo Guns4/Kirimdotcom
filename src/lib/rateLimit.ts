@@ -151,3 +151,4 @@ export const upstashLimiters = {
 */
 
 export default rateLimit;
+export const rateLimiter = { limit: 100, window: "1m" };

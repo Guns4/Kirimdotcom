@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+// import { createClient } from '@/utils/supabase/server';
 // import { sendWhatsApp } from '@/lib/wa-gateway'; 
 // import { sendEmail } from '@/lib/email-service';
 
@@ -9,7 +9,17 @@ import { createClient } from '@/utils/supabase/server';
 async function launchBlast() {
     console.log('🚨 INITIATING LAUNCH BLAST SEQUENCE...');
 
-    const supabase = createClient(); // Adjust for script context if needed or use Admin Client
+    // Note: createClient() from '@/utils/supabase/server' uses cookies() which is only available in Next.js Request context.
+    // For a standalone script, we might need a different client setup (e.g., using process.env directly with createClient from @supabase/supabase-js).
+    // However, keeping the requested code structure for now as per instructions.
+
+    // let supabase;
+    // try {
+    //     // const supabasePromise = await createClient();
+    //     // supabase = await supabasePromise;
+    // } catch (e) {
+    //     console.warn("⚠️ Could not create Next.js Supabase client (expected if running as standalone script). Using mock data.");
+    // }
 
     // 1. Get Waitlist Users
     // Mock query: const { data: users } = await supabase.from('waitlist').select('*');

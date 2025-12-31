@@ -54,10 +54,7 @@ export function validateBundleDiscount(
   bundlePrice: number,
   expectedDiscountPercent: number
 ): boolean {
-  const actualDiscount = calculateDiscountPercentage(
-    originalPrice,
-    bundlePrice
-  );
+  const actualDiscount = calculateDiscountPercentage(originalPrice, bundlePrice);
   return Math.abs(actualDiscount - expectedDiscountPercent) < 1; // Allow 1% tolerance
 }
 
@@ -80,8 +77,8 @@ export function getItemValueBreakdown(items: BundleItem[]): {
   breakdown: Array<{ name: string; value: number; percentage: number }>;
 } {
   const totalValue = items.reduce((sum, item) => sum + item.value, 0);
-
-  const breakdown = items.map((item) => ({
+  
+  const breakdown = items.map(item => ({
     name: item.name,
     value: item.value,
     percentage: (item.value / totalValue) * 100,
@@ -101,7 +98,7 @@ export function isUserEligibleForBundle(
   if (bundleSlug === 'starter-kit-pemula') {
     return true;
   }
-
+  
   // Add more complex logic here for other bundles
   return userStatus !== 'premium'; // Premium users might not need starter kit
 }

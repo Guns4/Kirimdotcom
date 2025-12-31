@@ -8,7 +8,8 @@ export async function saveBankAccount(
   accountNumber: string,
   accountName: string
 ) {
-  const supabase = await createClient();
+  const supabasePromise = await createClient();
+  const supabase = await supabasePromise;
 
   // 1. Double check auth
   const {

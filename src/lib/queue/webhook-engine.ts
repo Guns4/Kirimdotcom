@@ -1,72 +1,80 @@
 import { createClient } from '@/utils/supabase/server';
 
-/**
- * Exponential Backoff Strategy
- * Attempt 1: 0s delay
- * Attempt 2: 5s delay
- * Attempt 3: 1m delay
- * Attempt 4: 1h delay
- * Attempt 5: 6h delay
- */
-const RETRY_DELAYS_MS = [0, 5000, 60000, 3600000, 21600000];
+export const WebhookEngine = {
+    async enqueueWebhook(url: string, payload: any) {
+        // Fix: Double await for createClient
+        const supabasePromise = await createClient();
+        const supabase = await supabasePromise;
 
-export async function processWebhookQueue() {
-    const supabase = createClient();
-
-    // 1. Fetch Due Jobs
-    const { data: jobs } = await supabase
-        .from('webhook_queue')
-        .select('*')
-        .in('status', ['PENDING', 'FAILED'])
-        .lte('next_attempt_at', new Date().toISOString())
-        .limit(10); // Batch size
-
-    if (!jobs || jobs.length === 0) return;
-
-    for (const job of jobs) {
-        try {
-            // Update status to PROCESSING to prevent double-workers
-            await supabase.from('webhook_queue').update({ status: 'PROCESSING' }).eq('id', job.id);
-
-            // 2. Execute Webhook
-            const res = await fetch(job.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(job.payload),
-                signal: AbortSignal.timeout(10000) // 10s Timeout
+        const { error } = await (supabase as any)
+            .from('webhook_queue')
+            .insert({
+                url,
+                payload,
+                status: 'PENDING',
+                next_attempt_at: new Date().toISOString()
             });
 
-            if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+        if (error) {
+            console.error('Failed to enqueue webhook', error);
+            throw error;
+        }
+    },
 
-            // Success
-            await supabase
-                .from('webhook_queue')
-                .update({
-                    status: 'DELIVERED',
-                    updated_at: new Date()
-                })
-                .eq('id', job.id);
+    async processQueue() {
+        const supabasePromise = await createClient();
+        const supabase = await supabasePromise;
 
-        } catch (error: any) {
-            // Failure Handling
-            const attempts = job.attempts + 1;
-            const isGiveUp = attempts >= (job.max_attempts || 5);
+        // 1. Fetch Job
+        // Note: Real queue system needs row locking (FOR UPDATE SKIP LOCKED) which Supabase JS doesn't fully expose easily without RPC.
+        // For simple needs, we fetch and hope for minimal race conditions or use RPC in production.
+        const { data: jobs } = await (supabase as any)
+            .from('webhook_queue')
+            .select('*')
+            .in('status', ['PENDING', 'FAILED'])
+            .lte('next_attempt_at', new Date().toISOString())
+            .limit(5);
 
-            const updates: any = {
-                attempts: attempts,
-                last_error: error.message,
-                updated_at: new Date()
-            };
+        if (!jobs || jobs.length === 0) return;
 
-            if (isGiveUp) {
-                updates.status = 'GAVE_UP';
-            } else {
-                updates.status = 'FAILED';
-                const delay = RETRY_DELAYS_MS[attempts] || 3600000;
-                updates.next_attempt_at = new Date(Date.now() + delay).toISOString();
+        for (const job of jobs) {
+            try {
+                // Mark as processing
+                await (supabase as any).from('webhook_queue').update({ status: 'PROCESSING' }).eq('id', job.id);
+
+                // Execute
+                const response = await fetch(job.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(job.payload)
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                // Success
+                await (supabase as any).from('webhook_queue').update({ status: 'DELIVERED', updated_at: new Date().toISOString() }).eq('id', job.id);
+
+            } catch (error: any) {
+                console.error(`Webhook ${job.id} failed:`, error);
+
+                const attempts = job.attempts + 1;
+                const status = attempts >= job.max_attempts ? 'GAVE_UP' : 'FAILED';
+
+                // Exponential backoff: 2^attempts * 1 minute
+                const nextAttempt = new Date();
+                nextAttempt.setMinutes(nextAttempt.getMinutes() + Math.pow(2, attempts));
+
+                await (supabase as any)
+                    .from('webhook_queue')
+                    .update({
+                        status,
+                        attempts,
+                        last_error: error.message,
+                        next_attempt_at: nextAttempt.toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', job.id);
             }
-
-            await supabase.from('webhook_queue').update(updates).eq('id', job.id);
         }
     }
-}
+};
