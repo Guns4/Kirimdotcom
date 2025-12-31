@@ -287,6 +287,49 @@ export async function POST(req: Request) {
             console.error('[Marketplace Checkout] Failed to insert items:', itemsError);
         }
 
+        // ==========================================
+        // 📱 NOTIFICATION HOOKS (WhatsApp Gateway Ready)
+        // ==========================================
+
+        // Admin Notification: New Order Alert
+        console.log(`🔔 [NEW ORDER NOTIF] Order ${trxId} created!`);
+        console.log(`   User ID: ${user_id}`);
+        console.log(`   Total: Rp ${totalAmount.toLocaleString()}`);
+        console.log(`   Items: ${items.length} (${physicalProducts.length} Physical, ${digitalProducts.length} Digital)`);
+
+        // TODO: Replace with actual WhatsApp API call
+        /*
+        await sendWhatsAppNotification({
+          to: 'ADMIN_PHONE_NUMBER',
+          message: `🛍️ *PESANAN BARU!*\n\nOrder ID: ${trxId}\nTotal: Rp ${totalAmount.toLocaleString()}\nItems: ${items.length}\n\nCek dashboard untuk detail.`
+        });
+        */
+
+        // Customer Notification: Order Confirmation
+        if (digitalProducts.length > 0) {
+            // Digital SMM Order
+            console.log(`📲 [USER NOTIF] Digital order confirmation for user ${user_id}`);
+            // TODO: Send WhatsApp to user
+            /*
+            await sendWhatsAppNotification({
+              to: userPhoneNumber,
+              message: `✅ *PESANAN DITERIMA!*\n\nOrder ID: ${trxId}\nLayanan: ${digitalProducts.map(p => p.name).join(', ')}\n\n⚡ Pesanan Anda sedang diproses secara otomatis. Estimasi selesai: 1-24 jam.`
+            });
+            */
+        }
+
+        if (physicalProducts.length > 0) {
+            // Physical Product Order
+            console.log(`📦 [USER NOTIF] Physical order confirmation for user ${user_id}`);
+            // TODO: Send WhatsApp to user
+            /*
+            await sendWhatsAppNotification({
+              to: userPhoneNumber,
+              message: `✅ *PESANAN DITERIMA!*\n\nOrder ID: ${trxId}\nProduk: ${physicalProducts.map(p => p.name).join(', ')}\n\n📦 Pesanan Anda sedang dikemas. Kami akan menginformasikan nomor resi setelah dikirim.`
+            });
+            */
+        }
+
         // 9. Update Order Status
         // If all digital items are processed, mark as completed
         const allDigitalProcessed = digitalProducts.length > 0 &&
