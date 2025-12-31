@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { checkCache, setCache } from '@/lib/shipping/cache-engine';
 
 // Mock function for rate retrieval (replace with actual logic)
 async function getCouriersRates(origin: string, destination: string, weight: number) {
@@ -58,11 +59,32 @@ export async function POST(request: Request) {
         const COST_PER_REQUEST = 50;
         await supabase.rpc('decrement_balance', { user_id: userId, amount: COST_PER_REQUEST });
 
-        // 3. Calculate Rates
+        // 3. Calculate Rates with Caching
         const body = await request.json();
         const { origin_city, destination_district, weight } = body;
 
-        const rawRates = await getCouriersRates(origin_city, destination_district, weight);
+        // Check Cache First
+        const cachedRates = await checkCache({
+            origin: origin_city,
+            destination: destination_district,
+            weight: weight
+        });
+
+        let rawRates;
+        if (cachedRates && cachedRates.length > 0) {
+            console.log('✅ Cache Hit - Using cached rates');
+            rawRates = cachedRates;
+        } else {
+            console.log('❌ Cache Miss - Fetching from vendor');
+            rawRates = await getCouriersRates(origin_city, destination_district, weight);
+
+            // Save to Cache
+            await setCache({
+                origin: origin_city,
+                destination: destination_district,
+                weight: weight
+            }, rawRates);
+        }
 
         // 4. Profit Injection (Markup)
         const MARKUP = 1000;

@@ -89,9 +89,6 @@ class WC_CekKirim_Shipping extends WC_Shipping_Method {
         foreach ( $package['contents'] as $item_id => $values ) {
             $weight += $values['data']->get_weight() * $values['quantity'];
         }
-        // Normalize weight to kg if needed, assuming CekKirim needs grams or kg. 
-        // Assuming user input in WC is kg, CekKirim takes grams:
-        // $weight = $weight * 1000; 
 
         // 2. Prepare API Request
         $api_url = 'https://cekkirim.com/api/integration/woocommerce/rates';
@@ -99,28 +96,36 @@ class WC_CekKirim_Shipping extends WC_Shipping_Method {
         $destination = $package['destination'];
         $payload = array(
             'origin_city'          => $origin,
-            'destination_district' => $destination['city'] . ', ' . $destination['state'], // Simple concatenation for example
+            'destination_district' => $destination['city'] . ', ' . $destination['state'],
             'weight'               => $weight
         );
 
-        // 3. Remote Post with Timeout
+        // 3. Remote Post with Timeout & Fail-Safe
         $response = wp_remote_post( $api_url, array(
             'headers' => array(
                 'x-api-key'    => $api_key,
                 'Content-Type' => 'application/json',
             ),
             'body'    => json_encode( $payload ),
-            'timeout' => 5, // 5 seconds timeout prevention
+            'timeout' => 5, // 5 seconds timeout
         ) );
 
+        // Fail-Safe: If API fails, silently continue (don't show rates)
         if ( is_wp_error( $response ) ) {
-            return;
+            error_log( 'CekKirim API Error: ' . $response->get_error_message() );
+            return; // Graceful degradation - no rates shown
         }
 
         $body = wp_remote_retrieve_body( $response );
         $data = json_decode( $body, true );
 
-        if ( ! empty( $data['success'] ) && ! empty( $data['rates'] ) ) {
+        // Handle API errors gracefully
+        if ( empty( $data['success'] ) ) {
+            error_log( 'CekKirim API Response Error: ' . ( $data['error'] ?? 'Unknown' ) );
+            return; // Don't crash checkout
+        }
+
+        if ( ! empty( $data['rates'] ) ) {
             foreach ( $data['rates'] as $rate ) {
                 $this->add_rate( array(
                     'id'    => $this->id . ':' . $rate['id'],
