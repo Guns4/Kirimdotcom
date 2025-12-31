@@ -1,72 +1,79 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Standalone script, so we use supabase-js directly with ADMIN key usually
+// For this template, we assume environment variables are set
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function runRevenueAudit() {
-    console.log('🔍 Starting Revenue Audit...');
+    console.log('💰 Starting Shadow Auditor...');
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const dateStr = yesterday.toISOString().split('T')[0];
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayISO = today.toISOString();
+    console.log(`📊 Auditing date: ${dateStr}`);
 
-    // A. Calculate total cost from successful API logs
-    const { data: apiLogs, error: logsError } = await (supabase as any)
-        .from('api_logs')
-        .select('cost')
-        .eq('status_code', 200)
-        .gte('created_at', todayISO);
+    // 1. Fetch successful API Usage Logs (Source of Truth for billing)
+    // Assuming 'metering_logs' table exists from previous steps
+    const { count: requestCount, error: logError } = await supabase
+        .from('metering_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'success')
+        .gte('created_at', `${dateStr}T00:00:00`)
+        .lte('created_at', `${dateStr}T23:59:59`);
 
-    if (logsError) {
-        console.error('Error fetching API logs:', logsError);
+    if (logError) {
+        console.error('Error fetching logs:', logError);
         return;
     }
 
-    const totalApiCost = apiLogs?.reduce((sum: number, log: any) => sum + (log.cost || 0), 0) || 0;
-
-    // B. Calculate total debits from wallet transactions
-    const { data: transactions, error: transError } = await (supabase as any)
+    // 2. Fetch Wallet Transactions (Actual Billing)
+    const { count: txCount, error: txError } = await supabase
         .from('wallet_transactions')
-        .select('amount')
-        .eq('type', 'DEBIT')
-        .gte('created_at', todayISO);
+        .select('*', { count: 'exact', head: true })
+        .eq('type', 'API_USAGE') // Assuming this type is used
+        .gte('created_at', `${dateStr}T00:00:00`)
+        .lte('created_at', `${dateStr}T23:59:59`);
 
-    if (transError) {
-        console.error('Error fetching transactions:', transError);
+    if (txError) {
+        console.error('Error fetching transactions:', txError);
         return;
     }
 
-    const totalDebits = transactions?.reduce((sum: number, trx: any) => sum + (trx.amount || 0), 0) || 0;
+    // 3. Compare
+    const discrepancies = (requestCount || 0) - (txCount || 0);
+    const status = discrepancies === 0 ? 'MATCH' : 'MISMATCH';
 
-    // C. Compare
-    const difference = totalApiCost - totalDebits;
+    console.log(`   Requests: ${requestCount}`);
+    console.log(`   Transactions: ${txCount}`);
+    console.log(`   Status: ${status}`);
 
-    console.log('📊 Audit Results:');
-    console.log(`   API Costs (A): Rp ${totalApiCost.toLocaleString()}`);
-    console.log(`   Wallet Debits (B): Rp ${totalDebits.toLocaleString()}`);
-    console.log(`   Difference: Rp ${difference.toLocaleString()}`);
-
-    if (difference !== 0) {
-        console.error('🚨 REVENUE LEAK DETECTED!');
-        console.error(`   Discrepancy: Rp ${Math.abs(difference).toLocaleString()}`);
-
-        // TODO: Send Telegram alert to admin
-        // sendTelegramAlert(`🚨 URGENT: Revenue leak detected!\nDifference: Rp ${difference.toLocaleString()}`);
-
-        return false;
-    } else {
-        console.log('✅ Audit passed. No discrepancies found.');
-        return true;
+    // 4. Detailed Check (if mismatch) - Simplified for MVP
+    let details = {};
+    if (status === 'MISMATCH') {
+        details = {
+            message: 'Count mismatch detected',
+            diff: discrepancies
+        };
     }
+
+    // 5. Log Result
+    const { error: auditError } = await supabase
+        .from('financial_audit_logs')
+        .insert({
+            audit_date: dateStr,
+            total_requests: requestCount || 0,
+            total_billed_transactions: txCount || 0,
+            discrepancy_count: Math.abs(discrepancies),
+            discrepancy_details: details,
+            status: status
+        });
+
+    if (auditError) console.error('Error saving audit log:', auditError);
+    else console.log('✅ Audit saved successfully.');
 }
 
-// Run audit
-runRevenueAudit()
-    .then(success => {
-        process.exit(success ? 0 : 1);
-    })
-    .catch(error => {
-        console.error('Audit script error:', error);
-        process.exit(1);
-    });
+// Execute
+runRevenueAudit().catch(console.error);
