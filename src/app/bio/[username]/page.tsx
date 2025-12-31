@@ -1,26 +1,19 @@
-import { Suspense } from 'react';
+import { getBioProfile, trackBioEvent } from '@/lib/bio-link';
 import BioPageView from '@/components/bio/BioPageView';
+import { notFound } from 'next/navigation';
 
-interface BioPageProps {
-    params: { username: string };
-}
+export default async function BioPage({ params }: { params: { username: string } }) {
+    const profile = await getBioProfile(params.username);
 
-export async function generateMetadata({ params }: BioPageProps) {
-    const username = params.username;
-    return {
-        title: `@${username} | Bio Link - CekKirim`,
-        description: `Lihat profil dan link dari @${username}`,
-    };
-}
+    if (!profile) {
+        notFound();
+    }
 
-export default function BioPage({ params }: BioPageProps) {
-    return (
-        <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gray-900">
-                <div className="animate-pulse text-white">Loading...</div>
-            </div>
-        }>
-            <BioPageView username={params.username} />
-        </Suspense>
-    );
+    // Server-side tracking (PageView)
+    // Note: In Next.js App Router, this runs on server render.
+    await trackBioEvent(profile.id, 'VIEW', {
+        userAgent: 'server-side-detected', // Simplified
+    });
+
+    return <BioPageView profile={profile} />;
 }

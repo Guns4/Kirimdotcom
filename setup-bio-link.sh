@@ -11,6 +11,11 @@ echo ">>> Setting up Bio Link Generator..."
 # 3. src/components/bio/BioPageView.tsx
 # 4. src/app/bio/[username]/page.tsx
 
+mkdir -p src/lib
+mkdir -p src/components/bio
+mkdir -p src/app/bio/[username]
+mkdir -p supabase/migrations
+
 echo ">>> Features:"
 echo "  📱 Linktree-style bio page"
 echo "  📦 Integrated Resi Tracker"
