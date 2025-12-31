@@ -11,6 +11,11 @@ echo ">>> Setting up Digital Store..."
 # 3. src/components/digital/MyLibrary.tsx
 # 4. src/app/dashboard/my-assets/page.tsx
 
+mkdir -p src/lib
+mkdir -p src/components/digital
+mkdir -p src/app/dashboard/my-assets
+mkdir -p supabase/migrations
+
 echo ">>> Features:"
 echo "  📄 Digital product schema"
 echo "  🔐 Signed URL (24h expiry)"
