@@ -1,49 +1,57 @@
-export interface SellerProfile {
+export interface AgentRanking {
     id: string;
     name: string;
-    avatar_url?: string;
-    shipment_count: number;
-    rating: number;
+    avatar: string;
+    points: number;
+    badges: string[];
+    area: string; // e.g., "Jakarta Selatan", "Bandung"
 }
 
-export async function getTopSellers(district: string): Promise<SellerProfile[]> {
-    // In a real scenario, this would be:
-    // const { data } = await supabase.from('sellers').select('*').eq('district', district).order('shipment_count', { ascending: false }).limit(5);
+export const MOCK_RANKINGS: AgentRanking[] = [
+    {
+        id: 'a1',
+        name: 'Top Kurir JKT',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Kurir1',
+        points: 1250,
+        badges: ['🚀 Fast', '⭐ Top Rated'],
+        area: 'Jakarta Selatan'
+    },
+    {
+        id: 'a2',
+        name: 'Agen Logistik BDG',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Agen2',
+        points: 980,
+        badges: ['📦 High Volume'],
+        area: 'Bandung'
+    },
+    {
+        id: 'a3',
+        name: 'Sby Express',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sby3',
+        points: 850,
+        badges: ['🛡️ Safe Handler'],
+        area: 'Surabaya'
+    },
+    {
+        id: 'a4',
+        name: 'Medan Fast',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Medan4',
+        points: 720,
+        badges: ['⚡ Quick Pickup'],
+        area: 'Medan'
+    },
+    {
+        id: 'a5',
+        name: 'Bali Cargo',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bali5',
+        points: 600,
+        badges: [],
+        area: 'Denpasar'
+    }
+];
 
-    // MOCK DATA for "Community Pride" feature
-    // Generating deterministic mock data based on district name length so it feels consistent
-    const seed = district.length;
-
-    return [
-        {
-            id: 's1',
-            name: `Toko Serba Ada ${district}`,
-            shipment_count: 1250 + seed * 10,
-            rating: 4.9
-        },
-        {
-            id: 's2',
-            name: `Fashion ${district} Collection`,
-            shipment_count: 980 + seed * 5,
-            rating: 4.8
-        },
-        {
-            id: 's3',
-            name: `${district} Gadget Store`,
-            shipment_count: 850,
-            rating: 4.7
-        },
-        {
-            id: 's4',
-            name: `Oleh-oleh Khas ${district}`,
-            shipment_count: 620,
-            rating: 4.9
-        },
-        {
-            id: 's5',
-            name: `Herbal Center ${district}`,
-            shipment_count: 450,
-            rating: 4.6
-        }
-    ];
+export function getLeaderboardByArea(areaSlug: string): AgentRanking[] {
+    // Simple mock logic: return all mixed, realistically filter by area
+    // For demo, we just shuffle or return top 3
+    return MOCK_RANKINGS.sort((a, b) => b.points - a.points);
 }

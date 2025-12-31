@@ -1,34 +1,43 @@
--- Consultation Database Schema
--- Run this in Supabase SQL Editor
-
-CREATE TABLE IF NOT EXISTS access_tokens (id uuid DEFAULT uuid_generate_v4()); -- dependency placeholder if needed
-
+-- Mentors Table (Extension of Profile or Separate)
 CREATE TABLE IF NOT EXISTS mentors (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    title TEXT,
-    hourly_rate DECIMAL(10, 2),
-    topics TEXT[],
+    name TEXT NOT NULL,
+    expertise TEXT[], -- Array of strings
+    rate DECIMAL(10, 2) NOT NULL,
+    rating DECIMAL(3, 2) DEFAULT 5.0,
+    avatar_url TEXT,
+    bio TEXT,
     is_verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS bookings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+-- Bookings Table
+CREATE TABLE IF NOT EXISTS consultation_bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mentor_id UUID REFERENCES mentors(id),
-    user_id UUID REFERENCES auth.users(id),
-    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status TEXT DEFAULT 'PENDING', -- PENDING, PAID, COMPLETED, CANCELLED
-    meeting_url TEXT,
-    notes TEXT,
+    client_id UUID REFERENCES auth.users(id),
+    scheduled_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    duration_minutes INTEGER DEFAULT 60,
+    status TEXT CHECK (status IN ('PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED')) DEFAULT 'PENDING',
+    payment_status TEXT DEFAULT 'UNPAID',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Chat Messages for Consultation Room
 CREATE TABLE IF NOT EXISTS consultation_messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    booking_id UUID REFERENCES bookings(id),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    booking_id UUID REFERENCES consultation_bookings(id),
     sender_id UUID REFERENCES auth.users(id),
     content TEXT NOT NULL,
+    is_system_message BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- RLS Policies (Simplified)
+ALTER TABLE consultation_bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultation_messages ENABLE ROW LEVEL SECURITY;
+
+-- Only participants can view bookings
+CREATE POLICY "View own bookings" ON consultation_bookings
+    FOR SELECT USING (auth.uid() = client_id OR auth.uid() IN (SELECT user_id FROM mentors WHERE id = mentor_id));

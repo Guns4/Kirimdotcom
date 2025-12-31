@@ -1,55 +1,60 @@
-import { getMentorById } from '@/lib/consultation-service';
-import BookingCalendar from '@/components/consultation/BookingCalendar';
+'use client';
+
+import React, { useState, use } from 'react';
 import { notFound } from 'next/navigation';
-import { CheckCircle } from 'lucide-react';
+import { MOCK_MENTORS } from '@/lib/consultation-service';
+import BookingCalendar from '@/components/consultation/BookingCalendar';
+import Link from 'next/link';
 
-interface Props {
-    params: Promise<{
-        mentorId: string;
-    }>;
-}
+export default function BookingPage({ params }: { params: Promise<{ mentorId: string }> }) {
+    const resolvedParams = use(params);
+    const mentor = MOCK_MENTORS.find(m => m.id === resolvedParams.mentorId);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-export default async function BookingPage({ params }: Props) {
-    const { mentorId } = await params;
-    const mentor = await getMentorById(mentorId);
-
-    if (!mentor) notFound();
+    if (!mentor) {
+        return notFound();
+    }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold mb-8 text-gray-800">Booking Konsultasi</h1>
+        <div className="max-w-3xl mx-auto px-4 py-8">
+            <Link href="/consultation" className="text-sm text-blue-500 hover:underline mb-4 block">
+                &larr; Back to Mentors
+            </Link>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Left: Mentor Summary */}
-                    <div className="md:col-span-1">
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                            <img
-                                src={mentor.avatarUrl}
-                                alt={mentor.name}
-                                className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                            />
-                            <h3 className="text-center font-bold text-lg">{mentor.name}</h3>
-                            <p className="text-center text-sm text-gray-500 mb-4">{mentor.title}</p>
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-8 shadow-sm">
+                <h1 className="text-2xl font-bold mb-2">Book a Session with {mentor.name}</h1>
+                <p className="text-zinc-500 mb-6">{mentor.expertise.join(' • ')}</p>
 
-                            <div className="border-t border-gray-100 pt-4 space-y-2">
-                                {mentor.topics.map(t => (
-                                    <div key={t} className="flex items-center gap-2 text-sm text-gray-700">
-                                        <CheckCircle className="w-4 h-4 text-green-500" /> {t}
-                                    </div>
-                                ))}
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 className="font-semibold mb-3">Session Details</h3>
+                        <div className="space-y-2 text-sm">
+                            <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800">
+                                <span>Rate</span>
+                                <span className="font-medium">Rp {mentor.rate.toLocaleString()}/hr</span>
                             </div>
-
-                            <div className="mt-6 bg-blue-50 p-4 rounded-xl text-center">
-                                <p className="text-xs text-blue-600 mb-1">Tarif Konsultasi</p>
-                                <p className="font-bold text-blue-800 text-lg">Rp {mentor.hourlyRate.toLocaleString()}</p>
+                            <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800">
+                                <span>Duration</span>
+                                <span className="font-medium">60 Minutes</span>
+                            </div>
+                            <div className="flex justify-between py-2">
+                                <span>Total</span>
+                                <span className="font-bold text-lg">Rp {mentor.rate.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right: Calendar */}
-                    <div className="md:col-span-2">
-                        <BookingCalendar />
+                    <div>
+                        <h3 className="font-semibold mb-3">Select Schedule</h3>
+                        <BookingCalendar onSelect={setSelectedDate} />
+
+                        <button
+                            disabled={!selectedDate}
+                            className="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            onClick={() => alert(`Booking functionality mocked.\nMentor: ${mentor.name}\nDate: ${selectedDate?.toLocaleString()}`)}
+                        >
+                            Confirm Booking
+                        </button>
                     </div>
                 </div>
             </div>

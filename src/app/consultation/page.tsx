@@ -1,31 +1,27 @@
-import { getAllMentors } from '@/lib/consultation-service';
+import React from 'react';
+import { MOCK_MENTORS } from '@/lib/consultation-service';
 import MentorCard from '@/components/consultation/MentorCard';
 
 export const metadata = {
-    title: 'Consultation - Cari Mentor Bisnis',
-    description: 'Konsultasi privat dengan ahli logistik dan bisnis online.',
+    title: 'Consultation Market | CekKirim.com',
+    description: 'Find expert mentors for your logistics business.',
 };
 
-export default async function ConsultationPage() {
-    const mentors = await getAllMentors();
-
+export default function ConsultationPage() {
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            <div className="bg-blue-900 text-white py-16">
-                <div className="max-w-6xl mx-auto px-4 text-center">
-                    <h1 className="text-4xl font-bold mb-4">Cari Mentor, Scale Up Bisnismu</h1>
-                    <p className="text-blue-200 max-w-2xl mx-auto text-lg">
-                        Belajar langsung dari praktisi yang sudah terbukti sukses. Hemat waktu, hindari kesalahan fatal.
-                    </p>
-                </div>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">Expert Consultation</h1>
+                <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+                    Connect with industry leaders to accelerate your business growth.
+                    Get advice on logistics, supply chain, and digital marketing.
+                </p>
             </div>
 
-            <div className="max-w-6xl mx-auto px-4 mt-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mentors.map(mentor => (
-                        <MentorCard key={mentor.id} mentor={mentor} />
-                    ))}
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {MOCK_MENTORS.map((mentor) => (
+                    <MentorCard key={mentor.id} mentor={mentor} />
+                ))}
             </div>
         </div>
     );

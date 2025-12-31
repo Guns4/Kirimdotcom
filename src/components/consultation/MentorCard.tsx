@@ -1,55 +1,37 @@
-import { Mentor } from '@/lib/consultation-service';
-import { Star, Briefcase, Tag } from 'lucide-react';
+import React from 'react';
 import Link from 'next/link';
+import { Mentor } from '@/lib/consultation-service';
+import Image from 'next/image';
 
-interface Props {
-    mentor: Mentor;
-}
-
-export default function MentorCard({ mentor }: Props) {
+export default function MentorCard({ mentor }: { mentor: Mentor }) {
     return (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col hover:shadow-lg transition-all duration-300">
-            <div className="flex items-start justify-between mb-4">
-                <div className="flex gap-4">
-                    <img
-                        src={mentor.avatarUrl}
-                        alt={mentor.name}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-100"
-                    />
-                    <div>
-                        <h3 className="font-bold text-lg text-gray-900">{mentor.name}</h3>
-                        <p className="text-gray-600 text-sm flex items-center gap-1">
-                            <Briefcase className="w-3 h-3" /> {mentor.title} at {mentor.company}
-                        </p>
-                        <div className="flex items-center gap-1 text-yellow-500 text-sm mt-1">
-                            <Star className="w-3 h-3 fill-current" />
-                            <span className="font-bold">{mentor.rating}</span>
-                        </div>
-                    </div>
-                </div>
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-6 flex flex-col items-center text-center hover:shadow-lg transition-shadow">
+            <div className="w-24 h-24 relative mb-4">
+                <Image
+                    src={mentor.avatar}
+                    alt={mentor.name}
+                    fill
+                    className="rounded-full object-cover"
+                />
             </div>
-
-            <div className="flex flex-wrap gap-2 mb-6">
-                {mentor.topics.map(topic => (
-                    <span key={topic} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md flex items-center gap-1">
-                        <Tag className="w-3 h-3" /> {topic}
-                    </span>
-                ))}
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{mentor.name}</h3>
+            <p className="text-sm text-zinc-500 mb-2">{mentor.expertise.join(', ')}</p>
+            <div className="flex items-center gap-1 mb-4 text-amber-500">
+                <span>★</span>
+                <span className="text-zinc-700 dark:text-zinc-300 font-medium">{mentor.rating}</span>
             </div>
-
-            <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                <div>
-                    <span className="text-xs text-gray-500">Mulai dari</span>
-                    <p className="font-bold text-blue-600">Rp {mentor.hourlyRate.toLocaleString()}<span className="text-xs text-gray-400 font-normal">/jam</span></p>
-                </div>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4">
+                {mentor.bio}
+            </p>
+            <div className="mt-auto w-full">
+                <p className="text-zinc-900 dark:text-zinc-100 font-bold mb-3">
+                    Rp {mentor.rate.toLocaleString('id-ID')} / jam
+                </p>
                 <Link
                     href={`/consultation/${mentor.id}/book`}
-                    className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${mentor.isAvailable
-                            ? 'bg-black text-white hover:bg-gray-800'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        }`}
+                    className="block w-full py-2 px-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md font-medium hover:opacity-90 transition-opacity"
                 >
-                    {mentor.isAvailable ? 'Book Now' : 'Full Booked'}
+                    Book Now
                 </Link>
             </div>
         </div>

@@ -1,54 +1,42 @@
 export interface Mentor {
     id: string;
     name: string;
-    title: string;
-    company: string;
-    avatarUrl: string;
-    hourlyRate: number;
+    expertise: string[];
+    rate: number; // per hour
     rating: number;
-    topics: string[];
-    isAvailable: boolean;
+    avatar: string;
+    bio: string;
 }
 
 export const MOCK_MENTORS: Mentor[] = [
     {
         id: 'm1',
         name: 'Budi Santoso',
-        title: 'Ex-VP Logistics',
-        company: 'Logistik Indonesia',
-        avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-        hourlyRate: 500000,
-        rating: 4.9,
-        topics: ['Supply Chain', 'Warehouse Management', 'Last Mile Delivery'],
-        isAvailable: true
+        expertise: ['Logistics Strategy', 'Supply Chain', 'Import/Export'],
+        rate: 500000,
+        rating: 4.8,
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Budi',
+        bio: 'Expert in logistics with 15 years experience managing heavy cargo fleets.'
     },
     {
         id: 'm2',
         name: 'Siti Aminah',
-        title: 'Digital Marketing Expert',
-        company: 'Marketplace Pro',
-        avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
-        hourlyRate: 350000,
-        rating: 4.8,
-        topics: ['Ads Optimization', 'Branding', 'Copywriting'],
-        isAvailable: true
+        expertise: ['Digital Marketing', 'E-commerce Growth', 'Branding'],
+        rate: 350000,
+        rating: 4.9,
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Siti',
+        bio: 'Helping detailed oriented businesses grow their online presence.'
     },
     {
         id: 'm3',
-        name: 'Reza Rahardian',
-        title: 'Import/Export Consultant',
-        company: 'Global Trade',
-        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
-        hourlyRate: 750000,
-        rating: 5.0,
-        topics: ['Customs', 'Freight Forwarding', 'Sourcing'],
-        isAvailable: false
+        name: 'Andi Pratama',
+        expertise: ['Warehouse Management', 'Inventory Control'],
+        rate: 400000,
+        rating: 4.7,
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Andi',
+        bio: 'Warehouse optimization specialist reducing sortation times by 40%.'
     }
 ];
-
-export async function getAllMentors(): Promise<Mentor[]> {
-    return MOCK_MENTORS;
-}
 
 export async function getMentorById(id: string): Promise<Mentor | undefined> {
     return MOCK_MENTORS.find(m => m.id === id);
