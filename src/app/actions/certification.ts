@@ -3,59 +3,60 @@
 import { MOCK_EXAMS } from '@/lib/quiz-engine';
 import { createClient } from '@/utils/supabase/server';
 
-export interface ExamResult {
+export interface GradingResult {
     passed: boolean;
     score: number;
-    message: string;
     certificateId?: string;
+    message: string;
 }
 
-export async function submitExam(courseSlug: string, userAnswers: Record<string, number>): Promise<ExamResult> {
+export async function submitExam(examId: string, answers: number[]): Promise<GradingResult> {
     const supabase = await createClient();
-    const exam = MOCK_EXAMS[courseSlug];
+    const { data: { user } } = await supabase.auth.getUser();
 
+    // In a real app, strictly check authentication
+    // if (!user) throw new Error('Unauthorized');
+    const userName = user?.user_metadata?.full_name || 'Student';
+
+    const exam = MOCK_EXAMS[examId];
     if (!exam) {
         return { passed: false, score: 0, message: 'Exam not found' };
     }
 
-    // 1. Calculate Score
-    let correctCount = 0;
-    let total = exam.questions.length;
+    if (answers.length !== exam.questions.length) {
+        return { passed: false, score: 0, message: 'Incomplete answers' };
+    }
 
-    exam.questions.forEach(q => {
-        if (userAnswers[q.id] === q.correctIndex) {
+    // Grade Exam
+    let correctCount = 0;
+    exam.questions.forEach((q, idx) => {
+        if (answers[idx] === q.correctIndex) {
             correctCount++;
         }
     });
 
-    const score = Math.round((correctCount / total) * 100);
+    const score = (correctCount / exam.questions.length) * 100;
     const passed = score >= exam.passingScore;
 
-    // 2. Record Result (Mock DB)
-    const { data: { user } } = await supabase.auth.getUser();
+    if (passed) {
+        // Generate Certificate Record
+        // In real app: Insert into 'certificates' table
+        const certificateId = `CERT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    if (passed && user) {
-        // Save Certification
-        const mockCertId = `CERT-${courseSlug.toUpperCase().substring(0, 3)}-${Date.now()}`;
-
-        // Update user profile badges (Simulated)
-        /* 
-        await supabase.from('profiles').update({ 
-           badges: supabase.raw(`array_append(badges, 'Certified: ${exam.title}')`) 
-        }).eq('id', user.id);
-        */
+        // Mock DB Insertion
+        console.log(`Certificate generated for ${userName}: ${certificateId}`);
 
         return {
             passed: true,
             score,
-            certificateId: mockCertId,
-            message: 'Selamat! Anda lulus ujian ini.'
+            certificateId,
+            message: 'Congratulations! You passed.'
         };
     } else {
         return {
             passed: false,
             score,
-            message: 'Maaf, nilai Anda belum memenuhi syarat kelulusan. Silakan coba lagi.'
+            message: 'You did not pass. Please try again.'
         };
     }
 }

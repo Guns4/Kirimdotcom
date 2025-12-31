@@ -11,6 +11,11 @@ echo ">>> Setting up Certification System..."
 # 3. src/components/academy/CertificateGenerator.tsx (PDF Gen)
 # 4. src/app/academy/[slug]/exam/page.tsx (Exam UI)
 
+mkdir -p src/lib
+mkdir -p src/app/actions
+mkdir -p src/components/academy
+mkdir -p src/app/academy/[slug]/exam
+
 echo ">>> Running Typecheck..."
 npm run typecheck
 

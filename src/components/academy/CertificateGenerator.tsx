@@ -1,83 +1,105 @@
 'use client';
 
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { Download } from 'lucide-react';
+import { useState } from 'react';
 
-interface Props {
+interface CertificateProps {
     studentName: string;
-    courseTitle: string;
+    courseName: string;
     date: string;
     certificateId: string;
 }
 
-export default function CertificateGenerator({ studentName, courseTitle, date, certificateId }: Props) {
+export default function CertificateGenerator({ data }: { data: CertificateProps }) {
+    const [generating, setGenerating] = useState(false);
 
     const generatePDF = () => {
+        setGenerating(true);
         const doc = new jsPDF({
             orientation: 'landscape',
             unit: 'mm',
             format: 'a4'
         });
 
-        // Background (Simple Border)
-        doc.setLineWidth(2);
-        doc.setDrawColor(212, 175, 55); // Gold color
-        doc.rect(10, 10, 277, 190);
+        // Background / Border
+        doc.setLineWidth(3);
+        doc.setDrawColor(20, 30, 70); // Dark Blue
+        doc.rect(10, 10, 277, 190); // Border
+
+        doc.setLineWidth(1);
+        doc.setDrawColor(218, 165, 32); // Gold
+        doc.rect(15, 15, 267, 180); // Inner Border
 
         // Header
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(40);
-        doc.setTextColor(40, 40, 40);
-        doc.text('CERTIFICATE OF COMPLETION', 148.5, 50, { align: 'center' });
+        doc.setTextColor(20, 30, 70);
+        doc.text('CERTIFICATE', 148.5, 50, { align: 'center' });
 
-        // Subtitle
-        doc.setFont('helvetica', 'normal');
         doc.setFontSize(16);
-        doc.setTextColor(100, 100, 100);
-        doc.text('This is to certify that', 148.5, 75, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text('OF COMPLETION', 148.5, 60, { align: 'center' });
 
-        // Student Name
+        // Body
+        doc.setFontSize(14);
+        doc.setTextColor(100);
+        doc.text('This record certificates that', 148.5, 80, { align: 'center' });
+
+        // Name
         doc.setFont('times', 'bolditalic');
-        doc.setFontSize(32);
-        doc.setTextColor(0, 0, 0);
-        doc.text(studentName, 148.5, 95, { align: 'center' });
+        doc.setFontSize(36);
+        doc.setTextColor(0);
+        doc.text(data.studentName, 148.5, 100, { align: 'center' });
 
-        // Line under name
         doc.setLineWidth(0.5);
-        doc.line(70, 100, 227, 100);
+        doc.line(70, 105, 227, 105); // Underline name
 
-        // Course Title
+        // Course Info
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(16);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Has successfully passed the exam for`, 148.5, 120, { align: 'center' });
+        doc.setFontSize(14);
+        doc.setTextColor(100);
+        doc.text('has successfully completed the course requirements for', 148.5, 120, { align: 'center' });
 
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(22);
-        doc.setTextColor(33, 33, 33);
-        doc.text(courseTitle, 148.5, 135, { align: 'center' });
+        doc.setTextColor(20, 30, 70);
+        doc.text(data.courseName, 148.5, 135, { align: 'center' });
 
-        // Footer Info
+        // Footer
         doc.setFontSize(12);
-        doc.setTextColor(120, 120, 120);
-        doc.text(`Date: ${date}`, 50, 170);
-        doc.text(`ID: ${certificateId}`, 230, 170, { align: 'right' });
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text(`Date: ${data.date}`, 50, 170);
+        doc.text(`ID: ${data.certificateId}`, 230, 170, { align: 'right' });
 
         // Signature Line
         doc.line(110, 170, 190, 170);
         doc.setFontSize(10);
-        doc.text('Authorized Signature', 148.5, 175, { align: 'center' });
+        doc.text('Academy Director', 150, 175, { align: 'center' });
 
         // Save
-        doc.save(`Certificate-${certificateId}.pdf`);
+        doc.save(`${data.certificateId}.pdf`);
+        setGenerating(false);
     };
 
     return (
-        <button
-            onClick={generatePDF}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105"
-        >
-            <Download className="w-5 h-5" /> Download Sertifikat
-        </button>
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg border border-gray-100 mt-8">
+            <div className="mb-6">
+                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+                    🏆
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Exam Passed!</h3>
+                <p className="text-gray-600">You have earned the {data.courseName}.</p>
+            </div>
+
+            <button
+                onClick={generatePDF}
+                disabled={generating}
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 flex items-center gap-2 mx-auto"
+            >
+                {generating ? 'Printing...' : <><Download size={20} /> Download Certificate</>}
+            </button>
+        </div>
     );
 }

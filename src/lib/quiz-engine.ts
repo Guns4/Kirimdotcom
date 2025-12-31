@@ -1,37 +1,38 @@
-export interface QuizQuestion {
+export interface Question {
     id: string;
     text: string;
     options: string[];
-    correctIndex: number; // 0-3
+    correctIndex: number;
 }
 
 export interface Exam {
-    courseSlug: string;
+    id: string;
     title: string;
-    questions: QuizQuestion[];
-    passingScore: number;
+    passingScore: number; // Percentage
+    questions: Question[];
 }
 
+// Mock Database of Exams
 export const MOCK_EXAMS: Record<string, Exam> = {
     'business-online-101': {
-        courseSlug: 'business-online-101',
-        title: 'Ujian Akhir: Bisnis Online 101',
-        passingScore: 80,
+        id: 'business-online-101',
+        title: 'Business Online 101 Certification',
+        passingScore: 70,
         questions: [
             {
                 id: 'q1',
-                text: 'Apa langkah pertama yang paling krusial sebelum memulai bisnis dropship?',
+                text: 'Apa langkah pertama dalam memulai bisnis online?',
                 options: [
-                    'Mencari Karyawan',
-                    'Riset Produk & Kompetitor',
-                    'Sewa Gudang',
-                    'Pinjam Modal Bank'
+                    'Membuat logo',
+                    'Riset pasar & produk',
+                    'Mencari investor',
+                    'Menyewa kantor'
                 ],
                 correctIndex: 1
             },
             {
                 id: 'q2',
-                text: 'Mana platform yang paling cocok untuk B2B Marketing?',
+                text: 'Platform mana yang paling efektif untuk B2B marketing?',
                 options: [
                     'TikTok',
                     'Instagram',
@@ -42,33 +43,42 @@ export const MOCK_EXAMS: Record<string, Exam> = {
             },
             {
                 id: 'q3',
-                text: 'Bagaimana cara menentukan HPP (Harga Pokok Penjualan) yang benar?',
+                text: 'Apa itu SEO?',
                 options: [
-                    'Hanya menghitung biaya beli barang',
-                    'Biaya beli + Operasional + Marketing',
-                    'Mengikuti harga kompetitor',
-                    'Dikira-kira saja'
+                    'Search Engine Optimization',
+                    'Sales Executive Officer',
+                    'System Error Output',
+                    'Social Engagement Organization'
+                ],
+                correctIndex: 0
+            },
+            {
+                id: 'q4',
+                text: 'Mengapa retensi pelanggan penting?',
+                options: [
+                    'Karena pelanggan baru lebih murah',
+                    'Karena meningkatkan Customer Lifetime Value (CLV)',
+                    'Tidak terlalu penting',
+                    'Hanya untuk pamer data'
                 ],
                 correctIndex: 1
-            }
-        ]
-    },
-    'master-logistik': {
-        courseSlug: 'master-logistik',
-        title: 'Ujian Sertifikasi Master Logistik',
-        passingScore: 70,
-        questions: [
+            },
             {
-                id: 'q1',
-                text: 'Apa arti istilah "Volumetric Weight" dalam pengiriman?',
+                id: 'q5',
+                text: 'Metrics apa yang digunakan untuk mengukur biaya akuisisi pelanggan?',
                 options: [
-                    'Berat asli timbangan',
-                    'Berat berdasarkan dimensi paket (P x L x T)',
-                    'Berat kemasan',
-                    'Berat bersih barang'
+                    'ROI',
+                    'CAC (Customer Acquisition Cost)',
+                    'NPS',
+                    'Churn Rate'
                 ],
                 correctIndex: 1
             }
         ]
     }
 };
+
+export async function getExam(slug: string): Promise<Exam | null> {
+    // In real app, fetch from DB
+    return MOCK_EXAMS[slug] || null;
+}
