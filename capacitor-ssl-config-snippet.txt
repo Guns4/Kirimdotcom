@@ -1,0 +1,15 @@
+import { CapacitorConfig } from '@capacitor/cli';
+
+// Add this to your capacitor.config.ts 'plugins' object:
+const plugins = {
+  Http: {
+    enabled: true,
+    certificates: [
+      {
+        url: 'https://cekkirim.com',
+        signingCert: 'YOUR_SHA256_HASH_HERE', // Replace with output from openssl
+        errorCert: 'YOUR_BACKUP_HASH_HERE'     // Optional backup
+      }
+    ]
+  }
+};
