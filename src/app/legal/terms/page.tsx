@@ -1,67 +1,40 @@
-export default function TermsOfServicePage() {
+import React from 'react';
+
+export const metadata = {
+    title: 'Terms of Service | CekKirim.com',
+    description: 'Syarat dan Ketentuan penggunaan layanan CekKirim.com',
+};
+
+export default function TermsPage() {
     return (
-        <div className="max-w-4xl mx-auto p-8">
-            <h1 className="text-3xl font-bold mb-6">Syarat dan Ketentuan Layanan</h1>
-            <p className="text-sm text-gray-600 mb-8">Versi 2.0 | Berlaku sejak: 1 Januari 2024</p>
+        <div className="max-w-4xl mx-auto px-4 py-12 prose prose-slate dark:prose-invert">
+            <h1>Syarat dan Ketentuan</h1>
+            <p className="lead">Terakhir diperbarui: {new Date().toLocaleDateString('id-ID')}</p>
 
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">1. Penerimaan Syarat</h2>
-                <p className="mb-4">
-                    Dengan menggunakan layanan CekKirim.com, Anda menyetujui syarat dan ketentuan berikut.
-                    Jika Anda tidak setuju, harap tidak menggunakan layanan kami.
-                </p>
-            </section>
+            <h2>1. Pendahuluan</h2>
+            <p>
+                Selamat datang di CekKirim.com. Dengan mengakses dan menggunakan layanan kami, Anda menyetujui untuk terikat oleh Syarat dan Ketentuan ini.
+            </p>
 
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">2. Layanan Logistik & PPOB</h2>
-                <p className="mb-4">
-                    CekKirim.com menyediakan platform untuk pengecekan tarif pengiriman dan pembayaran tagihan.
-                </p>
-                <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-                    <p className="font-semibold">⚠️ PENTING - Tanggung Jawab Konten Paket:</p>
-                    <p>
-                        Kami TIDAK bertanggung jawab atas isi, kualitas, atau legalitas konten dalam paket yang dikirim.
-                        Pengirim bertanggung jawab penuh atas kepatuhan terhadap hukum yang berlaku.
-                    </p>
-                </div>
-            </section>
+            <h2>2. Layanan Kami</h2>
+            <p>
+                CekKirim.com menyediakan layanan agregator logistik, perbandingan harga, dan pelacakan pengiriman. Kami bekerja sama dengan berbagai vendor logistik pihak ketiga.
+            </p>
 
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">3. Larangan Keras</h2>
-                <ul className="list-disc pl-8 space-y-2">
-                    <li><strong>Pencucian Uang (AML):</strong> Semua transaksi dimonitor. Aktivitas mencurigakan akan dilaporkan ke pihak berwajib.</li>
-                    <li><strong>Barang Terlarang:</strong> Dilarang keras mengirim narkoba, senjata, bahan peledak, atau barang ilegal lainnya.</li>
-                    <li><strong>Fraud:</strong> Manipulasi sistem, penggunaan kartu kredit curian, atau penipuan akan mengakibatkan pemblokiran permanen.</li>
-                </ul>
-            </section>
+            <h2>3. Akun Pengguna</h2>
+            <p>
+                Anda bertanggung jawab untuk menjaga kerahasiaan akun dan kata sandi Anda. Segala aktivitas yang terjadi di bawah akun Anda adalah tanggung jawab Anda sepenuhnya.
+            </p>
 
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">4. Biaya dan Pembayaran</h2>
-                <p className="mb-4">
-                    Semua biaya layanan tercantum jelas. Anda bertanggung jawab untuk memastikan saldo mencukupi sebelum bertransaksi.
-                </p>
-            </section>
+            <h2>4. Pembayaran dan Saldo</h2>
+            <p>
+                Transaksi dilakukan melalui sistem saldo (Wallet). Pengembalian dana (Refund) tunduk pada kebijakan masing-masing vendor logistik dan prosedur verifikasi kami.
+            </p>
 
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">5. Pembatasan Liabilitas</h2>
-                <p className="mb-4">
-                    CekKirim.com bertindak sebagai agregator informasi. Kami tidak bertanggung jawab atas keterlambatan,
-                    kehilangan, atau kerusakan yang disebabkan oleh pihak kurir eksternal.
-                </p>
-            </section>
-
-            <section className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4">6. Perubahan Ketentuan</h2>
-                <p className="mb-4">
-                    Kami berhak mengubah syarat ini kapan saja. Perubahan material akan diberitahukan melalui email
-                    atau notifikasi di aplikasi.
-                </p>
-            </section>
-
-            <footer className="mt-12 pt-6 border-t text-sm text-gray-600">
-                <p>Untuk pertanyaan, hubungi: legal@cekkirim.com</p>
-                <p className="mt-2">© 2024 CekKirim.com - Hak Cipta Dilindungi</p>
-            </footer>
+            <h2>5. Larangan</h2>
+            <p>
+                Pengguna dilarang menggunakan layanan untuk pengiriman barang ilegal, berbahaya, atau melanggar hukum yang berlaku di Indonesia.
+            </p>
         </div>
     );
 }
