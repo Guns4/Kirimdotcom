@@ -11,6 +11,11 @@ echo ">>> Setting up Downline System..."
 # 3. src/components/network/DownlineDashboard.tsx
 # 4. src/app/dashboard/network/page.tsx
 
+mkdir -p src/lib
+mkdir -p src/components/network
+mkdir -p src/app/dashboard/network
+mkdir -p supabase/migrations
+
 echo ">>> System Rules:"
 echo "  1. Relation: One Upline -> Many Downlines"
 echo "  2. Trigger: Transaction SUCCESS"

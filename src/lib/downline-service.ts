@@ -1,71 +1,89 @@
-// Downline Service
-// Referral system logic and commission processing
-
-export interface CommissionStats {
-    totalDownlines: number;
-    totalCommission: number;
-    todayTransactions: number;
-    todayCommission: number;
-}
-
-export interface DownlineUser {
-    id: string;
-    userId: string;
-    joinDate: string;
-    totalTrx: number;
-}
+import { createClient } from '@/utils/supabase/server';
 
 const COMMISSION_AMOUNT = 25; // Rp 25 per transaction
 
-// Process Commission
-// Called when a transaction completes successfully
-export async function processDownlineCommission(
-    downlineId: string,
-    transactionRef: string
-): Promise<{ processed: boolean; uplineId?: string; amount?: number }> {
-    // In production:
-    // 1. Find upline
-    // const { data: relation } = await supabase.from('user_relations').select('uplne_id').eq('downline_id', downlineId).single();
+export interface NetworkStats {
+    totalDownlines: number;
+    totalCommission: number;
+    recentCommissions: any[];
+    referralLink: string;
+}
 
-    // Mock lookup
-    const mockUplineId = 'upline-123';
+export async function getNetworkStats(userId: string): Promise<NetworkStats> {
+    const supabase = await createClient();
 
-    if (!mockUplineId) return { processed: false };
+    // 1. Get User Relation Count (Downlines)
+    const { count: totalDownlines, error: countError } = await (supabase as any)
+        .from('user_relations')
+        .select('*', { count: 'exact', head: true })
+        .eq('upline_id', userId);
 
-    // 2. Insert Commission Record
-    // await supabase.from('commissions').insert({ ... })
+    if (countError) console.error('Error fetching downlines:', countError);
 
-    // 3. Add to Upline Wallet
-    // await supabase.rpc('add_balance', { user_id: mockUplineId, amount: COMMISSION_AMOUNT, type: 'COMMISSION_REWARD' })
+    // 2. Get Total Commission from Wallet Transactions
+    const { data: transactions, error: txError } = await (supabase as any)
+        .from('wallet_transactions')
+        .select('amount, created_at')
+        .eq('user_id', userId)
+        .eq('type', 'COMMISSION_REWARD');
 
-    console.log(`[Commission] Paid Rp ${COMMISSION_AMOUNT} to ${mockUplineId} for trx ${transactionRef}`);
+    const totalCommission = transactions?.reduce((sum: number, tx: any) => sum + Number(tx.amount), 0) || 0;
+    const recentCommissions = transactions?.slice(0, 10) || [];
+
+    // 3. Generate Referral Link (using ID for simplicity)
+    // In a real app, might want to generate a short code
+    const referralLink = `https://cekkirim.com/register?ref=${userId}`;
 
     return {
-        processed: true,
-        uplineId: mockUplineId,
-        amount: COMMISSION_AMOUNT
+        totalDownlines: totalDownlines || 0,
+        totalCommission,
+        recentCommissions,
+        referralLink
     };
 }
 
-// Get Upline Stats
-export async function getUplineStats(uplineId: string): Promise<CommissionStats> {
-    // In production: Count queries
-    // const { count } = await supabase.from('user_relations').select('*', { count: 'exact' }).eq('uplne_id', uplineId);
+// Called when a new user registers with a referral code
+export async function registerDownline(downlineId: string, referralCode: string) {
+    const supabase = await createClient();
 
-    return {
-        totalDownlines: 45,
-        totalCommission: 157500, // 45 users * mixed trx
-        todayTransactions: 120,
-        todayCommission: 120 * COMMISSION_AMOUNT // 3000
-    };
+    // Assume referralCode is the upline's User ID for this implementation
+    const uplineId = referralCode;
+
+    // Prevent self-referral
+    if (downlineId === uplineId) return { error: 'Self referral not allowed' };
+
+    // Create relation
+    const { error } = await (supabase as any)
+        .from('user_relations')
+        .insert({
+            upline_id: uplineId,
+            downline_id: downlineId
+        });
+
+    return { error };
 }
 
-// Register with Referral Code
-export async function registerWithReferral(
-    userId: string,
-    referralCode: string
-): Promise<{ success: boolean; error?: string }> {
-    // Validate code, create relation
-    console.log(`User ${userId} registered with code ${referralCode}`);
-    return { success: true };
+// Called when a transaction completes (e.g., in rates/route.ts or webhook)
+export async function processTransactionCommission(transactingUserId: string) {
+    const supabase = await createClient();
+
+    // 1. Find Upline
+    const { data: relation } = await (supabase as any)
+        .from('user_relations')
+        .select('upline_id')
+        .eq('downline_id', transactingUserId)
+        .single();
+
+    if (!relation || !relation.upline_id) return; // No upline, no commission
+
+    // 2. Credit Upline (Phase 1761 Rule: Rp 25)
+    const { error } = await (supabase as any)
+        .rpc('add_commission', {
+            p_upline_id: relation.upline_id,
+            p_downline_id: transactingUserId, // Just for logging/ref if needed
+            p_amount: COMMISSION_AMOUNT,
+            p_description: `Commission from downline transaction`
+        });
+
+    if (error) console.error('Commission Error:', error);
 }
