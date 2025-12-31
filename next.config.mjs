@@ -18,7 +18,7 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    swcMinify: true,
+    // swcMinify is now default in Next.js 15+ (removed deprecated option)
 
     // 1. Image Optimization
     images: {

@@ -11,7 +11,7 @@ async function sendEdgeAlert(message: string, ip: string) {
 
   if (!token || !adminId) return;
 
-  const text = `👮‍♂️ *SECURITY ALERT*\n\n${message}\n\n*IP:* \`${ip}\``;
+  const text = `👮‍♂️ *SECURITY ALERT*\\n\\n${message}\\n\\n*IP:* \\`${ ip }\\``;
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   try {
@@ -150,6 +150,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Match all paths EXCEPT:
+    // - /api/* (API routes handled separately)
+    // - static files and assets
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
