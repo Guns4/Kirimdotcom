@@ -1,26 +1,35 @@
--- Create user consents tracking table
-CREATE TABLE IF NOT EXISTS public.user_consents (
+-- Legal Tracking Schema
+-- Non-repudiation consent tracking
+
+CREATE TABLE IF NOT EXISTS public.legal_consents (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) NOT NULL,
-    document_type TEXT NOT NULL, -- 'TOS', 'PRIVACY_POLICY', 'AUP'
-    document_version TEXT NOT NULL,
-    ip_address TEXT,
+    document_type TEXT NOT NULL, -- 'TOS', 'PRIVACY', 'REFUND'
+    document_version TEXT NOT NULL, -- 'v1.0', '2025-12-31'
+    document_hash TEXT NOT NULL, -- SHA-256 hash of the content agreed to
+    ip_address TEXT, -- Stored as text to handle IPv4/IPv6 mapped
     user_agent TEXT,
-    consent_hash TEXT NOT NULL, -- SHA256 of document content at time of consent
     agreed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    
+    -- Constraint to prevent duplicate active consents if needed, 
+    -- but usually we want a log of everytime they agree (e.g. re-login or checkout)
+    -- For now, just a log.
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 
--- Indexes for fast lookups
-CREATE INDEX IF NOT EXISTS idx_user_consents_user_id ON public.user_consents(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_consents_document ON public.user_consents(document_type, document_version);
-CREATE INDEX IF NOT EXISTS idx_user_consents_agreed_at ON public.user_consents(agreed_at);
+-- Index for fast lookup of latest consent
+CREATE INDEX IF NOT EXISTS idx_legal_consents_user_doc ON public.legal_consents(user_id, document_type, document_version);
 
 -- RLS
-ALTER TABLE public.user_consents ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own consents" ON public.user_consents FOR SELECT USING (auth.uid() = user_id);
+ALTER TABLE public.legal_consents ENABLE ROW LEVEL SECURITY;
 
--- Add last_accepted_tos_version to users if not exists (from previous TOS schema)
--- ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_accepted_tos_version TEXT;
+-- Users can view their own consents
+CREATE POLICY "Users view own consents" ON public.legal_consents 
+    FOR SELECT USING (auth.uid() = user_id);
 
-COMMENT ON TABLE public.user_consents IS 'Legal tracking of user consent for non-repudiation purposes';
+-- System (Service Role) inserts consents. 
+-- Users might insert via server action (authenticated).
+CREATE POLICY "Users insert own consents" ON public.legal_consents 
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- No updates/deletes allowed for non-repudiation (Immutable log)

@@ -1,77 +1,51 @@
 import { createClient } from '@/utils/supabase/server';
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 
-const CURRENT_TOS_VERSION = 'v2.0';
-const CURRENT_PRIVACY_VERSION = 'v1.1';
-
-export async function checkConsentCompliance(
-    userId: string,
-    request: Request
-): Promise<{ compliant: boolean; requiresConsent?: string[] }> {
-    const supabase = await createClient();
-
-    // Get user's consent history
-    const { data: consents } = await (supabase as any)
-        .from('user_consents')
-        .select('document_type, document_version')
-        .eq('user_id', userId)
-        .order('agreed_at', { ascending: false });
-
-    const latestConsents: Record<string, string> = {};
-    consents?.forEach((consent: any) => {
-        if (!latestConsents[consent.document_type]) {
-            latestConsents[consent.document_type] = consent.document_version;
-        }
-    });
-
-    const missingConsents: string[] = [];
-
-    // Check TOS
-    if (latestConsents['TOS'] !== CURRENT_TOS_VERSION) {
-        missingConsents.push('Terms of Service');
-    }
-
-    // Check Privacy Policy
-    if (latestConsents['PRIVACY_POLICY'] !== CURRENT_PRIVACY_VERSION) {
-        missingConsents.push('Privacy Policy');
-    }
-
-    if (missingConsents.length > 0) {
-        return { compliant: false, requiresConsent: missingConsents };
-    }
-
-    return { compliant: true };
+export interface ConsentData {
+    userId: string;
+    documentType: 'TOS' | 'PRIVACY' | 'REFUND';
+    documentVersion: string;
+    documentContent: string; // We'll hash this
+    ipAddress: string;
+    userAgent: string;
 }
 
-export async function recordConsent(
-    userId: string,
-    documentType: 'TOS' | 'PRIVACY_POLICY' | 'AUP',
-    documentVersion: string,
-    documentContent: string,
-    request: Request
-) {
+export async function recordConsent(data: ConsentData) {
     const supabase = await createClient();
 
-    // Extract IP and User Agent
-    const ip = request.headers.get('x-forwarded-for') ||
-        request.headers.get('x-real-ip') ||
-        'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    // Calculate Hash
+    const hash = createHash('sha256').update(data.documentContent).digest('hex');
 
-    // Hash document content for non-repudiation
-    const consentHash = crypto
-        .createHash('sha256')
-        .update(documentContent)
-        .digest('hex');
+    const { error } = await (supabase as any)
+        .from('legal_consents')
+        .insert({
+            user_id: data.userId,
+            document_type: data.documentType,
+            document_version: data.documentVersion,
+            document_hash: hash,
+            ip_address: data.ipAddress,
+            user_agent: data.userAgent
+        });
 
-    await (supabase as any).from('user_consents').insert({
-        user_id: userId,
-        document_type: documentType,
-        document_version: documentVersion,
-        ip_address: ip,
-        user_agent: userAgent,
-        consent_hash: consentHash
-    });
+    if (error) {
+        console.error('Failed to record consent:', error);
+        throw new Error('Consent recording failed');
+    }
 
-    console.log(`✅ Consent recorded: ${documentType} ${documentVersion} for user ${userId} from IP ${ip}`);
+    return true;
+}
+
+export async function hasUserConsented(userId: string, docType: string, version: string): Promise<boolean> {
+    const supabase = await createClient();
+
+    const { data, error } = await (supabase as any)
+        .from('legal_consents')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('document_type', docType)
+        .eq('document_version', version)
+        .limit(1);
+
+    if (error) return false;
+    return (data && data.length > 0);
 }
