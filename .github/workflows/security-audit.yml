@@ -1,0 +1,29 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * 1' # Weekly scan
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies (Safe)
+        # npm ci enforces lockfile usage. If lockfile is out of sync, it fails.
+        run: npm ci
+
+      - name: Audit Dependencies
+        # Fails if vulnerabilities found with 'high' or 'critical' severity
+        run: npm audit --audit-level=high
