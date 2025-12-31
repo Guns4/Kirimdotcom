@@ -13,6 +13,7 @@
     "lint:fix": "next lint --fix && prettier --write src/**/*.{js,jsx,ts,tsx,css,md}"
   },
   "dependencies": {
+    "@capacitor-community/contacts": "^7.1.0",
     "@capacitor/android": "^8.0.0",
     "@capacitor/cli": "^8.0.0",
     "@capacitor/core": "^8.0.0",

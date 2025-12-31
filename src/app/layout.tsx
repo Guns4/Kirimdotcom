@@ -77,11 +77,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+import { useDeepLink } from '@/hooks/useDeepLink';
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Initialize Deep Linking
+  useDeepLink();
+
   // Wrap in try-catch to handle cases where request context is not available
   let isWidget = false;
   let flags = {};
