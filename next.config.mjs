@@ -27,7 +27,7 @@ const nextConfig = {
             { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
             { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
             { protocol: 'https', hostname: 'images.unsplash.com' },
-            { protocol: 'https', hostname: 'pub-*.r2.dev' }, // Cloudflare R2
+            { protocol: 'https', hostname: 'pub-*.r2.dev' },
             { protocol: 'https', hostname: '*.supabase.co' },
             { protocol: 'https', hostname: 'api.dicebear.com' },
         ],
@@ -35,66 +35,51 @@ const nextConfig = {
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
 
-    // 2. Webpack Config (Polyfills for Node modules)
+    // 2. Webpack Config
     webpack: (config, { isServer }) => {
         if (!isServer) {
             config.resolve.fallback = {
                 ...config.resolve.fallback,
-                fs: false,
-                net: false,
-                tls: false,
-                crypto: false,
-                stream: false,
-                url: false,
-                zlib: false,
-                http: false,
-                https: false,
-                assert: false,
-                os: false,
-                path: false,
-                'process/browser': false,
+                fs: false, net: false, tls: false, crypto: false, stream: false,
+                url: false, zlib: false, http: false, https: false, assert: false,
+                os: false, path: false, 'process/browser': false,
             };
         }
         return config;
     },
 
-    // 3. Security Headers
+    // 3. Security Headers & CSP
     async headers() {
+        // CSP Policy: Allow Self, Google Analytics, Midtrans, Supabase, Vercel
+        const ContentSecurityPolicy = `
+          default-src 'self';
+          script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com https://app.midtrans.com https://api.midtrans.com https://vercel.live;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          img-src 'self' blob: data: https:;
+          font-src 'self' https://fonts.gstatic.com;
+          connect-src 'self' https://*.supabase.co https://api.midtrans.com https://app.midtrans.com https://www.google-analytics.com;
+          frame-src 'self' https://app.midtrans.com;
+          object-src 'none';
+          base-uri 'self';
+          form-action 'self';
+          frame-ancestors 'none';
+          upgrade-insecure-requests;
+        `.replace(/\s{2,}/g, ' ').trim();
+
         return [
             {
                 source: '/(.*)',
                 headers: [
-                    {
-                        key: 'X-DNS-Prefetch-Control',
-                        value: 'on',
-                    },
-                    {
-                        key: 'Strict-Transport-Security',
-                        value: 'max-age=63072000; includeSubDomains; preload',
-                    },
-                    {
-                        key: 'X-XSS-Protection',
-                        value: '1; mode=block',
-                    },
-                    {
-                        key: 'X-Frame-Options',
-                        value: 'SAMEORIGIN', // Allows embedding on same domain, blocks clickjacking
-                    },
-                    {
-                        key: 'X-Content-Type-Options',
-                        value: 'nosniff',
-                    },
-                    {
-                        key: 'Referrer-Policy',
-                        value: 'origin-when-cross-origin',
-                    },
-                    {
-                        key: 'Permissions-Policy',
-                        value: 'camera=(), microphone=(), geolocation=()', // Tighten as needed
-                    },
+                    { key: 'X-DNS-Prefetch-Control', value: 'on' },
+                    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+                    { key: 'X-XSS-Protection', value: '1; mode=block' },
+                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+                    { key: 'X-Content-Type-Options', value: 'nosniff' },
+                    { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+                    { key: 'Content-Security-Policy', value: ContentSecurityPolicy }
                 ],
             },
-            // Allow specific API CORS if needed
             {
                 source: '/api/:path*',
                 headers: [
@@ -106,10 +91,6 @@ const nextConfig = {
             },
         ];
     },
-
-    // 4. Output (Commented out to allow Vercel Serverless)
-    // output: 'export',
 };
 
-// Export Configuration (Without next-intl)
 export default withPWA(bundleAnalyzer(nextConfig));
