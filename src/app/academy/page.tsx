@@ -1,64 +1,83 @@
-import { getAllCourses } from '@/lib/academy-service';
-import { Clock, Users, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-
-export const metadata = {
-    title: 'CekKirim Academy - Belajar Bisnis Online',
-    description: 'Pusat edukasi bisnis online dan strategi logistik untuk UMKM.',
-};
+import { getCourses } from '@/lib/academy-service';
+import { Play, Clock, Users } from 'lucide-react';
 
 export default async function AcademyPage() {
-    const courses = await getAllCourses();
+    const courses = await getCourses();
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 py-16">
-                <div className="max-w-6xl mx-auto px-4 text-center">
-                    <h1 className="text-4xl font-bold mb-4 text-gray-900">CekKirim Academy 🎓</h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Tingkatkan omzet bisnis onlinemu dengan strategi logistik dan marketing yang terbukti.
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 py-12">
+                {/* Header */}
+                <div className="mb-12">
+                    <h1 className="text-4xl font-bold mb-4">CekKirim Academy</h1>
+                    <p className="text-xl text-gray-600">
+                        Master logistics, shipping, and e-commerce with expert-led courses
                     </p>
                 </div>
-            </div>
 
-            {/* Course List */}
-            <div className="max-w-6xl mx-auto px-4 mt-12">
+                {/* Course Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {courses.map(course => (
-                        <Link href={`/academy/${course.slug}`} key={course.id} className="group">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all h-full flex flex-col">
-                                <div className="relative h-48 w-full overflow-hidden">
+                    {courses.map((course) => (
+                        <Link
+                            key={course.id}
+                            href={`/academy/${course.slug}`}
+                            className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                        >
+                            {/* Thumbnail */}
+                            <div className="relative aspect-video bg-gradient-to-br from-blue-500 to-purple-600">
+                                {course.thumbnail_url ? (
                                     <img
-                                        src={course.thumbnail}
+                                        src={course.thumbnail_url}
                                         alt={course.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        className="w-full h-full object-cover"
                                     />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <Play size={64} className="text-white opacity-50" />
+                                    </div>
+                                )}
+                                <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                    {course.price === 0
+                                        ? 'FREE'
+                                        : `Rp ${course.price.toLocaleString()}`
+                                    }
                                 </div>
-                                <div className="p-6 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">
-                                        {course.title}
-                                    </h3>
-                                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                        {course.description}
-                                    </p>
+                            </div>
 
-                                    <div className="mt-auto flex items-center justify-between text-xs text-gray-500 border-t border-gray-100 pt-4">
-                                        <div className="flex items-center gap-1">
-                                            <Clock className="w-3 h-3" /> {course.totalDuration}
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Users className="w-3 h-3" /> {course.studentCount} Siswa
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <BookOpen className="w-3 h-3" /> {course.lessons.length} Materi
-                                        </div>
+                            {/* Content */}
+                            <div className="p-6">
+                                <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">
+                                    {course.title}
+                                </h3>
+                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                                    {course.description}
+                                </p>
+
+                                {/* Meta */}
+                                <div className="flex items-center gap-4 text-sm text-gray-500">
+                                    <div className="flex items-center gap-1">
+                                        <Users size={16} />
+                                        <span>{course.instructor_name}</span>
                                     </div>
                                 </div>
                             </div>
                         </Link>
                     ))}
                 </div>
+
+                {/* Empty state */}
+                {courses.length === 0 && (
+                    <div className="text-center py-20">
+                        <Play size={64} className="mx-auto text-gray-400 mb-4" />
+                        <h3 className="text-2xl font-bold text-gray-700 mb-2">
+                            No courses available yet
+                        </h3>
+                        <p className="text-gray-500">
+                            Check back soon for new content!
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

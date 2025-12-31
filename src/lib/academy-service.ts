@@ -1,61 +1,138 @@
-export interface Lesson {
-    id: string;
-    title: string;
-    duration: string;
-    videoUrl: string; // YouTube ID or URL
-    isCompleted?: boolean;
-}
+import { createClient } from '@/utils/supabase/server';
 
 export interface Course {
     id: string;
     slug: string;
     title: string;
     description: string;
-    thumbnail: string;
+    thumbnail_url: string;
+    instructor_name: string;
     price: number;
-    lessons: Lesson[];
-    totalDuration: string;
-    studentCount: number;
+    is_published: boolean;
 }
 
-// MOCK DATA for "Utility" / "MVP" Phase
-export const MOCK_COURSES: Course[] = [
-    {
-        id: 'c1',
-        slug: 'business-online-101',
-        title: 'Bisnis Online 101: Dari Nol sampai Omzet',
-        description: 'Panduan lengkap memulai bisnis dropship dan reseller tanpa modal besar.',
-        thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
-        price: 150000,
-        studentCount: 1240,
-        totalDuration: '2 Jam',
-        lessons: [
-            { id: 'l1', title: 'Mindset Pengusaha Sukses', duration: '15:00', videoUrl: 'dQw4w9WgXcQ', isCompleted: true },
-            { id: 'l2', title: 'Riset Produk Laris', duration: '20:00', videoUrl: 'dQw4w9WgXcQ', isCompleted: true },
-            { id: 'l3', title: 'Cara Jualan di Marketplace', duration: '25:00', videoUrl: 'dQw4w9WgXcQ' },
-        ]
-    },
-    {
-        id: 'c2',
-        slug: 'master-logistik',
-        title: 'Master Logistik: Hemat Ongkir 50%',
-        description: 'Strategi pengiriman efisien untuk scale-up bisnis UMKM Anda.',
-        thumbnail: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
-        price: 99000,
-        studentCount: 850,
-        totalDuration: '1.5 Jam',
-        lessons: [
-            { id: 'l1', title: 'Memilih Ekspedisi Tepat', duration: '10:00', videoUrl: 'dQw4w9WgXcQ', isCompleted: false },
-            { id: 'l2', title: 'Packing Aman & Murah', duration: '15:00', videoUrl: 'dQw4w9WgXcQ', isCompleted: false },
-        ]
+export interface Module {
+    id: string;
+    course_id: string;
+    title: string;
+    order_index: number;
+}
+
+export interface Lesson {
+    id: string;
+    module_id: string;
+    title: string;
+    video_url: string;
+    duration_seconds: number;
+    order_index: number;
+    is_free: boolean;
+}
+
+export async function getCourses(): Promise<Course[]> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('academy_courses')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+}
+
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('academy_courses')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+    if (error) return null;
+    return data;
+}
+
+export async function getCourseModules(courseId: string): Promise<Module[]> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('academy_modules')
+        .select('*')
+        .eq('course_id', courseId)
+        .order('order_index');
+
+    if (error) throw error;
+    return data || [];
+}
+
+export async function getModuleLessons(moduleId: string): Promise<Lesson[]> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('academy_lessons')
+        .select('*')
+        .eq('module_id', moduleId)
+        .order('order_index');
+
+    if (error) throw error;
+    return data || [];
+}
+
+export async function checkEnrollment(userId: string, courseId: string): Promise<boolean> {
+    const supabase = await createClient();
+    const { data, error } = await (supabase as any)
+        .from('academy_enrollments')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('course_id', courseId)
+        .single();
+
+    return !!data && !error;
+}
+
+export async function enrollUser(userId: string, courseId: string): Promise<void> {
+    const supabase = await createClient();
+    await (supabase as any)
+        .from('academy_enrollments')
+        .insert({ user_id: userId, course_id: courseId });
+}
+
+export async function updateProgress(
+    userId: string,
+    lessonId: string,
+    completed: boolean,
+    lastPosition: number
+): Promise<void> {
+    const supabase = await createClient();
+    await (supabase as any)
+        .from('academy_progress')
+        .upsert({
+            user_id: userId,
+            lesson_id: lessonId,
+            completed,
+            last_position_seconds: lastPosition,
+            completed_at: completed ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString()
+        });
+}
+
+export async function getUserProgress(userId: string, courseId: string) {
+    const supabase = await createClient();
+
+    // Get all lessons for the course
+    const modules = await getCourseModules(courseId);
+    const lessonIds: string[] = [];
+
+    for (const module of modules) {
+        const lessons = await getModuleLessons(module.id);
+        lessonIds.push(...lessons.map(l => l.id));
     }
-];
 
-export async function getCourseBySlug(slug: string): Promise<Course | undefined> {
-    // Simulate DB Fetch
-    return MOCK_COURSES.find(c => c.slug === slug);
-}
+    // Get progress for those lessons
+    const { data, error } = await (supabase as any)
+        .from('academy_progress')
+        .select('*')
+        .eq('user_id', userId)
+        .in('lesson_id', lessonIds);
 
-export async function getAllCourses(): Promise<Course[]> {
-    return MOCK_COURSES;
+    if (error) return [];
+    return data || [];
 }
