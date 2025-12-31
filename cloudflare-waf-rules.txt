@@ -1,0 +1,15 @@
+--- CLOUDFLARE WAF EXPRESSIONS ---
+
+1. BLOCK High Risk Countries (Non-ID)
+   (Adjust 'ID' to your target market)
+   Expression: (ip.geoip.country ne "ID" and not ip.geoip.in_eu)
+   Action: Managed Challenge
+
+2. BLOCK Suspicious Bots & Tools
+   Expression: (http.user_agent contains "curl") or (http.user_agent contains "python") or (http.user_agent contains "nmap")
+   Action: Block
+
+3. PROTECT Admin API (Whitelist IP)
+   Expression: (http.request.uri.path starts_with "/api/admin") and (ip.src ne 202.123.45.67) 
+   *(Replace 202.123.45.67 with your Office IP)*
+   Action: Block
