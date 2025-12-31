@@ -16,10 +16,11 @@ function generateTraps() {
 
     // 1. Fake .env Backup
     // This looks like a juicy target for hackers looking for credentials
+    // Renamed to .env.production_backup to be more tempting
     if (TRAPS.envFile) {
-        const dest = path.join(process.cwd(), '.env.backup');
+        const dest = path.join(process.cwd(), '.env.production_backup');
         const content = `
-# BACKUP CREDENTIALS (DO NOT DELETE)
+# PRODUCTION BACKUP CREDENTIALS (DO NOT DELETE)
 # Last Updated: 2024-12-01
 
 DB_PASSWORD=live_prod_x829392
@@ -32,7 +33,7 @@ CANARY_URL=http://canarytokens.com/stats/about/feed/7f8f903a28c7/index.html
         // Type: "Web Bug" or "DNS Token"
 
         fs.writeFileSync(dest, content);
-        console.log('✅ planted .env.backup');
+        console.log('✅ planted .env.production_backup');
     }
 
     // 2. Fake Database User (SQL Script)

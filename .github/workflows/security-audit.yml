@@ -21,8 +21,9 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies (Safe)
-        # npm ci enforces lockfile usage. If lockfile is out of sync, it fails.
-        run: npm ci
+        # npm ci enforces lockfile usage.
+        # --ignore-scripts prevents malware from running postlnstall scripts.
+        run: npm ci --ignore-scripts
 
       - name: Audit Dependencies
         # Fails if vulnerabilities found with 'high' or 'critical' severity
