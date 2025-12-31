@@ -78,6 +78,7 @@ export const metadata: Metadata = {
 };
 
 import { useDeepLink } from '@/hooks/useDeepLink';
+import { useShake } from '@/hooks/useShake';
 
 export default function RootLayout({
   children,
@@ -86,6 +87,9 @@ export default function RootLayout({
 }>) {
   // Initialize Deep Linking
   useDeepLink();
+
+  // Initialize Shake-to-Refresh
+  useShake();
 
   // Wrap in try-catch to handle cases where request context is not available
   let isWidget = false;
