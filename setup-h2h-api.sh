@@ -12,6 +12,12 @@ echo ">>> Setting up H2H API Server..."
 # 4. src/app/api/h2h/status/route.ts
 # 5. src/app/api/h2h/balance/route.ts
 
+mkdir -p src/lib
+mkdir -p src/app/api/h2h/trx
+mkdir -p src/app/api/h2h/status
+mkdir -p src/app/api/h2h/balance
+mkdir -p supabase/migrations
+
 echo ">>> API Endpoints:"
 echo "  1. POST /api/h2h/balance"
 echo "     Headers: X-API-Key"

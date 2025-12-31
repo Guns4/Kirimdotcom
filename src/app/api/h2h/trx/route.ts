@@ -1,41 +1,59 @@
-import { NextRequest } from 'next/server';
-import { validateH2HRequest, h2hResponse, h2hError } from '@/lib/h2h-auth';
+import { validateH2HRequest, successResponse, errorResponse } from '@/lib/h2h-auth';
+import { createClient } from '@/utils/supabase/server';
+import { randomUUID } from 'crypto';
 
-export async function POST(req: NextRequest) {
-    // 1. Validate Auth
-    const auth = await validateH2HRequest();
-    if (!auth.isValid) {
-        return h2hError(auth.error || 'Unauthorized', auth.status);
+export async function POST(request: Request) {
+    const { partner, body, errorResponse: authError } = await validateH2HRequest(request);
+    if (authError) return authError;
+
+    // Validate Body
+    const { service_code, target, ref_id } = body || {};
+    if (!service_code || !target || !ref_id) {
+        return errorResponse('Missing service_code, target, or ref_id', 400);
     }
 
-    try {
-        const body = await req.json();
-        const { service_code, target, ref_id } = body;
+    const supabase = await createClient();
+    const trxId = randomUUID();
 
-        // 2. Validate Input
-        if (!service_code || !target || !ref_id) {
-            return h2hError('Missing required fields: service_code, target, ref_id');
-        }
+    // 1. Check for Duplicate Ref ID for this Partner
+    const { data: existing } = await (supabase as any)
+        .from('h2h_transaction_logs')
+        .select('id')
+        .eq('partner_id', partner!.id)
+        .eq('ref_id', ref_id)
+        .single();
 
-        // 3. Process Transaction (Mock)
-        // In production: Lookup service, check balance, call provider, deduct balance
-        console.log(`[H2H] TRX Request: ${service_code} -> ${target} (Ref: ${ref_id})`);
+    if (existing) {
+        return errorResponse('Duplicate ref_id', 409);
+    }
 
-        // Mock Success Response
-        const trxId = `TRX-${Date.now()}`;
+    // 2. Perform Transaction Logic (Mocked)
+    // In reality: Check balance -> Call Vendor -> Deduct Balance -> Save
 
-        return h2hResponse({
+    // Mock processing result
+    const success = true; // Assume success for MVP
+    const price = 1000; // Mock price
+
+    // 3. Log Transaction
+    await (supabase as any)
+        .from('h2h_transaction_logs')
+        .insert({
+            partner_id: partner!.id,
+            ref_id,
             trx_id: trxId,
-            ref_id: ref_id,
-            service_code: service_code,
-            target: target,
-            status: 'PENDING', // Async process usually returns PENDING
-            price: 10500,
-            balance_after: 1489500,
-            note: 'Transaction processed successfully'
+            endpoint: 'TRX',
+            request_payload: body,
+            response_payload: { status: 'PENDING', message: 'Transaction processing' },
+            status_code: 200,
+            ip_address: request.headers.get('x-forwarded-for') || null
         });
 
-    } catch (error) {
-        return h2hError('Invalid request body');
-    }
+    // 4. Return Pending/Success Response
+    return successResponse({
+        trx_id: trxId,
+        ref_id,
+        status: 'PROCESSING', // Async processing is better for H2H
+        price,
+        balance_remaining: 99999 // Mock
+    });
 }

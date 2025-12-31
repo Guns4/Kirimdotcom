@@ -1,18 +1,25 @@
-import { validateH2HRequest, h2hResponse, h2hError } from '@/lib/h2h-auth';
+import { validateH2HRequest, successResponse, errorResponse } from '@/lib/h2h-auth';
+import { createClient } from '@/utils/supabase/server';
 
-export async function POST() {
-    // 1. Validate Auth
-    const auth = await validateH2HRequest();
-    if (!auth.isValid) {
-        return h2hError(auth.error || 'Unauthorized', auth.status);
+export async function POST(request: Request) {
+    const { partner, errorResponse: authError } = await validateH2HRequest(request);
+    if (authError) return authError;
+
+    const supabase = await createClient();
+
+    // Fetch Balance
+    const { data: user, error } = await (supabase as any)
+        .from('users')
+        .select('balance')
+        .eq('id', partner!.user_id)
+        .single();
+
+    if (error || !user) {
+        return errorResponse('User account not found', 404);
     }
 
-    // 2. Get Balance (Mock)
-    const mockBalance = 1500000;
-
-    return h2hResponse({
-        balance: mockBalance,
-        currency: 'IDR',
-        formatted: 'Rp 1.500.000'
-    }, 'Balance retrieved successfully');
+    return successResponse({
+        balance: user.balance,
+        currency: 'IDR'
+    });
 }

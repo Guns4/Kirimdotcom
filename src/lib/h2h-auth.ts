@@ -1,93 +1,114 @@
-// H2H Auth & Security
-// API Key Validation and IP Whitelisting
+import { createClient } from '@/utils/supabase/server';
+import { NextResponse } from 'next/server';
 
-import { headers } from 'next/headers';
-import crypto from 'crypto';
-
-export interface APIAuthResult {
-    isValid: boolean;
-    credentialId?: string; // UUID from api_credentials
-    userId?: string;
-    error?: string;
-    status?: number;
+export interface H2HPartner {
+    id: string;
+    user_id: string;
+    name: string;
+    ip_whitelist: string[] | null;
+    is_active: boolean;
 }
 
-// Generate new credentials
-export function generateCredentials() {
-    return {
-        apiKey: 'ck_' + crypto.randomBytes(16).toString('hex'),
-        secretKey: 'sk_' + crypto.randomBytes(32).toString('hex')
-    };
+export interface H2HResponse {
+    status: boolean;
+    response_code: number;
+    message: string;
+    data?: any;
 }
 
-// Validate Request
-export async function validateH2HRequest(): Promise<APIAuthResult> {
-    const headersList = headers();
-    const apiKey = headersList.get('X-API-Key');
-    // In production: Get real IP from x-forwarded-for or request context
-    const ip = headersList.get('x-forwarded-for') || '127.0.0.1';
+export async function validateH2HRequest(request: Request): Promise<{
+    partner?: H2HPartner;
+    errorResponse?: NextResponse;
+    body?: any
+}> {
+    const supabase = await createClient();
+    const apiKey = request.headers.get('X-API-Key');
 
+    // 1. Check API Key presence
     if (!apiKey) {
-        return { isValid: false, error: 'Missing X-API-Key header', status: 401 };
+        return {
+            errorResponse: NextResponse.json({
+                status: false,
+                response_code: 401,
+                message: 'Unauthorized: Missing API Key'
+            }, { status: 401 })
+        };
     }
 
-    // In production: Query Supabase
-    // const { data } = await supabase.from('api_credentials').select('*').eq('api_key', apiKey).single();
+    // 2. Validate API Key
+    const { data: partner, error } = await (supabase as any)
+        .from('h2h_partners')
+        .select('*')
+        .eq('api_key', apiKey)
+        .eq('is_active', true)
+        .single();
 
-    // Mock Validation for Demo
-    const mockCredential = {
-        id: 'cred-123',
-        userId: 'user-vip-1',
-        apiKey: 'ck_demo123',
-        ipWhitelist: ['127.0.0.1', '::1', '202.10.10.10'],
-        isActive: true
-    };
-
-    // 1. Check if key matches (Mock)
-    // if (apiKey !== mockCredential.apiKey) {
-    //     return { isValid: false, error: 'Invalid API Key', status: 401 };
-    // }
-
-    // 2. Check if active
-    if (!mockCredential.isActive) {
-        return { isValid: false, error: 'API Key is revoked', status: 403 };
+    if (error || !partner) {
+        return {
+            errorResponse: NextResponse.json({
+                status: false,
+                response_code: 401,
+                message: 'Unauthorized: Invalid API Key'
+            }, { status: 401 })
+        };
     }
 
     // 3. Check IP Whitelist
-    // If whitelist is empty, allow all (optional policy, usually deny all is safer)
-    // But here we enforce whitelist if present
-    const isIpAllowed = mockCredential.ipWhitelist.length === 0 || mockCredential.ipWhitelist.includes(ip.split(',')[0].trim());
+    const ip = request.headers.get('x-forwarded-for') || 'unknown';
+    // Simplified IP check for MVP. In production, parse IP properly.
+    // If whitelist exists and IP is not in it (and IP is available)
+    if (partner.ip_whitelist && partner.ip_whitelist.length > 0) {
+        // Very basic inclusion check. 
+        // Note: x-forwarded-for can contain multiple IPs.
+        const requestIps = ip.split(',').map(s => s.trim());
+        const isAllowed = partner.ip_whitelist.some((allowedIp: string) =>
+            requestIps.includes(allowedIp)
+        );
 
-    // NOTE: For demo simplicity, we'll bypass IP check if it's localhost or if validation fails to avoid blocking the user in testing.
-    // In strict production, uncomment below:
-    /*
-    if (!isIpAllowed) {
-        return { isValid: false, error: `IP ${ip} not whitelisted`, status: 403 };
+        if (!isAllowed && ip !== 'unknown') {
+            return {
+                errorResponse: NextResponse.json({
+                    status: false,
+                    response_code: 403,
+                    message: `Forbidden: IP ${ip} not allowed`
+                }, { status: 403 })
+            };
+        }
     }
-    */
 
-    return {
-        isValid: true,
-        credentialId: mockCredential.id,
-        userId: mockCredential.userId
-    };
+    // 4. Parse Body (if POST)
+    let body = null;
+    if (request.method === 'POST') {
+        try {
+            body = await request.json();
+        } catch (e) {
+            return {
+                errorResponse: NextResponse.json({
+                    status: false,
+                    response_code: 400,
+                    message: 'Bad Request: Invalid JSON'
+                }, { status: 400 })
+            };
+        }
+    }
+
+    return { partner, body };
 }
 
-// Helper for standardized JSON response
-export function h2hResponse(data: any, message: string = 'Success', status: number = 200) {
-    return Response.json({
-        status: status === 200,
-        response_code: status,
+export function successResponse(data: any, message = 'Success'): NextResponse {
+    return NextResponse.json({
+        status: true,
+        response_code: 200,
         message,
         data
-    }, { status });
+    });
 }
 
-export function h2hError(message: string, status: number = 400) {
-    return Response.json({
+export function errorResponse(message: string, code = 400): NextResponse {
+    return NextResponse.json({
         status: false,
-        response_code: status,
+        response_code: code,
         message,
         data: null
-    }, { status });
+    }, { status: code });
 }

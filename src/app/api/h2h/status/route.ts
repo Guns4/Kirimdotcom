@@ -1,37 +1,38 @@
-import { NextRequest } from 'next/server';
-import { validateH2HRequest, h2hResponse, h2hError } from '@/lib/h2h-auth';
+import { validateH2HRequest, successResponse, errorResponse } from '@/lib/h2h-auth';
+import { createClient } from '@/utils/supabase/server';
 
-export async function POST(req: NextRequest) {
-    // 1. Validate Auth
-    const auth = await validateH2HRequest();
-    if (!auth.isValid) {
-        return h2hError(auth.error || 'Unauthorized', auth.status);
+export async function POST(request: Request) {
+    const { partner, body, errorResponse: authError } = await validateH2HRequest(request);
+    if (authError) return authError;
+
+    if (!body || !body.trx_id && !body.ref_id) {
+        return errorResponse('Missing trx_id or ref_id', 400);
     }
 
-    try {
-        const body = await req.json();
-        const { trx_id, ref_id } = body;
+    const supabase = await createClient();
 
-        // 2. Validate Input
-        if (!trx_id && !ref_id) {
-            return h2hError('Please provide trx_id or ref_id');
-        }
+    // Query Transaction Log or your main transaction table
+    let query = (supabase as any)
+        .from('h2h_transaction_logs')
+        .select('*');
 
-        // 3. Check Status (Mock)
-        // In production: Lookup transaction in DB
-
-        return h2hResponse({
-            trx_id: trx_id || 'TRX-MOCK-Found',
-            ref_id: ref_id || 'REF-MOCK-Found',
-            service_code: 'PULSA10',
-            target: '081234567890',
-            status: 'SUCCESS',
-            sn: '123456789012345', // Serial Number
-            price: 10500,
-            note: 'Topup Sukses'
-        }, 'Transaction status retrieved');
-
-    } catch (error) {
-        return h2hError('Invalid request body');
+    if (body.trx_id) {
+        query = query.eq('trx_id', body.trx_id);
+    } else {
+        query = query.eq('ref_id', body.ref_id).eq('partner_id', partner!.id);
     }
+
+    const { data, error } = await query.single();
+
+    if (error || !data) {
+        return errorResponse('Transaction not found', 404);
+    }
+
+    // Return the stored status or payload
+    return successResponse({
+        trx_id: data.trx_id,
+        ref_id: data.ref_id,
+        status: data.status_code === 200 ? 'SUCCESS' : 'FAILED', // Simplified status mapping
+        details: data.response_payload
+    });
 }

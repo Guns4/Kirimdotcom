@@ -1,55 +1,42 @@
 -- H2H API Schema
--- B2B Partner Integration
+-- Phase 1756-1760
 
--- API Credentials
-CREATE TABLE IF NOT EXISTS api_credentials (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    
-    -- Auth
-    api_key TEXT UNIQUE NOT NULL,
-    secret_key TEXT NOT NULL, -- For signature calculation if needed
-    
-    -- Security
-    ip_whitelist TEXT[], -- Array of allowed IPs
-    is_active BOOLEAN DEFAULT TRUE,
-    
-    -- Stats
-    total_requests INT DEFAULT 0,
-    last_request_at TIMESTAMP WITH TIME ZONE,
-    
+-- 1. H2H Partners Table (Credential & Security)
+CREATE TABLE IF NOT EXISTS public.h2h_partners (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES auth.users(id),
+    name TEXT NOT NULL,
+    api_key TEXT NOT NULL UNIQUE,
+    ip_whitelist INET[] DEFAULT NULL, -- Array of allowed IPs, NULL means allow all (or strictly no access if enforced)
+    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
-    UNIQUE(user_id)
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- H2H Transaction Logs
-CREATE TABLE IF NOT EXISTS h2h_request_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    credential_id UUID REFERENCES api_credentials(id),
-    
-    endpoint TEXT NOT NULL,
-    method TEXT NOT NULL,
-    request_body JSONB,
-    response_code INT,
-    response_body JSONB,
-    ip_address TEXT,
-    execution_time_ms INT,
-    
+-- Index for fast API Key lookup
+CREATE INDEX IF NOT EXISTS idx_h2h_partners_api_key ON public.h2h_partners(api_key);
+
+-- 2. H2H Transaction Logs (Audit Trail)
+CREATE TABLE IF NOT EXISTS public.h2h_transaction_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    partner_id UUID REFERENCES public.h2h_partners(id),
+    ref_id TEXT, -- Partner's Reference ID
+    trx_id TEXT, -- Our Internal ID
+    endpoint TEXT,
+    request_payload JSONB,
+    response_payload JSONB,
+    status_code INTEGER,
+    ip_address INET,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- RLS Policies
-ALTER TABLE api_credentials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE h2h_request_logs ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_h2h_logs_ref_id ON public.h2h_transaction_logs(ref_id);
+CREATE INDEX IF NOT EXISTS idx_h2h_logs_trx_id ON public.h2h_transaction_logs(trx_id);
 
-CREATE POLICY "Users can manage their api credentials" ON api_credentials
-FOR ALL USING (auth.uid() = user_id);
+-- 3. RLS
+ALTER TABLE public.h2h_partners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.h2h_transaction_logs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their logs" ON h2h_request_logs
-FOR SELECT USING (credential_id IN (SELECT id FROM api_credentials WHERE user_id = auth.uid()));
-
--- Indexes
-CREATE INDEX idx_api_credentials_key ON api_credentials(api_key);
-CREATE INDEX idx_h2h_logs_creds ON h2h_request_logs(credential_id, created_at DESC);
+-- Service role management
+CREATE POLICY "Service role manages h2h" ON public.h2h_partners FOR ALL USING (true);
+CREATE POLICY "Service role manages h2h logs" ON public.h2h_transaction_logs FOR ALL USING (true);
