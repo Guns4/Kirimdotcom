@@ -8,40 +8,54 @@ const supabase = createClient(
 
 // ==========================================
 // POST /api/admin/order/update-resi
-// Update tracking number for physical orders
+// SECURED: Requires admin secret header
 // ==========================================
 
 interface UpdateResiRequest {
     order_id: string;
-    tracking_number: string;
-    courier_used: string;
+    resi_number: string;
+    courier_name: string;
     notes?: string;
 }
 
 export async function POST(req: Request) {
     try {
-        // TODO: Add admin authentication middleware
-        // For now, this endpoint should be protected by your auth system
-        // Example: const session = await getServerSession(); if (!session.user.is_admin) return 401;
+        // ==========================================
+        // 🔒 SECURITY CHECK #1: Admin Secret Header
+        // ==========================================
+        const adminSecret = req.headers.get('x-admin-secret');
+
+        if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET_KEY) {
+            console.warn('[Admin Update Resi] Unauthorized access attempt');
+            return NextResponse.json(
+                {
+                    error: 'Unauthorized',
+                    message: 'Invalid or missing admin credentials. Access denied.'
+                },
+                { status: 401 }
+            );
+        }
+
+        console.log('[Admin Update Resi] ✅ Admin authenticated');
 
         const body: UpdateResiRequest = await req.json();
-        const { order_id, tracking_number, courier_used, notes } = body;
+        const { order_id, resi_number, courier_name, notes } = body;
 
         console.log('[Admin Update Resi] Processing...', {
             order_id,
-            tracking_number,
-            courier_used,
+            resi_number,
+            courier_name,
         });
 
         // Validate Input
-        if (!order_id || !tracking_number || !courier_used) {
+        if (!order_id || !resi_number || !courier_name) {
             return NextResponse.json(
-                { error: 'Missing required fields: order_id, tracking_number, courier_used' },
+                { error: 'Missing required fields: order_id, resi_number, courier_name' },
                 { status: 400 }
             );
         }
 
-        // Fetch order to verify it exists and has physical items
+        // Fetch order to verify it exists
         const { data: order, error: fetchError } = await supabase
             .from('marketplace_orders')
             .select('*, marketplace_order_items(*)')
@@ -62,7 +76,7 @@ export async function POST(req: Request) {
 
         if (!hasPhysicalItems) {
             return NextResponse.json(
-                { error: 'This order does not contain physical products' },
+                { error: 'This order does not contain physical products that require shipping' },
                 { status: 400 }
             );
         }
@@ -71,11 +85,12 @@ export async function POST(req: Request) {
         const { data: updatedOrder, error: updateError } = await supabase
             .from('marketplace_orders')
             .update({
-                tracking_number,
-                courier_used,
+                tracking_number: resi_number,
+                courier_used: courier_name,
                 order_status: 'SHIPPED',
                 shipped_at: new Date().toISOString(),
                 notes: notes || null,
+                updated_at: new Date().toISOString(),
             })
             .eq('id', order_id)
             .select()
@@ -88,14 +103,29 @@ export async function POST(req: Request) {
 
         console.log('[Admin Update Resi] ✅ Order updated:', updatedOrder.trx_id);
 
-        // TODO: Send notification to user (WhatsApp, email, etc.)
-        // Example: await sendWhatsAppNotification(order.user_id, `Pesanan ${order.trx_id} telah dikirim! Resi: ${tracking_number}`);
+        // ==========================================
+        // 📱 TODO: Send notification to user
+        // ==========================================
+        // Example WhatsApp notification:
+        /*
+        const message = `
+          Halo! Pesanan Anda ${updatedOrder.trx_id} telah dikirim!
+          
+          Kurir: ${courier_name.toUpperCase()}
+          No. Resi: ${resi_number}
+          
+          Lacak paket Anda di: [link]
+        `;
+        
+        await sendWhatsAppNotification(order.user_id, message);
+        */
 
         // Return success
         return NextResponse.json({
             success: true,
-            message: 'Tracking number updated successfully',
+            message: 'Tracking number updated successfully. Order marked as SHIPPED.',
             order: {
+                id: updatedOrder.id,
                 trx_id: updatedOrder.trx_id,
                 tracking_number: updatedOrder.tracking_number,
                 courier_used: updatedOrder.courier_used,
@@ -118,19 +148,32 @@ export async function POST(req: Request) {
 
 // ==========================================
 // GET /api/admin/order/update-resi
-// Get pending shipments
+// Get pending shipments (SECURED)
 // ==========================================
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
-        // Fetch orders that need shipping (physical items, paid but not shipped)
+        // ==========================================
+        // 🔒 SECURITY CHECK: Admin Secret Header
+        // ==========================================
+        const adminSecret = req.headers.get('x-admin-secret');
+
+        if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET_KEY) {
+            console.warn('[Admin Get Pending] Unauthorized access attempt');
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
+
+        // Fetch orders that need shipping
         const { data: orders, error } = await supabase
             .from('marketplace_orders')
             .select('*, marketplace_order_items(*)')
             .eq('payment_status', 'PAID')
             .in('order_status', ['PROCESSING', 'PENDING'])
             .order('created_at', { ascending: false })
-            .limit(50);
+            .limit(100);
 
         if (error) throw error;
 
@@ -154,7 +197,7 @@ export async function GET() {
         });
 
     } catch (error: any) {
-        console.error('[Admin Get Pending Shipments] Error:', error);
+        console.error('[Admin Get Pending] Error:', error);
         return NextResponse.json(
             { error: 'Failed to fetch pending shipments', details: error.message },
             { status: 500 }
