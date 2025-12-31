@@ -1,6 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { ShippingCacheManager } from '@/lib/shipping-cache';
 
 export async function POST(request: Request) {
     try {
@@ -8,76 +7,103 @@ export async function POST(request: Request) {
 
         if (!origin || !destination || !weight || !courier) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: 'Missing required fields: origin, destination, weight, courier' },
                 { status: 400 }
             );
         }
 
-        const cookieStore = await cookies();
-        const supabase = await createClient(cookieStore);
+        // Step 1: Check Cache First (SAVE MONEY!)
+        const cached = await ShippingCacheManager.getCache({
+            origin,
+            destination,
+            weight: parseInt(weight),
+            courier,
+        });
 
-        // 1. Check Cache
-        const { data: cacheData, error: cacheError } = await supabase
-            .from('shipping_cache')
-            .select('*')
-            .eq('origin_code', origin)
-            .eq('destination_code', destination)
-            .eq('weight_kg', weight)
-            .eq('courier', courier)
-            .single();
-
-        if (cacheData && !cacheError) {
-            // Cache Hit
+        if (cached) {
+            console.log(`[COST API] Cache HIT! Saved API call for ${courier}`);
             return NextResponse.json({
                 source: 'cache',
+                cached_at: cached.created_at,
                 data: {
-                    ...cacheData,
-                    price: Number(cacheData.price) + 1000 // Ensure markup is applied
-                }
+                    courier: cached.courier,
+                    service: cached.service,
+                    price: parseFloat(cached.price.toString()) + 1000, // Markup +1000
+                    etd: cached.etd,
+                    original_price: parseFloat(cached.price.toString()),
+                },
             });
         }
 
-        // 2. Cache Miss: Fetch from Provider (RajaOngkir/Binderbyte)
+        // Step 2: Cache MISS - Fetch from Vendor API
+        console.log(`[COST API] Cache MISS. Calling vendor API for ${courier}...`);
 
-        // Mocking response for demonstration
-        const mockPrice = 15000 + (weight * 5000); // 15k base + 5k/kg
-        const serviceName = 'REG';
+        // Mock vendor API response (replace with real RajaOngkir/Binderbyte API)
+        const mockPrice = 15000 + parseInt(weight) * 5000; // 15k base + 5k/kg
+        const service = 'REG';
         const etd = '2-3 Days';
 
-        // 3. Insert specific result to Cache
-        const { error: insertError } = await supabase.from('shipping_cache').insert({
-            origin_code: origin,
-            destination_code: destination,
-            weight_kg: weight,
-            courier: courier,
-            service: serviceName,
-            price: mockPrice, // Storing query result (COST)
-            etd: etd
-        });
+        // Step 3: Store in Cache for next time
+        await ShippingCacheManager.setCache(
+            {
+                origin,
+                destination,
+                weight: parseInt(weight),
+                courier,
+                service,
+                price: mockPrice,
+                etd,
+            },
+            {
+                // Store full vendor response for debugging
+                vendor: 'mock',
+                timestamp: new Date().toISOString(),
+                query: { origin, destination, weight, courier },
+            }
+        );
 
-        if (insertError) {
-            console.error('Failed to cache shipping cost:', insertError);
-        }
-
-        // 4. Return with Markup
+        // Step 4: Return with markup
         return NextResponse.json({
             source: 'api',
+            fetched_at: new Date().toISOString(),
             data: {
-                origin_code: origin,
-                destination_code: destination,
-                weight_kg: weight,
-                courier: courier,
-                service: serviceName,
+                courier,
+                service,
                 price: mockPrice + 1000, // Markup +1000
-                etd: etd
-            }
+                etd,
+                original_price: mockPrice,
+            },
+            cache_info: 'Result cached for 7 days',
         });
-
     } catch (error) {
-        console.error('Shipping Cost Error:', error);
+        console.error('Shipping cost API error:', error);
         return NextResponse.json(
-            { error: 'Internal Server Error' },
+            { error: 'Internal server error' },
             { status: 500 }
         );
+    }
+}
+
+// GET endpoint for cache statistics
+export async function GET() {
+    try {
+        const stats = await ShippingCacheManager.getCacheStats();
+
+        return NextResponse.json({
+            cache_statistics: {
+                total_cached_routes: stats.total_entries,
+                total_api_calls_saved: stats.total_hits,
+                expired_entries: stats.expired_entries,
+                estimated_cost_savings: `Rp ${stats.cache_savings.toLocaleString('id-ID')}`,
+                savings_usd: `$${(stats.cache_savings / 15000).toFixed(2)}`,
+            },
+            message:
+                stats.total_hits > 0
+                    ? `Cache saved you ${stats.total_hits} API calls! 🎉`
+                    : 'No cache hits yet. Keep using the app!',
+        });
+    } catch (error) {
+        console.error('Cache stats error:', error);
+        return NextResponse.json({ error: 'Failed to get stats' }, { status: 500 });
     }
 }
