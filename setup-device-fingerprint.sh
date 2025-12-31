@@ -14,7 +14,7 @@ cat > supabase/security/device_fingerprint_enhanced.sql << 'EOF'
 -- Ensure table exists (from previous step)
 CREATE TABLE IF NOT EXISTS public.known_devices (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     device_hash TEXT NOT NULL,
     user_agent TEXT,
     ip_address TEXT,
@@ -77,7 +77,7 @@ export function isImpossibleTravel(
     // Commercial plane speed ~900 km/h. Giving buffer of 1200 km/h
     const MAX_SPEED = 1200;
 
-    if (distaceKm > 50 && speed > MAX_SPEED) {
+    if (distanceKm > 50 && speed > MAX_SPEED) {
         console.warn(`[FRAUD] Impossible Travel Detected! ${distanceKm}km in ${timeDiffHours}h. Speed: ${speed}`);
         return true;
     }

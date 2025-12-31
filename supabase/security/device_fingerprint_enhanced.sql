@@ -1,7 +1,7 @@
 -- Ensure table exists (from previous step)
 CREATE TABLE IF NOT EXISTS public.known_devices (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     device_hash TEXT NOT NULL,
     user_agent TEXT,
     ip_address TEXT,
