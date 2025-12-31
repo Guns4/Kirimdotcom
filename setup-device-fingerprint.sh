@@ -2,99 +2,88 @@
 
 # setup-device-fingerprint.sh
 # ---------------------------
-# Setup Device Fingerprinting for Fraud Detection
+# Setup Device Fingerprinting & Geo-Location Guard
+# Includes Impossible Travel Detection
 
-echo "🕵️  Setting up Device Fingerprinting..."
+echo "🕵️  Setting up Enhanced Fraud Detection..."
 
-# 1. Install Library
-echo "📦 Installing @fingerprintjs/fingerprintjs..."
-npm install @fingerprintjs/fingerprintjs
-
-# 2. Database Schema
+# 1. Update Database Schema
 mkdir -p supabase/security
 
-cat > supabase/security/device_fingerprint.sql << 'EOF'
--- Table to store valid devices for each user
+cat > supabase/security/device_fingerprint_enhanced.sql << 'EOF'
+-- Ensure table exists (from previous step)
 CREATE TABLE IF NOT EXISTS public.known_devices (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     device_hash TEXT NOT NULL,
     user_agent TEXT,
     ip_address TEXT,
+    latitude FLOAT,   -- NEW
+    longitude FLOAT,  -- NEW
+    country_code TEXT, -- NEW
     last_seen TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     is_trusted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Index for fast lookup
+-- Index
 CREATE INDEX IF NOT EXISTS idx_known_devices_user_hash ON public.known_devices(user_id, device_hash);
 
 -- RLS
 ALTER TABLE public.known_devices ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own devices" ON public.known_devices 
-    FOR SELECT USING (auth.uid() = user_id);
-
--- Only server logic should insert/update usually, or strictly validated client input
--- For MVP, we allow insert if user owns it
-CREATE POLICY "Users can add devices" ON public.known_devices 
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view own devices" ON public.known_devices FOR SELECT USING (auth.uid() = user_id);
+-- Insert handled by server function/policy
 EOF
 
-echo "✅ SQL Schema created: supabase/security/device_fingerprint.sql"
-
-# 3. Validation Logic (Frontend)
+# 2. Logic Implementation
 mkdir -p src/lib/security
 
-cat > src/lib/security/device-guard.ts << 'EOF'
-import { createClient } from '@/utils/supabase/client';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
-
-export async function checkDeviceTrust(userId: string): Promise<'TRUSTED' | 'NEW_DEVICE' | 'ERROR'> {
-  try {
-    // 1. Get Fingerprint
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    const deviceHash = result.visitorId;
-
-    const supabase = createClient();
-
-    // 2. Check Database
-    const { data } = await supabase
-      .from('known_devices')
-      .select('id, is_trusted')
-      .eq('user_id', userId)
-      .eq('device_hash', deviceHash)
-      .single();
-
-    if (data) {
-      // Update Last Seen
-      await supabase.from('known_devices').update({ last_seen: new Date() }).eq('id', data.id);
-      return 'TRUSTED';
-    } else {
-      // New Device Detected!
-      // In a real app, do NOT insert immediately. Trigger OTP flow first.
-      // For this implementation, we flag it.
-      
-      console.warn('⚠️ New Device Detected:', deviceHash);
-      return 'NEW_DEVICE';
-    }
-  } catch (e) {
-    console.error('Fingerprint check failed', e);
-    return 'ERROR';
-  }
+cat > src/lib/security/geo-guard.ts << 'EOF'
+// Haversine Formula for Distance Calculation
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c; // Distance in km
+  return d;
 }
 
-export async function registerDevice(userId: string, deviceHash: string, userAgent: string, ip: string) {
-    const supabase = createClient();
-    await supabase.from('known_devices').insert({
-        user_id: userId,
-        device_hash: deviceHash,
-        user_agent: userAgent,
-        ip_address: ip,
-        is_trusted: true // Should be true ONLY after OTP
-    });
+function deg2rad(deg: number) {
+  return deg * (Math.PI / 180)
+}
+
+/**
+ * IMPOSSIBLE TRAVEL CHECK
+ * Checks if the user moved too fast between two logins.
+ * E.g. Indonesia -> Russia in 5 minutes.
+ */
+export function isImpossibleTravel(
+    prevLat: number, prevLon: number, prevTime: Date,
+    newLat: number, newLon: number, newTime: Date
+): boolean {
+    const distanceKm = getDistanceFromLatLonInKm(prevLat, prevLon, newLat, newLon);
+    const timeDiffHours = (newTime.getTime() - prevTime.getTime()) / (1000 * 60 * 60);
+
+    // If time difference is very small (e.g. almost instant), check distance
+    if (timeDiffHours < 0.1) return distanceKm > 100; // > 100km in < 6 mins is suspicious
+
+    const speed = distanceKm / timeDiffHours; // km/h
+
+    // Commercial plane speed ~900 km/h. Giving buffer of 1200 km/h
+    const MAX_SPEED = 1200;
+
+    if (distaceKm > 50 && speed > MAX_SPEED) {
+        console.warn(`[FRAUD] Impossible Travel Detected! ${distanceKm}km in ${timeDiffHours}h. Speed: ${speed}`);
+        return true;
+    }
+    return false;
 }
 EOF
 
-echo "✅ Device Guard created: src/lib/security/device-guard.ts"
+echo "✅ Enhanced Fingerprint SQL: supabase/security/device_fingerprint_enhanced.sql"
+echo "✅ Geo Logic: src/lib/security/geo-guard.ts"
