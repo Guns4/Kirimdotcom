@@ -1,109 +1,146 @@
 import { NextResponse } from 'next/server';
-import { ShippingCacheManager } from '@/lib/shipping-cache';
+import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
+import { VENDOR_CONFIG } from '@/lib/api/vendor-config';
 
-export async function POST(request: Request) {
-    try {
-        const { origin, destination, weight, courier } = await request.json();
+// Init Supabase with Service Role (bypass RLS for cache writes)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-        if (!origin || !destination || !weight || !courier) {
-            return NextResponse.json(
-                { error: 'Missing required fields: origin, destination, weight, courier' },
-                { status: 400 }
-            );
-        }
-
-        // Step 1: Check Cache First (SAVE MONEY!)
-        const cached = await ShippingCacheManager.getCache({
-            origin,
-            destination,
-            weight: parseInt(weight),
-            courier,
-        });
-
-        if (cached) {
-            console.log(`[COST API] Cache HIT! Saved API call for ${courier}`);
-            return NextResponse.json({
-                source: 'cache',
-                cached_at: cached.created_at,
-                data: {
-                    courier: cached.courier,
-                    service: cached.service,
-                    price: parseFloat(cached.price.toString()) + 1000, // Markup +1000
-                    etd: cached.etd,
-                    original_price: parseFloat(cached.price.toString()),
-                },
-            });
-        }
-
-        // Step 2: Cache MISS - Fetch from Vendor API
-        console.log(`[COST API] Cache MISS. Calling vendor API for ${courier}...`);
-
-        // Mock vendor API response (replace with real RajaOngkir/Binderbyte API)
-        const mockPrice = 15000 + parseInt(weight) * 5000; // 15k base + 5k/kg
-        const service = 'REG';
-        const etd = '2-3 Days';
-
-        // Step 3: Store in Cache for next time
-        await ShippingCacheManager.setCache(
-            {
-                origin,
-                destination,
-                weight: parseInt(weight),
-                courier,
-                service,
-                price: mockPrice,
-                etd,
-            },
-            {
-                // Store full vendor response for debugging
-                vendor: 'mock',
-                timestamp: new Date().toISOString(),
-                query: { origin, destination, weight, courier },
-            }
-        );
-
-        // Step 4: Return with markup
-        return NextResponse.json({
-            source: 'api',
-            fetched_at: new Date().toISOString(),
-            data: {
-                courier,
-                service,
-                price: mockPrice + 1000, // Markup +1000
-                etd,
-                original_price: mockPrice,
-            },
-            cache_info: 'Result cached for 7 days',
-        });
-    } catch (error) {
-        console.error('Shipping cost API error:', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
-    }
+interface ShippingCostRequest {
+  origin: string;
+  destination: string;
+  weight: number;
+  courier: string;
 }
 
-// GET endpoint for cache statistics
-export async function GET() {
-    try {
-        const stats = await ShippingCacheManager.getCacheStats();
+export async function POST(req: Request) {
+  try {
+    const body: ShippingCostRequest = await req.json();
+    const { origin, destination, weight, courier } = body;
 
-        return NextResponse.json({
-            cache_statistics: {
-                total_cached_routes: stats.total_entries,
-                total_api_calls_saved: stats.total_hits,
-                expired_entries: stats.expired_entries,
-                estimated_cost_savings: `Rp ${stats.cache_savings.toLocaleString('id-ID')}`,
-                savings_usd: `$${(stats.cache_savings / 15000).toFixed(2)}`,
-            },
-            message:
-                stats.total_hits > 0
-                    ? `Cache saved you ${stats.total_hits} API calls! 🎉`
-                    : 'No cache hits yet. Keep using the app!',
-        });
-    } catch (error) {
-        console.error('Cache stats error:', error);
-        return NextResponse.json({ error: 'Failed to get stats' }, { status: 500 });
+    // 1. Validate Input
+    if (!origin || !destination || !weight || !courier) {
+      return NextResponse.json(
+        { error: 'Missing required fields: origin, destination, weight, courier' },
+        { status: 400 }
+      );
     }
+
+    // 2. CHECK CACHE (Anti-Boncos Strategy!)
+    const { data: cache, error: cacheError } = await supabase
+      .from('shipping_cache')
+      .select('*')
+      .eq('origin', origin)
+      .eq('destination', destination)
+      .eq('weight', weight)
+      .eq('courier', courier)
+      .gte('expires_at', new Date().toISOString())
+      .single();
+
+    if (cache && !cacheError) {
+      console.log('⚡ CACHE HIT! Saved vendor API call');
+      
+      // Increment hit count for ROI tracking
+      await supabase
+        .from('shipping_cache')
+        .update({ hit_count: (cache.hit_count || 0) + 1 })
+        .eq('id', cache.id);
+
+      return NextResponse.json({
+        source: 'cache',
+        data: cache.price_data,
+        cached_at: cache.created_at,
+        savings: 'Saved Rp 500 API call cost!',
+      });
+    }
+
+    // 3. FETCH FROM VENDOR (Cache Miss)
+    console.log('🔌 CACHE MISS - Fetching from vendor API...');
+
+    let vendorData: any;
+
+    if (VENDOR_CONFIG.SHIPPING_PROVIDER === 'rajaongkir') {
+      // RajaOngkir Implementation
+      const response = await axios.post(
+        `${VENDOR_CONFIG.SHIPPING_BASE_URL}/cost`,
+        {
+          origin,
+          originType: 'city',
+          destination,
+          destinationType: 'subdistrict',
+          weight,
+          courier,
+        },
+        {
+          headers: { key: VENDOR_CONFIG.SHIPPING_API_KEY },
+        }
+      );
+
+      vendorData = response.data.rajaongkir.results[0];
+    } else {
+      // Binderbyte Implementation
+      const response = await axios.get(
+        `${VENDOR_CONFIG.SHIPPING_BASE_URL}/cost`,
+        {
+          params: { origin, destination, weight, courier },
+          headers: { key: VENDOR_CONFIG.SHIPPING_API_KEY },
+        }
+      );
+
+      vendorData = response.data.data;
+    }
+
+    // 4. APPLY MARKUP (Profit Strategy!)
+    const processedCosts = vendorData.costs.map((service: any) => {
+      const originalCost = service.cost[0].value;
+      const markupCost = originalCost + VENDOR_CONFIG.SHIPPING_MARKUP;
+
+      return {
+        ...service,
+        cost: [
+          {
+            ...service.cost[0],
+            value: markupCost,
+            original_value: originalCost,
+            markup: VENDOR_CONFIG.SHIPPING_MARKUP,
+            note: 'Includes service fee',
+          },
+        ],
+      };
+    });
+
+    const finalData = { ...vendorData, costs: processedCosts };
+
+    // 5. SAVE TO CACHE (For Next Request)
+    await supabase.from('shipping_cache').insert({
+      origin,
+      destination,
+      weight,
+      courier,
+      service: vendorData.costs[0]?.service || 'unknown',
+      price: processedCosts[0]?.cost[0]?.value || 0,
+      etd: processedCosts[0]?.cost[0]?.etd || '',
+      price_data: finalData,
+      hit_count: 0,
+      expires_at: new Date(Date.now() + VENDOR_CONFIG.CACHE_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+    });
+
+    console.log('✅ Data cached for future requests');
+
+    return NextResponse.json({
+      source: 'api',
+      data: finalData,
+      fetched_at: new Date().toISOString(),
+      cached_until: new Date(Date.now() + VENDOR_CONFIG.CACHE_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+    });
+  } catch (error: any) {
+    console.error('Shipping Cost API Error:', error.message);
+    return NextResponse.json(
+      { error: 'Failed to fetch shipping cost', details: error.message },
+      { status: 500 }
+    );
+  }
 }
