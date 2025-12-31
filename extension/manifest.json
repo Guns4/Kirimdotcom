@@ -2,11 +2,10 @@
     "manifest_version": 3,
     "name": "CekKirim Resi Highlighter",
     "version": "1.0",
-    "description": "Automatically detects carrier receipts and tracks them via CekKirim.",
-    "permissions": [
-        "activeTab",
-        "scripting"
-    ],
+    "description": "Automatically detects and links tracking numbers (JNE, J&T, SiCepat) to CekKirim.com",
+    "icons": {
+        "48": "icon.png"
+    },
     "content_scripts": [
         {
             "matches": [
@@ -17,5 +16,6 @@
             ],
             "run_at": "document_idle"
         }
-    ]
+    ],
+    "permissions": []
 }
