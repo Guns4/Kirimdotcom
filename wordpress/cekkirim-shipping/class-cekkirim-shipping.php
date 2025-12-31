@@ -22,8 +22,31 @@ class WC_CekKirim_Shipping extends WC_Shipping_Method {
         $this->enabled = $this->get_option( 'enabled' );
         $this->title   = $this->get_option( 'title' );
         
-        // Save Settings Hook
         add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
+        
+        // Inject Ad Banner
+        add_action( 'woocommerce_settings_before_' . $this->id, array( $this, 'render_admin_banner' ) );
+    }
+
+    public function render_admin_banner() {
+        // Fetch Ad from CekKirim API
+        $response = wp_remote_get( 'https://cekkirim.com/api/ads/plugin-banner', array( 'timeout' => 2 ) );
+        if ( is_wp_error( $response ) ) return;
+        
+        $body = wp_remote_retrieve_body( $response );
+        $ad = json_decode( $body, true );
+
+        if ( ! empty( $ad['show'] ) ) {
+            echo '<div style="background: #fff; padding: 15px; border-left: 5px solid #f59e0b; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin: 0 0 5px; color: #d97706;">📢 ' . esc_html( $ad['text'] ) . '</h3>
+                        <a href="' . esc_url( $ad['link'] ) . '" target="_blank" class="button button-primary" style="background: #f59e0b; border-color: #d97706;">' . esc_html( $ad['cta_text'] ) . '</a>
+                    </div>
+                    <img src="' . esc_url( $ad['image_url'] ) . '" style="max-height: 80px; border-radius: 4px;">
+                </div>
+            </div>';
+        }
     }
 
     public function init_form_fields() {
