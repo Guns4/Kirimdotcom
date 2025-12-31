@@ -122,7 +122,7 @@ const nextConfig = {
 
     // Image optimization
     images: {
-        unoptimized: process.env.NEXT_EXPORT === 'true',
+        unoptimized: false, // process.env.NEXT_EXPORT === 'true',
         domains: [
             'onkmywglrpjqulhephkf.supabase.co', // Supabase storage
         ],
@@ -142,8 +142,8 @@ const nextConfig = {
         ignoreDuringBuilds: true,
     },
 
-    // Mobile App (Capacitor) Support
-    output: process.env.NEXT_EXPORT === 'true' ? 'export' : undefined,
+    // Mobile App (Capacitor) Support - Disabled for Vercel Web Deployment to prevent 404s
+    // output: process.env.NEXT_EXPORT === 'true' ? 'export' : undefined,
 
     // Production optimizations
     compiler: {
