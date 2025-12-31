@@ -1,31 +1,22 @@
 #!/bin/bash
 
-# =============================================================================
-# Setup Client-Side Error Monitoring (Phase 89)
-# Stability & Health Tracking
-# =============================================================================
+# setup-error-monitoring.sh
+# -------------------------
+# Observability: Error tracking and session replay.
+# Real-time debugging with user session recording.
 
-echo "Setting up Error Monitoring..."
-echo "================================================="
+echo "📊 Setting up Error Monitoring..."
+
+# Note: Using environment variables for Sentry DSN
+# NEXT_PUBLIC_SENTRY_DSN should be set in .env
+
+mkdir -p src/lib/monitoring
+
+echo "✅ Config: src/lib/monitoring/sentry-config.ts"
+echo "📹 Session Replay enabled with privacy masking"
+echo "🔔 Telegram alerts for critical errors (>10 in 5min)"
 echo ""
-
-# 1. Server Actions
-echo "1. Created Action: src/app/actions/errorLoggingActions.ts"
-# (File created via tool)
-
-# 2. Client Component
-echo "2. Created Component: src/components/analytics/ErrorMonitor.tsx"
-# (File created via tool)
-
-# 3. Integration
-echo "3. Integrated into: src/app/layout.tsx"
-echo "   - <ErrorMonitor /> injected globally"
-# (File already had it imported, verified via tool)
-
-# 4. Admin Widget
-echo "4. Created Widget: src/components/admin/RecentErrorsWidget.tsx"
-# (File created via tool)
-
-echo "================================================="
-echo "Setup Complete!"
-echo "Please run src/utils/supabase/migrations/20241229_error_logs.sql in Supabase SQL Editor."
+echo "⚠️ Remember to:"
+echo "   1. Set NEXT_PUBLIC_SENTRY_DSN in .env"
+echo "   2. Set SENTRY_AUTH_TOKEN for releases"
+echo "   3. Configure Telegram webhook for alerts"
