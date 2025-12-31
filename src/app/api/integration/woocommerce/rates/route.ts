@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { checkCache, setCache } from '@/lib/shipping/cache-engine';
+import { checkAndDeductBalance } from '@/lib/billing/metering';
+import { ShippingRequestSchema, checkRateLimit } from '@/lib/security/api-guards';
 
 // Mock function for rate retrieval (replace with actual logic)
 async function getCouriersRates(origin: string, destination: string, weight: number) {
-    // In real implementation: Query DB or internal API
-    // Returning mock data for demonstration
     return [
         { courier: 'JNE', service: 'REG', price: 10000, etd: '2-3 Days' },
         { courier: 'SiCepat', service: 'HALU', price: 8000, etd: '3-4 Days' },
@@ -15,7 +15,15 @@ async function getCouriersRates(origin: string, destination: string, weight: num
 
 export async function POST(request: Request) {
     try {
-        const apiKey = request.headers.get('x-api-key');
+        // 1. Rate Limiting Check
+        const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+        const rateLimitResult = checkRateLimit(ip);
+
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json({ error: rateLimitResult.error }, { status: 429 });
+        }
+
+        // 2. API Key Validation
         if (!apiKey) {
             return NextResponse.json({ error: 'API Key Required' }, { status: 401 });
         }
