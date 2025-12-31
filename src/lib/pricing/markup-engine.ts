@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { getTierMarkup } from '@/lib/tier-pricing';
 
 interface Rate {
     id: string;
@@ -11,15 +12,7 @@ interface Rate {
 export async function applyMarkup(rates: Rate[], userId: string): Promise<Rate[]> {
     const supabase = createClient();
 
-    // 1. Fetch Global/User Rules
-    // Simplified: Just getting ALL_USERS rules for MVP
-    const { data: rules } = await supabase
-        .from('markup_rules')
-        .select('*')
-        .eq('is_active', true)
-        .or(`user_level.eq.ALL_USERS`);
-
-    const globalMarkup = rules?.find(r => r.courier === 'ALL')?.amount_rp || 0;
+    const globalMarkup = await getTierMarkup(userId);
 
     // 2. Apply to Rates
     return rates.map(rate => {

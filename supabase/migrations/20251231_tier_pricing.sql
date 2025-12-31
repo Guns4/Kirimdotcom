@@ -1,44 +1,59 @@
 -- Tier Pricing Schema
--- Account levels for wholesale pricing
+-- Phase 1751-1755
 
--- Add account_level to profiles if it doesn't exist
--- Note: We assume a 'profiles' or similar table exists for user data.
--- Since the user didn't provide the exact profile schema, we'll create a new table
--- specifically for tier status that references auth.users
+-- 1. Add 'tier' column to users table
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS tier TEXT DEFAULT 'BASIC'; -- BASIC, RESELLER, VIP
 
-CREATE TABLE IF NOT EXISTS user_tiers (
-    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    account_level TEXT DEFAULT 'BASIC', -- BASIC, RESELLER, VIP
-    
-    -- Expiry (optional, e.g. for subscription-based VIP)
-    valid_until TIMESTAMP WITH TIME ZONE,
-    
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Upgrade History
-CREATE TABLE IF NOT EXISTS tier_upgrades (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    
-    from_level TEXT NOT NULL,
-    to_level TEXT NOT NULL,
-    amount_paid DECIMAL(10,2) NOT NULL,
-    payment_method TEXT,
-    
+-- 2. Create Tier Definitions (Optional, for dynamic config, but requirements are hardcoded)
+-- We'll use a simple table to store costs for auditing
+CREATE TABLE IF NOT EXISTS public.tier_upgrades_log (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id),
+    from_tier TEXT,
+    to_tier TEXT,
+    cost NUMERIC,
+    status TEXT DEFAULT 'SUCCESS',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- RLS Policies
-ALTER TABLE user_tiers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tier_upgrades ENABLE ROW LEVEL SECURITY;
+-- 3. Function to handle Upgrade (Atomic Transaction)
+CREATE OR REPLACE FUNCTION upgrade_user_tier(
+    p_user_id UUID,
+    p_target_tier TEXT,
+    p_cost NUMERIC
+) RETURNS JSONB AS $$
+DECLARE
+    v_balance NUMERIC;
+    v_current_tier TEXT;
+BEGIN
+    -- Get current balance and tier
+    SELECT balance, tier INTO v_balance, v_current_tier FROM public.users WHERE id = p_user_id;
 
-CREATE POLICY "Users can view their own tier" ON user_tiers
-FOR SELECT USING (auth.uid() = user_id);
+    -- Checks
+    IF v_balance < p_cost THEN
+        RETURN jsonb_build_object('success', false, 'message', 'Insufficient balance');
+    END IF;
 
-CREATE POLICY "Users can view their upgrade history" ON tier_upgrades
-FOR SELECT USING (auth.uid() = user_id);
+    IF v_current_tier = p_target_tier THEN
+         RETURN jsonb_build_object('success', false, 'message', 'Already on this tier');
+    END IF;
 
--- Indexes
-CREATE INDEX idx_user_tiers_level ON user_tiers(account_level);
+    -- Deduct Balance
+    UPDATE public.users 
+    SET balance = balance - p_cost,
+        tier = p_target_tier
+    WHERE id = p_user_id;
+
+    -- Log Transaction (Wallet)
+    INSERT INTO public.wallet_transactions (user_id, type, amount, description)
+    VALUES (p_user_id, 'TIER_UPGRADE', p_cost, 'Upgrade to ' || p_target_tier);
+
+    -- Log Audit
+    INSERT INTO public.tier_upgrades_log (user_id, from_tier, to_tier, cost)
+    VALUES (p_user_id, v_current_tier, p_target_tier, p_cost);
+
+    RETURN jsonb_build_object('success', true, 'message', 'Upgrade successful');
+EXCEPTION WHEN OTHERS THEN
+    RETURN jsonb_build_object('success', false, 'message', SQLERRM);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -11,6 +11,11 @@ echo ">>> Setting up Wholesale Pricing..."
 # 3. src/components/pricing/TierUpgrade.tsx
 # 4. src/app/dashboard/upgrade/page.tsx
 
+mkdir -p src/lib
+mkdir -p src/components/pricing
+mkdir -p src/app/dashboard/upgrade
+mkdir -p supabase/migrations
+
 echo ">>> Account Levels:"
 echo "  1. BASIC (Default)"
 echo "     - Base Price + Rp 1.000"
