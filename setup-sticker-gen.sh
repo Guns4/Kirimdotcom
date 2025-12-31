@@ -10,6 +10,10 @@ echo ">>> Setting up Sticker Generator..."
 # 2. src/components/tools/StickerGenerator.tsx
 # 3. src/app/tools/sticker-generator/page.tsx
 
+mkdir -p src/lib
+mkdir -p src/components/tools
+mkdir -p src/app/tools/sticker-generator
+
 echo ">>> Features:"
 echo "  🖨️ PDF Generator (jsPDF)"
 echo "  📏 A4 Layout (10 Stickers)"
