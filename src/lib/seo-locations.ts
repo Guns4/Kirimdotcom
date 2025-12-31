@@ -1,41 +1,37 @@
-import { popularRegions, Region } from '@/data/indonesia-regions';
+import { INDONESIA_REGIONS, Region } from '@/data/indonesia-regions';
 
-export interface LocationPath {
-    slug: string[]; // [province, city, district]
-    region: Region;
+export interface LocationBreadcrumb {
+    name: string;
+    slug: string;
+    type: string;
 }
 
-export function getAllLocationPaths(): LocationPath[] {
-    return popularRegions.map((region) => {
-        // Slugify helper
-        const slugify = (text: string) =>
-            text
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-');
+export function getLocationFromSlugs(slugs: string[]): { location: Region | null, breadcrumbs: LocationBreadcrumb[] } {
+    let currentLevel = INDONESIA_REGIONS;
+    let found: Region | null = null;
+    const breadcrumbs: LocationBreadcrumb[] = [];
 
-        return {
-            slug: [
-                slugify(region.province),
-                slugify(region.city),
-                slugify(region.district),
-            ],
-            region,
-        };
-    });
+    for (const slug of slugs) {
+        const match = currentLevel.find(r => r.slug === slug);
+        if (match) {
+            found = match;
+            breadcrumbs.push({ name: match.name, slug: match.slug, type: match.type });
+            if (match.children) {
+                currentLevel = match.children;
+            } else {
+                currentLevel = [];
+            }
+        } else {
+            return { location: null, breadcrumbs: [] };
+        }
+    }
+
+    return { location: found, breadcrumbs };
 }
 
-export function getRegionBySlug(slug: string[]): Region | undefined {
-    if (slug.length !== 3) return undefined;
+export function generateLocalSEOMetadata(location: Region) {
+    const title = `Cek Ongkir & Ekspedisi di ${location.name} - CekKirim.com`;
+    const description = `Daftar agen logistik terdekat, tarif pengiriman termurah, dan jadwal kurir di ${location.name}. Bandingkan harga JNE, J&T, SiCepat di ${location.name}.`;
 
-    const [provSlug, citySlug, distSlug] = slug;
-    const paths = getAllLocationPaths();
-
-    const match = paths.find(p =>
-        p.slug[0] === provSlug &&
-        p.slug[1] === citySlug &&
-        p.slug[2] === distSlug
-    );
-
-    return match?.region;
+    return { title, description };
 }
