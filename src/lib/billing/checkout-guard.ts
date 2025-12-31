@@ -8,7 +8,7 @@ interface CheckoutRequest {
 }
 
 export async function validateCheckoutSync(req: CheckoutRequest) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // 1. Fetch Source of Truth
     const { data: product, error } = await supabase
