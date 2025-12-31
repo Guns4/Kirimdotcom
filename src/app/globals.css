@@ -389,8 +389,19 @@
   }
 
   body {
-    @apply bg-white text-black;
-  }
+    @apply antialiased min-h-screen bg-white text-zinc-900;
+}
+
+/* --- NATIVE APP MODE UTILITIES --- */
+/* Hides web navbar/footer when body has .native-app class (injected by useNativeUI) */
+body.native-app header,
+body.native-app footer,
+body.native-app .web-navbar,
+body.native-app .web-footer,
+body.native-app .web-bottom-nav { display: none !important; }
+
+/* Add padding for native bottom nav */
+body.native-app main { padding-bottom: 80px !important; margin-top: 0 !important; }
 
   .card {
     @apply shadow-none border border-gray-300;

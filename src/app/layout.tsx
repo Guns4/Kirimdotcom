@@ -8,6 +8,7 @@ import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
+import MobileNav from '@/components/layout/MobileNav';
 import { LiteModeProvider } from '@/context/LiteModeContext';
 import { SystemStatusProvider } from '@/context/SystemStatusContext';
 import { FeedbackWidget } from '@/components/ui/FeedbackWidget';
@@ -135,7 +136,12 @@ export default async function RootLayout({
               <WebVitalsReporter />
               <NPSSurvey />
               {!isWidget && <Footer />}
-              {!isWidget && <BottomNav />}
+
+              {/* Web Bottom Nav (Hidden in Native App via CSS) */}
+              {!isWidget && <div className="web-bottom-nav"><BottomNav /></div>}
+
+              {/* Native Mobile Nav (Only in App) */}
+              <MobileNav />
             </LiteModeProvider>
           </FeatureFlagProvider>
         </SystemStatusProvider>
