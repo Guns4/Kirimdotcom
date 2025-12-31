@@ -1,120 +1,135 @@
 'use client';
 
-import { useState } from 'react';
-import { MOCK_EXAMS } from '@/lib/quiz-engine';
-import { submitExam, GradingResult } from '@/app/actions/certification';
+import React, { useState, use } from 'react';
+import { notFound } from 'next/navigation';
+import { MOCK_EXAM, Exam } from '@/lib/quiz-engine';
+import { submitExam } from '@/app/actions/certification';
 import CertificateGenerator from '@/components/academy/CertificateGenerator';
-import { Loader2, AlertCircle } from 'lucide-react';
 
-export default function ExamPage({ params }: { params: { slug: string } }) {
-    const exam = MOCK_EXAMS[params.slug];
+// Mock getExam for client comp (or pass from server)
+// For simplicity in this structure, we use the mock data directly or props.
+// Ideally fetches from server component.
 
-    // State
-    const [answers, setAnswers] = useState<number[]>([]);
-    const [submitted, setSubmitted] = useState(false);
-    const [result, setResult] = useState<GradingResult | null>(null);
+export default function ExamPage({ params }: { params: Promise<{ slug: string }> }) {
+    const resolvedParams = use(params);
+    // Simulating fetch
+    const exam = MOCK_EXAM;
+
+    const [answers, setAnswers] = useState<number[]>(new Array(exam.questions.length).fill(-1));
+    const [result, setResult] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
-    if (!exam) {
-        return <div className="p-12 text-center">Exam not found</div>;
+    if (resolvedParams.slug !== 'business-online-101') {
+        // Very authentic mock check
+        return notFound();
     }
 
-    const handleOptionSelect = (qIdx: number, optionIdx: number) => {
-        if (submitted) return;
+    const handleOptionSelect = (qIndex: number, optionIndex: number) => {
         const newAnswers = [...answers];
-        newAnswers[qIdx] = optionIdx;
+        newAnswers[qIndex] = optionIndex;
         setAnswers(newAnswers);
     };
 
     const handleSubmit = async () => {
-        if (answers.length < exam.questions.length) {
-            alert('Please answer all questions before submitting.');
+        if (answers.includes(-1)) {
+            alert("Please answer all questions");
             return;
         }
-
-        if (!confirm('Are you sure you want to submit? This cannot be undone.')) return;
-
         setLoading(true);
         try {
             const res = await submitExam(exam.id, answers);
             setResult(res);
-            setSubmitted(true);
-        } catch (error) {
-            console.error(error);
-            alert('Error submitting exam.');
+        } catch (e) {
+            alert("Error submitting exam");
         } finally {
             setLoading(false);
         }
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
-            <div className="max-w-3xl mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">{exam.title}</h1>
-                    <p className="text-gray-600">Passing Score: {exam.passingScore}%</p>
+    if (result && result.passed) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 flex flex-col items-center justify-center">
+                <div className="bg-green-100 text-green-800 px-6 py-3 rounded-full mb-8 font-bold">
+                    🎉 Congratulations! You Passed! Score: {result.score}%
                 </div>
+                <CertificateGenerator
+                    candidateName="Student Name" // In real app, get from Auth Context
+                    courseName={exam.title}
+                    date={new Date().toLocaleDateString()}
+                    certificateId={result.certificateId}
+                />
+                <button
+                    onClick={() => window.location.reload()}
+                    className="mt-8 text-zinc-500 hover:underline"
+                >
+                    Back to Academy
+                </button>
+            </div>
+        );
+    }
 
-                {!result || !result.passed ? (
-                    <div className="space-y-6">
-                        {exam.questions.map((q, idx) => (
-                            <div key={q.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                <h3 className="font-semibold text-lg mb-4">{idx + 1}. {q.text}</h3>
-                                <div className="space-y-3">
-                                    {q.options.map((opt, optIdx) => (
-                                        <div
-                                            key={optIdx}
-                                            onClick={() => handleOptionSelect(idx, optIdx)}
-                                            className={`p-3 rounded-lg border cursor-pointer transition-colors flex items-center gap-3 ${answers[idx] === optIdx
-                                                    ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium'
-                                                    : 'border-gray-200 hover:bg-gray-50'
-                                                } ${submitted ? 'cursor-default' : ''}`}
-                                        >
-                                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${answers[idx] === optIdx ? 'border-blue-500 bg-blue-500' : 'border-gray-400'
-                                                }`}>
-                                                {answers[idx] === optIdx && <div className="w-2 h-2 rounded-full bg-white"></div>}
-                                            </div>
-                                            {opt}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
+    if (result && !result.passed) {
+        return (
+            <div className="max-w-2xl mx-auto px-4 py-12 text-center">
+                <div className="text-6xl mb-4">😢</div>
+                <h1 className="text-3xl font-bold mb-4">Exam Failed</h1>
+                <p className="text-zinc-600 mb-8">
+                    Your score: <span className="font-bold text-red-600">{result.score}%</span>.
+                    Minimum passing score is {exam.passingScore}%.
+                </p>
+                <button
+                    onClick={() => { setResult(null); setAnswers(new Array(exam.questions.length).fill(-1)); }}
+                    className="px-6 py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800"
+                >
+                    Try Again
+                </button>
+            </div>
+        );
+    }
 
-                        {result && !result.passed && (
-                            <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-center gap-3 border border-red-200">
-                                <AlertCircle />
-                                <div>
-                                    <p className="font-bold">Exam Failed</p>
-                                    <p>Score: {result.score.toFixed(0)}% (Required: {exam.passingScore}%)</p>
-                                    <button
-                                        onClick={() => window.location.reload()}
-                                        className="text-sm underline mt-1"
-                                    >
-                                        Try Again
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+    return (
+        <div className="max-w-3xl mx-auto px-4 py-8">
+            <div className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+                <h1 className="text-2xl font-bold">{exam.title}</h1>
+                <p className="text-zinc-500">Passing Score: {exam.passingScore}% • {exam.questions.length} Questions</p>
+            </div>
 
-                        {!submitted && (
-                            <button
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-transform hover:scale-[1.01] flex items-center justify-center gap-2"
-                            >
-                                {loading ? <Loader2 className="animate-spin" /> : 'Submit Final Exam'}
-                            </button>
-                        )}
+            <div className="space-y-8">
+                {exam.questions.map((q, qIndex) => (
+                    <div key={q.id} className="bg-white dark:bg-zinc-900 p-6 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                        <p className="font-medium text-lg mb-4">{qIndex + 1}. {q.text}</p>
+                        <div className="space-y-2">
+                            {q.options.map((opt, optIndex) => (
+                                <label
+                                    key={optIndex}
+                                    className={`flex items-center p-3 rounded-md border cursor-pointer transition-colors ${answers[qIndex] === optIndex
+                                            ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/20 dark:border-blue-500'
+                                            : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                                        }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name={`q-${q.id}`}
+                                        className="mr-3"
+                                        checked={answers[qIndex] === optIndex}
+                                        onChange={() => handleOptionSelect(qIndex, optIndex)}
+                                    />
+                                    <span className="text-zinc-700 dark:text-zinc-300">{opt}</span>
+                                </label>
+                            ))}
+                        </div>
                     </div>
-                ) : (
-                    <CertificateGenerator data={{
-                        studentName: 'Student Name', // Should be from Auth context
-                        courseName: exam.title,
-                        date: new Date().toLocaleDateString(),
-                        certificateId: result.certificateId || 'Unknown'
-                    }} />
-                )}
+                ))}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex justify-end">
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                    {loading ? 'Submitting...' : 'Submit Exam'}
+                </button>
             </div>
         </div>
     );
