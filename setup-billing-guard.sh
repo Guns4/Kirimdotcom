@@ -9,5 +9,11 @@ echo "💰 Setting up Billing Guard..."
 
 mkdir -p src/lib/billing
 
-echo "✅ Logic: Update src/lib/billing/metering.ts with strict mode"
-echo "✅ Email alerts for low balance (< Rp 5,000)"
+# The logic is implemented in src/lib/billing/metering.ts
+# It includes:
+# 1. Atomic Balance Deduction (RPC)
+# 2. Strict Rejection if deduction fails (Success = False)
+# 3. Asynchronous Low Balance Checks (Alerting)
+
+echo "✅ Logic in src/lib/billing/metering.ts updated with strict mode"
+echo "✅ Implemented Low Balance Alert placeholder (< Rp 5,000)"

@@ -53,6 +53,26 @@ export async function trackApiUsage(userId: string, endpoint: string, plan: stri
             });
             return { allowed: false, cost: 0, error: 'Insufficient balance' };
         }
+
+        // --- LOW BALANCE ALERT START ---
+        // Fire-and-forget check for low balance
+        (async () => {
+            const { data: userData } = await supabase
+                .from('auth.users') // or public.users proxy if available, usually rpc is safer for balance
+                .select('balance')
+                .eq('id', userId)
+                .single();
+
+            // Alternatively, create an RPC 'get_balance' to be safe with permissions
+            // For now, let's assume we can fetch or use a separate quick check
+            // Better: Logic inside the deduction RPC could raise a notice, but here we do it in app layer
+
+            // Mocking balance fetch for alert
+            // In production: const balance = userData?.balance;
+            // if (balance < 5000) sendLowBalanceEmail(userId, balance);
+            console.log(`[BILLING GUARD] Checking balance for ${userId}... (Low Check)`);
+        })();
+        // --- LOW BALANCE ALERT END ---
     }
 
     // 4. Log Success (and increment free quota if needed)
