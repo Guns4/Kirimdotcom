@@ -86,7 +86,22 @@ export async function POST(req: Request) {
                 digitalProducts.push({ ...product, order_qty: item.qty });
             }
 
-            const subtotal = product.price_sell * item.qty;
+            // ==========================================
+            // PRICING CALCULATION (Different for Physical vs SMM)
+            // ==========================================
+            let subtotal = 0;
+
+            if (product.type === 'DIGITAL_SMM') {
+                // SMM Formula: (Quantity ÷ 1000) × Price per 1K
+                // Example: 2500 followers @ Rp 20,000/1K = (2500 ÷ 1000) × 20,000 = Rp 50,000
+                subtotal = (item.qty / 1000) * product.price_sell;
+                subtotal = Math.ceil(subtotal); // Round up to avoid decimals
+            } else {
+                // Physical Formula: Quantity × Unit Price
+                // Example: 2 lakban @ Rp 12,000 = 2 × 12,000 = Rp 24,000
+                subtotal = product.price_sell * item.qty;
+            }
+
             totalAmount += subtotal;
 
             orderItems.push({
