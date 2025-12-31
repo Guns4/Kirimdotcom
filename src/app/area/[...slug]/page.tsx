@@ -1,9 +1,36 @@
 import React from 'react';
 import LocalLeaderboard from '@/components/community/LocalLeaderboard';
+import { getLocationFromSlugs, generateLocalSEOMetadata } from '@/lib/seo-locations';
+import { notFound } from 'next/navigation';
 
-// Example Area Page that includes the leaderboard
-export default function AreaPage({ params }: { params: { slug: string[] } }) {
-    const areaName = params.slug.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+interface PageProps {
+    params: Promise<{ slug: string[] }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
+    const resolvedParams = await params;
+    const { location } = getLocationFromSlugs(resolvedParams.slug);
+
+    if (!location) {
+        return {
+            title: 'Area Not Found | CekKirim.com'
+        };
+    }
+
+    return generateLocalSEOMetadata(location);
+}
+
+export default async function AreaPage({ params }: PageProps) {
+    const resolvedParams = await params;
+    const { location } = getLocationFromSlugs(resolvedParams.slug);
+
+    if (!location) {
+        // Optional: Return generic page or 404. For SEO strategy, maybe 404 is better if we strictly want defined regions.
+        // For now, let's allow fallback but show generic title.
+        // return notFound(); 
+    }
+
+    const areaName = location ? location.name : resolvedParams.slug.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
