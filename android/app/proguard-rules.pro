@@ -1,23 +1,30 @@
-# 1. Capacitor & WebView
+# Add project specific ProGuard rules here.
+# By default, the flags in this file are appended to flags specified
+# in D:\android-sdk/tools/proguard/proguard-android.txt
+# and each other.
+
+# 1. Keep Capacitor Bridge
 -keep class com.getcapacitor.** { *; }
 -keep interface com.getcapacitor.** { *; }
+
+# 2. Keep WebView Interface
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
 
-# 2. Plugins (Prevent Crash)
+# 3. Third-party Plugins (Keep them to avoid crashes)
 -keep class com.capacitorjs.** { *; }
 -keep class com.google.android.gms.** { *; }
 -keep class com.google.firebase.** { *; }
 
-# 3. Aggressive Obfuscation
+# 4. Aggressive Obfuscation for everything else
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 -verbose
 
-# 4. Remove Logs
+# 5. Remove Log calls (Sanitize Logs)
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
     public static int v(...);
