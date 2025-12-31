@@ -1,59 +1,21 @@
 {
     "manifest_version": 3,
-    "name": "CekKirim Helper",
-    "version": "1.0.0",
-    "description": "Cek Ongkir & Resi Instan untuk Seller. Lacak paket, hitung ongkir, dan akses tools langsung dari WhatsApp Web.",
+    "name": "CekKirim Resi Highlighter",
+    "version": "1.0",
+    "description": "Automatically detects carrier receipts and tracks them via CekKirim.",
     "permissions": [
         "activeTab",
-        "storage",
-        "scripting",
-        "contextMenus",
-        "tabs"
+        "scripting"
     ],
-    "host_permissions": [
-        "https://cekkirim.com/*",
-        "https://web.whatsapp.com/*"
-    ],
-    "action": {
-        "default_popup": "popup/popup.html",
-        "default_title": "CekKirim Helper",
-        "default_icon": {
-            "16": "icons/icon16.png",
-            "32": "icons/icon32.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
-        }
-    },
-    "background": {
-        "service_worker": "background/background.js"
-    },
     "content_scripts": [
         {
             "matches": [
-                "https://web.whatsapp.com/*"
+                "<all_urls>"
             ],
             "js": [
-                "content/wa-injector.js"
+                "content.js"
             ],
             "run_at": "document_idle"
         }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "sidebar/sidebar.html",
-                "sidebar/sidebar.css",
-                "sidebar/sidebar.js"
-            ],
-            "matches": [
-                "https://web.whatsapp.com/*"
-            ]
-        }
-    ],
-    "icons": {
-        "16": "icons/icon16.png",
-        "32": "icons/icon32.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
-    }
+    ]
 }
