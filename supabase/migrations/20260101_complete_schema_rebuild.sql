@@ -1,6 +1,6 @@
 -- ==========================================
 -- Complete Database Schema Setup
--- Version: 2.0 - Clean Rebuild
+-- Version: 2.1 - Fixed IMMUTABLE Error
 -- Date: 2026-01-01
 -- ==========================================
 -- ==========================================
@@ -41,8 +41,9 @@ CREATE TABLE public.shipping_cache (
     expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '7 days') NOT NULL
 );
 -- Performance Indexes (Target: <10ms query time)
-CREATE INDEX idx_shipping_cache_lookup ON public.shipping_cache (origin, destination, weight, courier)
-WHERE expires_at > NOW();
+-- NOTE: Removed WHERE expires_at > NOW() because NOW() is not IMMUTABLE
+-- Filter in application code instead
+CREATE INDEX idx_shipping_cache_lookup ON public.shipping_cache (origin, destination, weight, courier);
 CREATE INDEX idx_shipping_cache_expires ON public.shipping_cache (expires_at);
 -- ==========================================
 -- STEP 3: TRACKING HISTORY (UX Enhancement)
@@ -65,11 +66,9 @@ CREATE TABLE public.tracking_history (
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 -- Performance Indexes
-CREATE INDEX idx_tracking_user ON public.tracking_history (user_id)
-WHERE user_id IS NOT NULL;
+CREATE INDEX idx_tracking_user ON public.tracking_history (user_id);
 CREATE INDEX idx_tracking_waybill ON public.tracking_history (waybill);
-CREATE INDEX idx_tracking_recent ON public.tracking_history (user_id, created_at DESC)
-WHERE user_id IS NOT NULL;
+CREATE INDEX idx_tracking_recent ON public.tracking_history (user_id, created_at DESC);
 -- ==========================================
 -- STEP 4: PPOB TRANSACTIONS (Revenue Stream)
 -- ==========================================
@@ -132,10 +131,8 @@ CREATE TABLE public.ppob_products (
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 -- Performance Indexes
-CREATE INDEX idx_ppob_products_category ON public.ppob_products (category, is_active)
-WHERE is_active = true;
-CREATE INDEX idx_ppob_products_provider ON public.ppob_products (provider, is_active)
-WHERE is_active = true;
+CREATE INDEX idx_ppob_products_category ON public.ppob_products (category, is_active);
+CREATE INDEX idx_ppob_products_provider ON public.ppob_products (provider, is_active);
 -- ==========================================
 -- STEP 6: ROW LEVEL SECURITY (RLS)
 -- ==========================================
