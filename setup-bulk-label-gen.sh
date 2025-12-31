@@ -26,6 +26,10 @@ else
     npm install jspdf jspdf-autotable jsbarcode
 fi
 
+mkdir -p src/lib
+mkdir -p src/components/business
+mkdir -p supabase/migrations
+
 echo ""
 echo ">>> Running Typecheck..."
 npm run typecheck

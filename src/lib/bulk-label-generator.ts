@@ -1,210 +1,131 @@
-// Bulk Label Generator Service
-// Generate shipping labels and manifests in PDF format
-
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import JsBarcode from 'jsbarcode';
 
-export interface LabelData {
-    trackingNumber: string;
-    courier: string;
-    service: string;
-    destination: string;
-    recipient: string;
+export interface ShippingLabelData {
+    id: string;
+    recipientName: string;
+    recipientPhone: string;
+    recipientAddress: string;
+    courier: string; // JNE, JNT, SICEPAT
+    service: string; // REG, YES, etc.
+    resi: string;
     weight: number;
-    cost: number;
+    items: string;
 }
 
-export interface CourierGroup {
-    courier: string;
-    labels: LabelData[];
-}
+export function generateBulkLabels(labels: ShippingLabelData[]) {
+    // 1. Sort by Courier
+    const sortedLabels = [...labels].sort((a, b) => a.courier.localeCompare(b.courier));
 
-// Group labels by courier and sort
-export function groupAndSortLabels(labels: LabelData[]): CourierGroup[] {
-    const grouped = new Map<string, LabelData[]>();
-
-    labels.forEach(label => {
-        if (!grouped.has(label.courier)) {
-            grouped.set(label.courier, []);
-        }
-        grouped.get(label.courier)!.push(label);
-    });
-
-    // Convert to array and sort by courier name
-    const result: CourierGroup[] = [];
-    const sortedCouriers = Array.from(grouped.keys()).sort();
-
-    sortedCouriers.forEach(courier => {
-        result.push({
-            courier,
-            labels: grouped.get(courier)!
-        });
-    });
-
-    return result;
-}
-
-// Generate barcode as base64 image
-function generateBarcode(trackingNumber: string): string {
-    const canvas = document.createElement('canvas');
-    JsBarcode(canvas, trackingNumber, {
-        format: 'CODE128',
-        width: 2,
-        height: 50,
-        displayValue: false
-    });
-    return canvas.toDataURL('image/png');
-}
-
-// Generate single label PDF (10x10cm thermal label format)
-export function generateBulkLabelsPDF(groupedLabels: CourierGroup[]): jsPDF {
+    // A6 Size: 105 x 148 mm
     const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: [100, 100] // 10cm x 10cm
+        format: 'a6'
     });
 
-    let isFirstPage = true;
-    let totalLabels = 0;
+    sortedLabels.forEach((label, index) => {
+        if (index > 0) doc.addPage();
 
-    groupedLabels.forEach(group => {
-        // Add section header (courier name)
-        if (!isFirstPage) {
-            doc.addPage();
-        } else {
-            isFirstPage = false;
-        }
+        // Border
+        doc.setLineWidth(1);
+        doc.rect(5, 5, 95, 138);
 
-        // Courier section title page
-        doc.setFontSize(20);
+        // Header: Courier Logo Placeholder & Service
+        doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text(group.courier, 50, 40, { align: 'center' });
-        doc.setFontSize(12);
-        doc.text(`${group.labels.length} label(s)`, 50, 50, { align: 'center' });
-        doc.setFontSize(8);
-        doc.text(`Pages ${totalLabels + 1} - ${totalLabels + group.labels.length}`, 50, 60, { align: 'center' });
+        doc.text(label.courier.toUpperCase(), 10, 15);
 
-        // Generate each label
-        group.labels.forEach((label, idx) => {
-            doc.addPage();
-            totalLabels++;
+        doc.setFontSize(14);
+        doc.text(label.service, 80, 15, { align: 'right' });
 
-            // Border
-            doc.rect(5, 5, 90, 90);
+        doc.line(5, 18, 100, 18);
 
-            // Courier logo area (placeholder)
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text(label.courier, 50, 15, { align: 'center' });
-
-            // Service
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(label.service, 50, 22, { align: 'center' });
-
-            // Barcode
-            try {
-                const barcodeImg = generateBarcode(label.trackingNumber);
-                doc.addImage(barcodeImg, 'PNG', 15, 25, 70, 15);
-            } catch (e) {
-                // Fallback if barcode generation fails
-                doc.setFontSize(8);
-                doc.text(label.trackingNumber, 50, 32, { align: 'center' });
-            }
-
-            // Tracking Number
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text(label.trackingNumber, 50, 45, { align: 'center' });
-
-            // Separator
-            doc.line(10, 48, 90, 48);
-
-            // Recipient
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.text('TO:', 10, 54);
-            doc.setFont('helvetica', 'normal');
-            const recipientLines = doc.splitTextToSize(label.recipient, 75);
-            doc.text(recipientLines, 10, 60);
-
-            // Destination
-            doc.setFont('helvetica', 'bold');
-            const destY = 60 + (recipientLines.length * 5);
-            doc.text(label.destination, 10, destY);
-
-            // Weight & Cost
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Weight: ${label.weight} kg`, 10, 85);
-            doc.text(`Cost: Rp ${label.cost.toLocaleString('id-ID')}`, 10, 90);
-
-            // Label number
-            doc.text(`Label ${totalLabels} of ${groupedLabels.reduce((sum, g) => sum + g.labels.length, 0)}`, 60, 90);
+        // Barcode (Resi)
+        const canvas = document.createElement('canvas');
+        JsBarcode(canvas, label.resi, {
+            format: "CODE128",
+            displayValue: true,
+            width: 2,
+            height: 40,
+            fontSize: 14
         });
+        const barcodeData = canvas.toDataURL('image/png');
+        doc.addImage(barcodeData, 'PNG', 10, 22, 85, 25);
+
+        doc.line(5, 50, 100, 50);
+
+        // Recipient Info
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text("Penerima:", 10, 58);
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(label.recipientName, 10, 65);
+        doc.text(label.recipientPhone, 10, 71);
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        const splitAddress = doc.splitTextToSize(label.recipientAddress, 85);
+        doc.text(splitAddress, 10, 78);
+
+        // Footer Info
+        const bottomY = 110;
+        doc.line(5, bottomY, 100, bottomY);
+
+        doc.setFontSize(10);
+        doc.text(`Berat: ${label.weight} kg`, 10, bottomY + 8);
+
+        const splitItems = doc.splitTextToSize(`Isi: ${label.items}`, 85);
+        doc.text(splitItems, 10, bottomY + 16);
+
+        // Sorting Code (Mock)
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text(label.courier.substring(0, 3) + "-001", 90, 135, { align: 'right' });
     });
 
-    return doc;
+    doc.save(`bulk-labels-${Date.now()}.pdf`);
 }
 
-// Generate manifest document for a courier
-export function generateManifestPDF(group: CourierGroup): jsPDF {
-    const doc = new jsPDF();
+export function generateManifest(courier: string, labels: ShippingLabelData[]) {
+    // Filter for courier
+    const courierLabels = labels.filter(l => l.courier === courier);
+    if (courierLabels.length === 0) return;
 
-    // Title
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Manifest Serah Terima`, 105, 20, { align: 'center' });
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    doc.setFontSize(18);
+    doc.text(`Manifest Serah Terima - ${courier}`, 105, 20, { align: 'center' });
 
     doc.setFontSize(12);
-    doc.text(`Kurir: ${group.courier}`, 105, 30, { align: 'center' });
-
-    // Date
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    const today = new Date().toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    });
-    doc.text(`Tanggal: ${today}`, 20, 40);
-
-    // Summary
-    doc.text(`Total Paket: ${group.labels.length}`, 20, 47);
-    const totalWeight = group.labels.reduce((sum, l) => sum + l.weight, 0);
-    doc.text(`Total Berat: ${totalWeight.toFixed(2)} kg`, 20, 54);
+    doc.text(`Tanggal: ${new Date().toLocaleDateString()}`, 15, 30);
+    doc.text(`Total Paket: ${courierLabels.length}`, 15, 37);
 
     // Table
+    const tableData = courierLabels.map((l, i) => [
+        i + 1,
+        l.resi,
+        l.recipientName,
+        l.service,
+        `${l.weight} kg`
+    ]);
+
     (doc as any).autoTable({
-        head: [['No', 'Resi', 'Tujuan', 'Penerima', 'Berat', 'Biaya']],
-        body: group.labels.map((label, idx) => [
-            idx + 1,
-            label.trackingNumber,
-            label.destination,
-            label.recipient.substring(0, 30) + (label.recipient.length > 30 ? '...' : ''),
-            `${label.weight} kg`,
-            `Rp ${label.cost.toLocaleString('id-ID')}`
-        ]),
-        startY: 65,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [41, 128, 185] }
+        startY: 45,
+        head: [['No', 'Resi', 'Penerima', 'Layanan', 'Berat']],
+        body: tableData,
     });
 
-    // Signature section
+    // Signature
     const finalY = (doc as any).lastAutoTable.finalY + 20;
+    doc.text("Diserahkan Oleh,", 30, finalY);
+    doc.text("(...........................)", 30, finalY + 25);
 
-    doc.setFontSize(10);
-    doc.text('Diserahkan oleh:', 20, finalY);
-    doc.text('Diterima oleh:', 120, finalY);
+    doc.text("Diterima Oleh (Kurir),", 130, finalY);
+    doc.text("(...........................)", 130, finalY + 25);
 
-    // Signature boxes
-    doc.rect(20, finalY + 5, 60, 30);
-    doc.rect(120, finalY + 5, 60, 30);
-
-    doc.setFontSize(8);
-    doc.text('(Warehouse Staff)', 50, finalY + 42, { align: 'center' });
-    doc.text(`(${group.courier} Courier)`, 150, finalY + 42, { align: 'center' });
-
-    return doc;
+    doc.save(`manifest-${courier}-${Date.now()}.pdf`);
 }
