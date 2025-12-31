@@ -1,51 +1,81 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
-
-export interface AgentSubmission {
+export interface Agent {
+    id: string;
     name: string;
     address: string;
-    latitude?: number;
-    longitude?: number;
-    notes?: string;
+    latitude: number;
+    longitude: number;
+    courier_services: string[];
+    operating_hours: string;
+    contact_number: string;
+    is_verified: boolean;
 }
 
-export async function submitNewAgent(data: AgentSubmission) {
+export async function getAgents(
+    minLat: number,
+    maxLat: number,
+    minLng: number,
+    maxLng: number
+): Promise<Agent[]> {
     const supabase = await createClient();
+
+    const { data, error } = await (supabase as any)
+        .from('logistics_agents')
+        .select('*')
+        .eq('is_verified', true)
+        .gte('latitude', minLat)
+        .lte('latitude', maxLat)
+        .gte('longitude', minLng)
+        .lte('longitude', maxLng)
+        .limit(100);
+
+    if (error) {
+        console.error('Error fetching agents:', error);
+        return [];
+    }
+
+    return data || [];
+}
+
+export async function submitAgent(formData: FormData) {
+    const supabase = await createClient();
+
+    // Get current user
     const { data: { user } } = await supabase.auth.getUser();
-
-    // 1. Validation
-    if (!data.name || !data.address) {
-        return { success: false, message: 'Nama dan Alamat wajib diisi.' };
+    if (!user) {
+        return { success: false, message: 'You must be logged in to submit an agent.' };
     }
 
-    // 2. Mock Saving (or Real DB if table exists)
-    // For this "Utility" phase, assuming we might not have 'agents' table yet, so we'll mock success
-    // or insert into a generic 'feedback' or 'submissions' table if available.
+    const name = formData.get('name') as string;
+    const address = formData.get('address') as string;
+    const latitude = parseFloat(formData.get('latitude') as string);
+    const longitude = parseFloat(formData.get('longitude') as string);
+    const services = (formData.get('services') as string).split(',').map(s => s.trim());
+    const hours = formData.get('hours') as string;
+    const phone = formData.get('phone') as string;
 
-    // Attempt to insert into 'agent_submissions' (generic fallback)
-    /*
-    const { error } = await supabase.from('agent_submissions').insert({
-      user_id: user?.id,
-      ...data,
-      status: 'PENDING'
-    });
-    */
+    const { error } = await (supabase as any)
+        .from('logistics_agents')
+        .insert({
+            name,
+            address,
+            latitude,
+            longitude,
+            courier_services: services,
+            operating_hours: hours,
+            contact_number: phone,
+            submitted_by: user.id,
+            is_verified: false // Requires admin approval
+        });
 
-    // SIMULATION DELAY
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    // 3. Reward Logic (Gamification)
-    if (user) {
-        // Add Points (Mock or Real)
-        // await supabase.rpc('add_user_points', { user_id: user.id, points: 50 });
+    if (error) {
+        return { success: false, message: error.message };
     }
 
-    // 4. Return Success
-    return {
-        success: true,
-        message: 'Terima kasih! Lokasi Agen berhasil dikirim.',
-        pointsEarned: 50
-    };
+    revalidatePath('/area');
+    return { success: true, message: 'Agent submitted successfully! Waiting for verification.' };
 }

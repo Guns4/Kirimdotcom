@@ -1,100 +1,87 @@
 'use client';
 
+import { submitAgent } from '@/app/actions/agent-locator';
 import { useState } from 'react';
-import { submitNewAgent } from '@/app/actions/agent-locator';
-import { MapPin, Plus, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export default function AddAgentForm() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        address: '',
-        notes: ''
-    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+    async function handleSubmit(formData: FormData) {
+        setIsSubmitting(true);
+        setMessage(null);
 
         try {
-            const result = await submitNewAgent(formData);
+            const result = await submitAgent(formData);
             if (result.success) {
-                toast.success(`Berhasil! +${result.pointsEarned} Poin`, {
-                    description: result.message
-                });
-                setIsOpen(false);
-                setFormData({ name: '', address: '', notes: '' });
+                setMessage({ type: 'success', text: result.message! });
+                (document.getElementById('add-agent-form') as HTMLFormElement).reset();
             } else {
-                toast.error('Gagal', { description: result.message });
+                setMessage({ type: 'error', text: result.message! });
             }
-        } catch (err) {
-            toast.error('Terjadi kesalahan sistem');
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
         }
-    };
+    }
 
     return (
-        <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
-            >
-                <Plus className="w-4 h-4" /> Tambah Lokasi Agen
-            </button>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4">Add Missing Agent</h2>
+            <p className="text-gray-600 mb-6">Know a logistics drop point not on the map? Add it here!</p>
 
-            {isOpen && (
-                <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                <MapPin className="w-5 h-5 text-blue-600" />
-                                Kontribusi Agen Baru
-                            </h3>
-                            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Agen / Toko</label>
-                                <input
-                                    required
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Contoh: JNE Cicendo / Toko Berkah"
-                                    value={formData.name}
-                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
-                                <textarea
-                                    required
-                                    rows={3}
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Jl. Raya..."
-                                    value={formData.address}
-                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="bg-blue-50 p-3 rounded-lg text-xs text-blue-800">
-                                🎁 Dapatkan <strong>50 Poin</strong> untuk setiap lokasi valid yang dikonfirmasi.
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Kirim Lokasi'}
-                            </button>
-                        </form>
-                    </div>
+            {message && (
+                <div className={`p-4 mb-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {message.text}
                 </div>
             )}
-        </>
+
+            <form id="add-agent-form" action={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Agent Name</label>
+                    <input name="name" type="text" required placeholder="e.g. JNE Agen Kebayoran" className="mt-1 w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Coordinates</label>
+                    <div className="grid grid-cols-2 gap-4">
+                        <input name="latitude" type="number" step="any" required placeholder="Latitude (-6.xxx)" className="mt-1 w-full p-2 border rounded" />
+                        <input name="longitude" type="number" step="any" required placeholder="Longitude (106.xxx)" className="mt-1 w-full p-2 border rounded" />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Services (comma separated)</label>
+                    <input name="services" type="text" required placeholder="JNE, J&T, SiCepat" className="mt-1 w-full p-2 border rounded" />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Full Address</label>
+                    <textarea name="address" required className="mt-1 w-full p-2 border rounded" rows={3}></textarea>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Operational Hours</label>
+                        <input name="hours" type="text" placeholder="08:00 - 21:00" className="mt-1 w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Phone</label>
+                        <input name="phone" type="text" placeholder="0812..." className="mt-1 w-full p-2 border rounded" />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex items-center justify-center gap-2"
+                >
+                    {isSubmitting && <Loader2 className="animate-spin" size={20} />}
+                    Submit Agent
+                </button>
+            </form>
+        </div>
     );
 }
