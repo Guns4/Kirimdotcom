@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS public.approval_requests (
     requester_id UUID REFERENCES auth.users(id) NOT NULL,
     action_type TEXT NOT NULL, -- e.g. 'WITHDRAWAL', 'DELETE_USER', 'CHANGE_CONFIG'
     payload JSONB NOT NULL,    -- Details of the action
-    amount NUMERIC,            -- NEW: Optional amount for financial requests
     
     approver_id UUID REFERENCES auth.users(id),
     status approval_status DEFAULT 'PENDING',

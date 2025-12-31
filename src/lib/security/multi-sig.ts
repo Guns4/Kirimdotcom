@@ -16,7 +16,7 @@ interface ApproveRequestParams {
 }
 
 export async function createApprovalRequest({ userId, action, payload }: RequestApprovalParams) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
         .from('approval_requests')
@@ -34,7 +34,7 @@ export async function createApprovalRequest({ userId, action, payload }: Request
 }
 
 export async function processApproval({ adminId, requestId, decision, reason }: ApproveRequestParams) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // 1. Fetch Request
     const { data: request } = await supabase
