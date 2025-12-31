@@ -53,8 +53,8 @@ export async function emailTaxReport(report: TaxReportData) {
 
 // 3. Automation Helper (Run this on 1st of Month)
 export async function runMonthlyTaxJob() {
-    const date = new Date();
-    const prevMonth = date.getMonth(); // 0-11, if run on 1st, we want previous month. 
+    // const date = new Date();
+    // const prevMonth = date.getMonth(); // Unused
     // If run in Jan (0), we want Dec (12). Logic handled by Date object usually.
     // For sim:
     const data = await generateMonthlyTaxReport(2025, 12);

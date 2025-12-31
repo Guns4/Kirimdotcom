@@ -122,6 +122,7 @@ const nextConfig = {
 
     // Image optimization
     images: {
+        unoptimized: process.env.NEXT_EXPORT === 'true',
         domains: [
             'onkmywglrpjqulhephkf.supabase.co', // Supabase storage
         ],
@@ -140,6 +141,9 @@ const nextConfig = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+
+    // Mobile App (Capacitor) Support
+    output: process.env.NEXT_EXPORT === 'true' ? 'export' : undefined,
 
     // Production optimizations
     compiler: {
