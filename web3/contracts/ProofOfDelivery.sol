@@ -1,36 +1,58 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/**
+ * @title ProofOfDelivery
+ * @dev Stores immutable delivery records (receipts) on-chain.
+ */
 contract ProofOfDelivery {
     struct Receipt {
-        string orderId;
-        string recipientName;
+        string resi;
+        string courier;
+        address seller;
+        address buyer;
         uint256 timestamp;
-        string metadataIpfsUrl;
+        string status; // 'DELIVERED'
+        string proofUrl; // IPFS or Image URL
     }
 
-    mapping(string => Receipt) public receipts; // orderId -> Receipt
-    mapping(address => string[]) public sellerReceipts;
+    mapping(string => Receipt) public receipts; // resi -> Receipt
+    event ReceiptMinted(string indexed resi, address indexed seller, uint256 timestamp);
 
-    event ReceiptMinted(string indexed orderId, address indexed seller, uint256 timestamp);
+    address public admin;
 
-    function mintReceipt(string memory _orderId, string memory _recipient, string memory _ipfsUrl) public {
-        require(bytes(receipts[_orderId].orderId).length == 0, "Receipt already exists");
+    constructor() {
+        admin = msg.sender;
+    }
 
-        Receipt memory newReceipt = Receipt({
-            orderId: _orderId,
-            recipientName: _recipient,
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can mint");
+        _;
+    }
+
+    function mintReceipt(
+        string memory _resi,
+        string memory _courier,
+        address _seller,
+        address _buyer,
+        string memory _proofUrl
+    ) external onlyAdmin {
+        require(bytes(receipts[_resi].resi).length == 0, "Receipt already exists");
+
+        receipts[_resi] = Receipt({
+            resi: _resi,
+            courier: _courier,
+            seller: _seller,
+            buyer: _buyer,
             timestamp: block.timestamp,
-            metadataIpfsUrl: _ipfsUrl
+            status: "DELIVERED",
+            proofUrl: _proofUrl
         });
 
-        receipts[_orderId] = newReceipt;
-        sellerReceipts[msg.sender].push(_orderId);
-
-        emit ReceiptMinted(_orderId, msg.sender, block.timestamp);
+        emit ReceiptMinted(_resi, _seller, block.timestamp);
     }
 
-    function getReceipt(string memory _orderId) public view returns (Receipt memory) {
-        return receipts[_orderId];
+    function getReceipt(string memory _resi) external view returns (Receipt memory) {
+        return receipts[_resi];
     }
 }
