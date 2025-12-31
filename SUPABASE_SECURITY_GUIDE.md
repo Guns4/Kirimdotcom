@@ -1,16 +1,28 @@
-# Supabase Identity Security Setup
+# Supabase Identity Security Setup (Enhanced)
 
 ## 1. Enable Refresh Token Rotation (RTR)
 Prevent Session Hijacking by forcing token rotation.
 
 1. Go to **Supabase Dashboard** > **Authentication** > **Sessions**.
 2. Enable **"Rotate Refresh Tokens"**.
-3. Enable **"Detect Session Reuse"** (Critical for detecting theft).
-4. Set **Access Token Expiry** to `600` seconds (10 Minutes).
-5. Set **Refresh Token Expiry** to `86400` seconds (1 Day) or as needed.
+3. Enable **"Detect Session Reuse"** (Critical).
+4. **IMPORTANT:** Set Access Token Expiry to **900 seconds (15 Minutes)** per requirements.
 
-## 2. Middleware Implementation
-The project uses `@supabase/ssr` which handles token refreshing automatically in middleware.
-Ensure `src/middleware.ts` calls `supabase.auth.getUser()`.
+## 2. Client-Side Config (src/lib/supabase/client.ts)
+Ensure your `createHashClient` or `createBrowserClient` options include:
+```ts
+auth: {
+  autoRefreshToken: true,
+  persistSession: true,
+  detectSessionInUrl: true
+}
+```
 
-If reuse is detected, Supabase will revoke the session family automatically.
+## 3. Middleware Implementation (src/middleware.ts)
+We have generated a secure middleware logic snippet in `src/lib/auth/middleware-security.ts`.
+Please integrate it into your main middleware file.
+
+The logic checks:
+- Validation of Session
+- Detection of potential reuse (usually handled by Supabase throwing error on exchange)
+- Redirect to login on security error
