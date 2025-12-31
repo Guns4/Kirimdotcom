@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { processSmmOrder } from '@/lib/api/smm-provider';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,12 +31,12 @@ interface CheckoutRequest {
         tiktok_url?: string;
         link?: string;
     };
-    payment_method: string; // WALLET, QRIS, VA_BCA, etc.
+    payment_method: string;
 }
 
 // ==========================================
 // POST /api/marketplace/checkout
-// Process marketplace order
+// Enhanced with SMM Provider Integration
 // ==========================================
 
 export async function POST(req: Request) {
@@ -97,6 +98,7 @@ export async function POST(req: Request) {
                 qty: item.qty,
                 price_at_purchase: product.price_sell,
                 subtotal: subtotal,
+                provider_config: product.provider_config, // SMM provider config
             });
         }
 
@@ -116,7 +118,6 @@ export async function POST(req: Request) {
         if (payment_method === 'WALLET') {
             console.log('[Marketplace Checkout] Processing wallet payment...');
 
-            // Deduct balance from user wallet
             const { data: deductResult, error: deductError } = await supabase.rpc(
                 'deduct_balance',
                 {
@@ -135,10 +136,6 @@ export async function POST(req: Request) {
 
             paymentStatus = 'PAID';
             orderStatus = 'PROCESSING';
-        } else {
-            // For other payment methods (QRIS, VA), status remains UNPAID
-            // Actual payment processing would happen via webhook
-            console.log(`[Marketplace Checkout] Payment method ${payment_method} requires external processing`);
         }
 
         // 6. Create Order Record
@@ -170,61 +167,139 @@ export async function POST(req: Request) {
 
         console.log('[Marketplace Checkout] Order created:', order.id);
 
-        // 7. Insert Order Items
-        const itemsPayload = orderItems.map((item) => ({
-            ...item,
-            order_id: order.id,
-        }));
+        // 7. Process Order Items & SMM Integration
+        const itemsPayload: any[] = [];
 
+        for (const item of orderItems) {
+            const itemPayload: any = {
+                order_id: order.id,
+                product_id: item.product_id,
+                product_sku: item.product_sku,
+                product_name: item.product_name,
+                product_type: item.product_type,
+                qty: item.qty,
+                price_at_purchase: item.price_at_purchase,
+                subtotal: item.subtotal,
+                status: 'PENDING',
+            };
+
+            // ==========================================
+            // 🚀 AUTO SMM ORDER PROCESSING
+            // ==========================================
+            if (item.product_type === 'DIGITAL_SMM' && item.provider_config) {
+                console.log(`[Marketplace Checkout] Processing SMM order for: ${item.product_name}`);
+
+                try {
+                    // Extract target (username or URL)
+                    const target = target_input?.instagram_username ||
+                        target_input?.tiktok_url ||
+                        target_input?.link ||
+                        '';
+
+                    if (!target) {
+                        throw new Error('Missing target input for SMM service');
+                    }
+
+                    // Send order to SMM provider
+                    const smmResult = await processSmmOrder({
+                        service_id: item.provider_config.service_id,
+                        target: target,
+                        qty: item.qty,
+                    });
+
+                    if (smmResult.success) {
+                        console.log('[Marketplace Checkout] ✅ SMM order placed:', smmResult.provider_order_id);
+
+                        // Update item with provider info
+                        itemPayload.status = 'PROCESSING';
+                        itemPayload.provider_data = {
+                            provider_order_id: smmResult.provider_order_id,
+                            start_count: smmResult.start_count,
+                            remains: smmResult.remains,
+                            note: smmResult.note,
+                            processed_at: new Date().toISOString(),
+                        };
+
+                        // Update main order with provider info
+                        await supabase
+                            .from('marketplace_orders')
+                            .update({
+                                provider_order_id: smmResult.provider_order_id,
+                                provider_response: smmResult,
+                            })
+                            .eq('id', order.id);
+
+                    } else {
+                        // SMM order failed
+                        console.error('[Marketplace Checkout] ❌ SMM order failed:', smmResult.error);
+
+                        itemPayload.status = 'FAILED';
+                        itemPayload.provider_data = {
+                            error: smmResult.error,
+                            failed_at: new Date().toISOString(),
+                        };
+
+                        // Log for manual processing
+                        // TODO: Send alert to admin
+                    }
+
+                } catch (smmError: any) {
+                    console.error('[Marketplace Checkout] SMM processing exception:', smmError.message);
+
+                    itemPayload.status = 'FAILED';
+                    itemPayload.provider_data = {
+                        error: smmError.message,
+                        failed_at: new Date().toISOString(),
+                    };
+                }
+            }
+
+            itemsPayload.push(itemPayload);
+
+            // ==========================================
+            // 📦 DEDUCT STOCK (Physical Products Only)
+            // ==========================================
+            if (item.product_type === 'PHYSICAL') {
+                console.log(`[Marketplace Checkout] Deducting stock for ${item.product_sku}: ${item.qty} units`);
+
+                const { data: stockResult, error: stockError } = await supabase.rpc(
+                    'deduct_product_stock',
+                    {
+                        p_product_id: item.product_id,
+                        p_quantity: item.qty,
+                    }
+                );
+
+                if (stockError || !stockResult?.[0]?.success) {
+                    console.error('[Marketplace Checkout] Stock deduction failed:', stockResult?.[0]?.message);
+                } else {
+                    console.log(`[Marketplace Checkout] Stock deducted. New stock: ${stockResult[0].new_stock}`);
+                }
+            }
+        }
+
+        // 8. Insert Order Items
         const { error: itemsError } = await supabase
             .from('marketplace_order_items')
             .insert(itemsPayload);
 
         if (itemsError) {
             console.error('[Marketplace Checkout] Failed to insert items:', itemsError);
-            // Don't fail the order, just log the error
         }
 
-        // 8. Deduct Stock for Physical Products
-        for (const product of physicalProducts) {
-            console.log(`[Marketplace Checkout] Deducting stock for ${product.sku}: ${product.order_qty} units`);
+        // 9. Update Order Status
+        // If all digital items are processed, mark as completed
+        const allDigitalProcessed = digitalProducts.length > 0 &&
+            itemsPayload.filter(i => i.product_type === 'DIGITAL_SMM' && i.status === 'PROCESSING').length === digitalProducts.length;
 
-            const { data: stockResult, error: stockError } = await supabase.rpc(
-                'deduct_product_stock',
-                {
-                    p_product_id: product.id,
-                    p_quantity: product.order_qty,
-                }
-            );
-
-            if (stockError || !stockResult?.[0]?.success) {
-                console.error('[Marketplace Checkout] Stock deduction failed:', stockResult?.[0]?.message);
-                // Log but don't fail - order is already created
-            } else {
-                console.log(`[Marketplace Checkout] Stock deducted. New stock: ${stockResult[0].new_stock}`);
-            }
-        }
-
-        // 9. Process SMM Orders (Digital Products)
-        if (digitalProducts.length > 0) {
-            console.log('[Marketplace Checkout] Processing SMM orders...');
-
-            // TODO: Integrate with SMM provider API (MedanPedia, IrvanKede, etc.)
-            // For now, we'll just log the items
-            for (const product of digitalProducts) {
-                console.log(`[Marketplace Checkout] SMM Product: ${product.name}`, {
-                    quantity: product.order_qty,
-                    target: target_input,
-                    provider_config: product.provider_config,
-                });
-
-                // Placeholder for SMM API call
-                // const smmResult = await callSmmProvider({
-                //   service_id: product.provider_config.service_id,
-                //   quantity: product.order_qty,
-                //   link: target_input?.instagram_username || target_input?.link
-                // });
-            }
+        if (allDigitalProcessed && physicalProducts.length === 0) {
+            await supabase
+                .from('marketplace_orders')
+                .update({
+                    order_status: 'COMPLETED',
+                    completed_at: new Date().toISOString(),
+                })
+                .eq('id', order.id);
         }
 
         // 10. Success Response
@@ -236,11 +311,15 @@ export async function POST(req: Request) {
                 total_amount: totalAmount,
                 payment_method,
                 payment_status: paymentStatus,
-                order_status: orderStatus,
+                order_status: allDigitalProcessed && physicalProducts.length === 0 ? 'COMPLETED' : orderStatus,
                 items_count: items.length,
+                digital_items: digitalProducts.length,
+                physical_items: physicalProducts.length,
             },
             message: paymentStatus === 'PAID'
-                ? 'Order successfully placed and paid'
+                ? digitalProducts.length > 0
+                    ? 'Order successfully placed! Digital services are being processed automatically.'
+                    : 'Order successfully placed and paid'
                 : 'Order created, awaiting payment',
         });
 
