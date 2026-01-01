@@ -38,6 +38,8 @@ import BadgeFactory from './BadgeFactory';
 import CustomerSegmentation from './CustomerSegmentation';
 import FunnelViz from './FunnelViz';
 import GrowthHackingDeck from './GrowthHackingDeck';
+import CXForensics from './CXForensics';
+import KnowledgeCenter from './KnowledgeCenter';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -165,6 +167,8 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                             </div>
                         </div>
                     )}
+                    {activeTab === 'CX' && <CXForensics adminKey={adminKey} />}
+                    {activeTab === 'KNOWLEDGE' && <KnowledgeCenter adminKey={adminKey} />}
                     {activeTab === 'LOGISTICS' && (
                         <div className="space-y-6">
                             <CourierControl adminKey={adminKey} />

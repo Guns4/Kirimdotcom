@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, Rocket, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, Rocket, Eye, BookOpen, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -34,6 +34,18 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Marketing Intelligence',
         icon: Rocket,
         description: 'RFM segmentation, funnel analysis, A/B testing, and marketing automation.'
+    },
+    {
+        id: 'CX',
+        label: 'Customer Experience',
+        icon: Eye,
+        description: 'Session replay, NPS dashboard, and UX issue detection (rage clicks).'
+    },
+    {
+        id: 'KNOWLEDGE',
+        label: 'Knowledge & Legal',
+        icon: BookOpen,
+        description: 'Legal document versioning, API documentation control, and FAQ management.'
     },
     {
         id: 'LOGISTICS',
