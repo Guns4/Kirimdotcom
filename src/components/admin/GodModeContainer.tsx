@@ -35,6 +35,9 @@ import ProblematicShipment from './ProblematicShipment';
 import GachaMaster from './GachaMaster';
 import LoyaltyConfig from './LoyaltyConfig';
 import BadgeFactory from './BadgeFactory';
+import CustomerSegmentation from './CustomerSegmentation';
+import FunnelViz from './FunnelViz';
+import GrowthHackingDeck from './GrowthHackingDeck';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -150,6 +153,15 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                             <div className="space-y-6">
                                 <LoyaltyConfig adminKey={adminKey} />
                                 <BadgeFactory adminKey={adminKey} />
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'GROWTH' && (
+                        <div className="space-y-6">
+                            <FunnelViz adminKey={adminKey} />
+                            <div className="grid grid-cols-2 gap-6">
+                                <CustomerSegmentation adminKey={adminKey} />
+                                <GrowthHackingDeck adminKey={adminKey} />
                             </div>
                         </div>
                     )}

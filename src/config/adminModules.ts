@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, Rocket, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -28,6 +28,12 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Gamification & Loyalty',
         icon: Trophy,
         description: 'Game economy: gacha probability control, loyalty tiers, and badge management.'
+    },
+    {
+        id: 'GROWTH',
+        label: 'Marketing Intelligence',
+        icon: Rocket,
+        description: 'RFM segmentation, funnel analysis, A/B testing, and marketing automation.'
     },
     {
         id: 'LOGISTICS',
