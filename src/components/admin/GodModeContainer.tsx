@@ -25,6 +25,9 @@ import BroadcastManager from './BroadcastManager';
 import ProfitEngine from './ProfitEngine';
 import MobileAppManager from './MobileAppManager';
 import PluginRepository from './PluginRepository';
+import AgentCommandCenter from './AgentCommandCenter';
+import IoTDeviceGrid from './IoTDeviceGrid';
+import FleetLiveMap from './FleetLiveMap';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -69,7 +72,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">Complete System v8.0</p>
+                    <p className="text-xs text-slate-500 mt-1">Complete System v9.0</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -131,6 +134,9 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
+                    {activeTab === 'O2O' && <AgentCommandCenter adminKey={adminKey} />}
+                    {activeTab === 'IOT' && <IoTDeviceGrid adminKey={adminKey} />}
+                    {activeTab === 'FLEET' && <FleetLiveMap adminKey={adminKey} />}
                     {activeTab === 'MOBILE' && <MobileAppManager adminKey={adminKey} />}
                     {activeTab === 'PLUGINS' && <PluginRepository adminKey={adminKey} />}
                     {activeTab === 'CONTROLS' && <SystemControls adminKey={adminKey} />}
