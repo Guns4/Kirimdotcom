@@ -4,6 +4,7 @@ import { ADMIN_MODULES } from '@/config/adminModules';
 import { Search, Activity, LogOut } from 'lucide-react';
 import Omnibar from './ui/Omnibar';
 import NotificationBell from './ui/NotificationBell';
+import AdminTodoWidget from './ui/AdminTodoWidget';
 
 // Import Views
 import OverviewView from './views/OverviewView';
@@ -20,6 +21,8 @@ import WebhookMonitor from './WebhookMonitor';
 import SystemControls from './SystemControls';
 import DataBackupCenter from './DataBackupCenter';
 import AdminActivityLog from './AdminActivityLog';
+import BroadcastManager from './BroadcastManager';
+import ProfitEngine from './ProfitEngine';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -30,33 +33,24 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
         midtrans: 'Checking...'
     });
 
-    // Keyboard Shortcut Listener
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
                 setShowOmnibar(true);
             }
-            if (e.key === 'Escape') {
-                setShowOmnibar(false);
-            }
+            if (e.key === 'Escape') setShowOmnibar(false);
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Health Check Loop
     useEffect(() => {
         const checkHealth = async () => {
             try {
                 const res = await fetch('/api/admin/system-health');
-                if (res.ok) {
-                    const data = await res.json();
-                    setHealth(data);
-                }
-            } catch (e) {
-                console.error('Health check failed:', e);
-            }
+                if (res.ok) setHealth(await res.json());
+            } catch (e) { }
         };
         checkHealth();
         const interval = setInterval(checkHealth, 30000);
@@ -73,7 +67,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">System Phase 501-600</p>
+                    <p className="text-xs text-slate-500 mt-1">Complete System v7.0</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -81,9 +75,9 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-lg transition-all duration-200 text-sm font-bold
+                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-lg transition text-sm font-bold
                 ${activeTab === item.id
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50 translate-x-1'
+                                    ? 'bg-blue-600 text-white shadow-lg translate-x-1'
                                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
                         >
                             <item.icon size={18} />
@@ -92,14 +86,16 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     ))}
                 </nav>
 
-                {/* HEALTH WIDGET */}
+                {/* TODO WIDGET */}
+                <div className="p-4">
+                    <AdminTodoWidget adminKey={adminKey} />
+                </div>
+
+                {/* HEALTH */}
                 <div className="p-4 border-t border-slate-800 text-xs">
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-slate-500">System Status</span>
-                        <Activity
-                            size={12}
-                            className={health.database === 'ONLINE' ? 'text-green-500 animate-pulse' : 'text-red-500'}
-                        />
+                        <Activity size={12} className={health.database === 'ONLINE' ? 'text-green-500 animate-pulse' : 'text-red-500'} />
                     </div>
                     <div className="space-y-1">
                         <div className="flex justify-between">
@@ -108,34 +104,22 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                                 {health.database}
                             </span>
                         </div>
-                        <div className="flex justify-between">
-                            <span className="text-slate-600">SMM API</span>
-                            <span className={health.smm_provider === 'ONLINE' ? 'text-green-500' : 'text-orange-500'}>
-                                {health.smm_provider}
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-slate-600">Midtrans</span>
-                            <span className={health.midtrans === 'ONLINE' ? 'text-green-500' : 'text-orange-500'}>
-                                {health.midtrans}
-                            </span>
-                        </div>
                     </div>
                 </div>
 
                 <div className="p-4 border-t border-slate-800">
-                    <button className="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg text-sm transition">
+                    <button className="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg text-sm">
                         <LogOut size={16} /> Logout
                     </button>
                 </div>
             </div>
 
-            {/* MAIN CONTENT */}
+            {/* MAIN */}
             <main className="flex-1 ml-72 p-8 overflow-y-auto">
                 <header className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className="text-3xl font-black text-slate-800 tracking-tight">
-                            {ADMIN_MODULES.find(m => m.id === activeTab)?.label || activeTab}
+                        <h2 className="text-3xl font-black text-slate-800">
+                            {ADMIN_MODULES.find(m => m.id === activeTab)?.label}
                         </h2>
                         <p className="text-slate-500">
                             {ADMIN_MODULES.find(m => m.id === activeTab)?.description}
@@ -144,23 +128,18 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                     <div className="flex gap-4 items-center">
                         <NotificationBell adminKey={adminKey} />
-                        <button
-                            onClick={() => setShowOmnibar(true)}
-                            className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border shadow-sm text-sm text-slate-500 hover:border-blue-400 hover:text-blue-500 transition"
-                        >
+                        <button onClick={() => setShowOmnibar(true)} className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border">
                             <Search size={16} />
-                            <span className="hidden md:inline">Search (Ctrl + K)</span>
+                            <span className="hidden md:inline">Ctrl + K</span>
                         </button>
-                        <div className="bg-white px-4 py-2 rounded-full border shadow-sm text-sm font-bold text-slate-600 flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            Session Secure
-                        </div>
                     </div>
                 </header>
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
                     {activeTab === 'CONTROLS' && <SystemControls adminKey={adminKey} />}
+                    {activeTab === 'COMMS' && <BroadcastManager adminKey={adminKey} />}
+                    {activeTab === 'INTEL' && <ProfitEngine adminKey={adminKey} />}
                     {activeTab === 'BACKUP' && (
                         <div className="space-y-6">
                             <DataBackupCenter adminKey={adminKey} />
