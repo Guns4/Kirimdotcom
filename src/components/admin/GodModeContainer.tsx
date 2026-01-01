@@ -12,6 +12,8 @@ import FinancialDashboard from './FinancialDashboard';
 import MarketplaceManager from './MarketplaceManager';
 import MonetizationManager from './MonetizationManager';
 import SettingsManager from './SettingsManager';
+import SaaSManager from './SaaSManager';
+import ContentCMS from './ContentCMS';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -65,7 +67,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">System Phase 251-300</p>
+                    <p className="text-xs text-slate-500 mt-1">System Phase 301-400</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -153,6 +155,8 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
+                    {activeTab === 'SAAS' && <SaaSManager adminKey={adminKey} />}
+                    {activeTab === 'CMS' && <ContentCMS adminKey={adminKey} />}
                     {activeTab === 'MONETIZATION' && <MonetizationManager adminKey={adminKey} />}
                     {activeTab === 'SECURITY' && <SecurityView adminKey={adminKey} />}
                     {activeTab === 'FINANCE' && <FinancialDashboard customKey={adminKey} />}
