@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -16,6 +16,18 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Command Center',
         icon: LayoutDashboard,
         description: 'Real-time analytics and system overview dashboard.'
+    },
+    {
+        id: 'SUPPORT',
+        label: 'Helpdesk Center',
+        icon: LifeBuoy,
+        description: 'Customer support tickets and helpdesk management.'
+    },
+    {
+        id: 'SYSTEM',
+        label: 'System Health & Webhooks',
+        icon: Cpu,
+        description: 'Webhook monitoring, debugging, and system diagnostics.'
     },
     {
         id: 'SAAS',

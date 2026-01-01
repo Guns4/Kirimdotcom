@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ADMIN_MODULES } from '@/config/adminModules';
 import { Search, Activity, LogOut } from 'lucide-react';
 import Omnibar from './ui/Omnibar';
+import NotificationBell from './ui/NotificationBell';
 
 // Import Views
 import OverviewView from './views/OverviewView';
@@ -14,6 +15,8 @@ import MonetizationManager from './MonetizationManager';
 import SettingsManager from './SettingsManager';
 import SaaSManager from './SaaSManager';
 import ContentCMS from './ContentCMS';
+import SupportDesk from './SupportDesk';
+import WebhookMonitor from './WebhookMonitor';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -67,7 +70,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">System Phase 301-400</p>
+                    <p className="text-xs text-slate-500 mt-1">System Phase 401-500</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -137,6 +140,9 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     </div>
 
                     <div className="flex gap-4 items-center">
+                        {/* NOTIFICATION BELL */}
+                        <NotificationBell adminKey={adminKey} />
+
                         {/* OMNIBAR TRIGGER BUTTON */}
                         <button
                             onClick={() => setShowOmnibar(true)}
@@ -155,6 +161,8 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
+                    {activeTab === 'SUPPORT' && <SupportDesk adminKey={adminKey} />}
+                    {activeTab === 'SYSTEM' && <WebhookMonitor adminKey={adminKey} />}
                     {activeTab === 'SAAS' && <SaaSManager adminKey={adminKey} />}
                     {activeTab === 'CMS' && <ContentCMS adminKey={adminKey} />}
                     {activeTab === 'MONETIZATION' && <MonetizationManager adminKey={adminKey} />}
