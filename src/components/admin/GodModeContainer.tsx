@@ -23,6 +23,8 @@ import DataBackupCenter from './DataBackupCenter';
 import AdminActivityLog from './AdminActivityLog';
 import BroadcastManager from './BroadcastManager';
 import ProfitEngine from './ProfitEngine';
+import MobileAppManager from './MobileAppManager';
+import PluginRepository from './PluginRepository';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -67,7 +69,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">Complete System v7.0</p>
+                    <p className="text-xs text-slate-500 mt-1">Complete System v8.0</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -96,14 +98,6 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-slate-500">System Status</span>
                         <Activity size={12} className={health.database === 'ONLINE' ? 'text-green-500 animate-pulse' : 'text-red-500'} />
-                    </div>
-                    <div className="space-y-1">
-                        <div className="flex justify-between">
-                            <span className="text-slate-600">Database</span>
-                            <span className={health.database === 'ONLINE' ? 'text-green-500' : 'text-red-500'}>
-                                {health.database}
-                            </span>
-                        </div>
                     </div>
                 </div>
 
@@ -137,6 +131,8 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
+                    {activeTab === 'MOBILE' && <MobileAppManager adminKey={adminKey} />}
+                    {activeTab === 'PLUGINS' && <PluginRepository adminKey={adminKey} />}
                     {activeTab === 'CONTROLS' && <SystemControls adminKey={adminKey} />}
                     {activeTab === 'COMMS' && <BroadcastManager adminKey={adminKey} />}
                     {activeTab === 'INTEL' && <ProfitEngine adminKey={adminKey} />}

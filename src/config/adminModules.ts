@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -16,6 +16,18 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Command Center',
         icon: LayoutDashboard,
         description: 'Real-time analytics and system overview dashboard.'
+    },
+    {
+        id: 'MOBILE',
+        label: 'App Command Center',
+        icon: Smartphone,
+        description: 'Mobile app remote config, version control, and push notifications.'
+    },
+    {
+        id: 'PLUGINS',
+        label: 'Plugin Repository',
+        icon: Plug,
+        description: 'B2B plugin distribution and version management for WordPress/WooCommerce.'
     },
     {
         id: 'CONTROLS',
