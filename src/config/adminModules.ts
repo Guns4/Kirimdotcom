@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, LucideIcon
+    ShieldAlert, Banknote, Settings, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -19,9 +19,9 @@ export const ADMIN_MODULES: AdminModule[] = [
     },
     {
         id: 'MONETIZATION',
-        label: 'Monetization Engine',
+        label: 'Monetization & Ads',
         icon: Banknote,
-        description: 'Ad management, affiliates, and passive revenue streams.'
+        description: 'Hybrid ad management (Google + Internal campaigns).'
     },
     {
         id: 'FINANCE',
@@ -46,5 +46,11 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Security Radar',
         icon: ShieldAlert,
         description: 'Live threat monitoring and security event logs.'
+    },
+    {
+        id: 'SETTINGS',
+        label: 'System Config',
+        icon: Settings,
+        description: 'AdSense ratio control and global configuration.'
     },
 ];
