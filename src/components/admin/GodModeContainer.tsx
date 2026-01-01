@@ -32,6 +32,9 @@ import AIControlDeck from './AIControlDeck';
 import CourierControl from './CourierControl';
 import CODReconcileDesk from './CODReconcileDesk';
 import ProblematicShipment from './ProblematicShipment';
+import GachaMaster from './GachaMaster';
+import LoyaltyConfig from './LoyaltyConfig';
+import BadgeFactory from './BadgeFactory';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -139,6 +142,17 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
                     {activeTab === 'AI_INTEL' && <AIControlDeck adminKey={adminKey} />}
+                    {activeTab === 'GAME' && (
+                        <div className="grid grid-cols-3 gap-6">
+                            <div className="col-span-2">
+                                <GachaMaster adminKey={adminKey} />
+                            </div>
+                            <div className="space-y-6">
+                                <LoyaltyConfig adminKey={adminKey} />
+                                <BadgeFactory adminKey={adminKey} />
+                            </div>
+                        </div>
+                    )}
                     {activeTab === 'LOGISTICS' && (
                         <div className="space-y-6">
                             <CourierControl adminKey={adminKey} />
