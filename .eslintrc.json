@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "next/core-web-vitals"
+    ],
+    "rules": {
+        // Disable overly strict React Hooks rules for now
+        "react-hooks/exhaustive-deps": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        // Allow unescaped entities (quotes in JSX)
+        "react/no-unescaped-entities": "off",
+        // Allow HTML links for now (will fix incrementally)
+        "@next/next/no-html-link-for-pages": "warn",
+        // Allow any type usage
+        "@typescript-eslint/no-explicit-any": "off",
+        // Allow unused vars (warnings only)
+        "@typescript-eslint/no-unused-vars": "warn",
+        "no-unused-vars": "warn",
+        // Allow JSX in comment text nodes
+        "react/jsx-no-comment-textnodes": "warn",
+        // Allow missing react import
+        "react/react-in-jsx-scope": "off",
+        // Allow prop spreading
+        "react/jsx-props-no-spreading": "off"
+    }
+}
