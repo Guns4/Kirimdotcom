@@ -1,43 +1,72 @@
 ﻿import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { isVpnOrDatacenter } from '@/lib/saas/guards/vpn';
 import { checkAccountFarming } from '@/lib/saas/guards/farming';
+
+// Blacklist User-Agents commonly used by bots
+const BAD_AGENTS = ['curl', 'python', 'wget', 'libwww-perl', 'postmanruntime', 'bot', 'crawler', 'spider'];
 
 // Simple in-memory rate limiting (Production: use Redis/Upstash)
 const ipRateLimitMap = new Map<string, { count: number; lastReset: number }>();
 
 export function middleware(request: NextRequest) {
-  // Only protect SaaS API routes
+
+  // Only protect SaaS API routes (Divisi 4)
   if (request.nextUrl.pathname.startsWith('/api/v1')) {
 
     const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
     const apiKey = request.headers.get('x-api-key') || 'unknown';
+    const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
 
-    // LAYER 1: VPN/DATACENTER BLOCK (Free Tier Protection)
-    // Only for API endpoints, don't block main website
-    if (isVpnOrDatacenter(ip)) {
-      // Exception: Allow if user has Enterprise plan (IP whitelisted in DB)
-      // But for default free tier, we reject
-      console.warn(`[VPN SHIELD] Blocked VPN/Datacenter IP: ${ip}`);
+    // -----------------------------------------------------------------
+    // LAYER 1: GEO-BLOCKING (INDONESIA ONLY FOR FREE TIER)
+    // Nuclear option: Block all non-Indonesian traffic
+    // -----------------------------------------------------------------
+    // Hackers using VPN usually connect to US/SG/EU servers
+    // We reject all foreign traffic for this endpoint
+    // Note: request.geo available when deployed on Vercel. Local dev might be undefined.
+    const country = request.geo?.country || 'ID'; // Default ID on local
+
+    if (country !== 'ID') {
+      // Exception: Allow if user has Enterprise plan (Database whitelist logic here)
+      // But default: REJECT
+      console.warn(`[GEO-BLOCK] Rejected traffic from ${country} (IP: ${ip})`);
       return new NextResponse(
         JSON.stringify({
-          error: "Access Denied",
-          message: "VPN/Proxy/Datacenter IPs are not allowed on Free Tier. Please use a residential connection or upgrade to Enterprise for IP whitelisting.",
-          code: "VPN_BLOCKED"
+          error: "Geo-Restricted",
+          message: "Access denied from your country. CekKirim API is strictly for Indonesian operations. Contact sales for international access.",
+          country_detected: country
         }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // LAYER 2: MULTI-ACCOUNT FARMING PROTECTION
+    // -----------------------------------------------------------------
+    // LAYER 2: BOT AGENT FILTER (Anti-Automation)
+    // Block requests from obvious bot user-agents
+    // -----------------------------------------------------------------
+    if (BAD_AGENTS.some(agent => userAgent.includes(agent))) {
+      console.warn(`[BOT-FILTER] Blocked bot user-agent: ${userAgent.substring(0, 50)}`);
+      return new NextResponse(
+        JSON.stringify({
+          error: "Bot Detected",
+          message: "Invalid user-agent. Please use a real application or browser. Automated bots are not allowed on free tier.",
+          detected_agent: userAgent.substring(0, 50)
+        }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // -----------------------------------------------------------------
+    // LAYER 3: MULTI-ACCOUNT FARMING (From previous patch)
+    // -----------------------------------------------------------------
     if (apiKey !== 'unknown') {
       const farmingCheck = checkAccountFarming(ip, apiKey);
       if (farmingCheck.banned) {
-        console.error(`[FARMING SHIELD] Banned IP attempting access: ${ip}`);
+        console.error(`[FARMING] Banned IP attempting access: ${ip}`);
         return new NextResponse(
           JSON.stringify({
             error: "IP Banned",
-            message: "Suspicious activity detected. Multiple accounts linked to this IP. This IP has been permanently banned. Contact support@cekkirim.com if this is an error.",
+            message: "Suspicious activity detected. This IP has been permanently banned.",
             code: farmingCheck.reason
           }),
           { status: 403, headers: { 'Content-Type': 'application/json' } }
@@ -45,7 +74,9 @@ export function middleware(request: NextRequest) {
       }
     }
 
-    // LAYER 3: RATE LIMITING (From previous patch)
+    // -----------------------------------------------------------------
+    // LAYER 4: RATE LIMITING (60 req/min per IP)
+    // -----------------------------------------------------------------
     const now = Date.now();
     const windowMs = 60 * 1000; // 1 minute
     const limit = 60;
@@ -60,7 +91,7 @@ export function middleware(request: NextRequest) {
       return new NextResponse(
         JSON.stringify({
           error: "Too Many Requests",
-          message: "Rate limit exceeded. Max 60 requests per minute.",
+          message: "Rate limit exceeded. Maximum 60 requests per minute.",
           retry_after: Math.ceil((windowMs - (now - record.lastReset)) / 1000)
         }),
         {
@@ -76,7 +107,9 @@ export function middleware(request: NextRequest) {
     record.count++;
     ipRateLimitMap.set(ip, record);
 
-    // LAYER 4: SECURITY HEADERS
+    // -----------------------------------------------------------------
+    // LAYER 5: SECURITY HEADERS
+    // -----------------------------------------------------------------
     const response = NextResponse.next();
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('X-Frame-Options', 'DENY');
@@ -88,7 +121,7 @@ export function middleware(request: NextRequest) {
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');
 
-    // Cache headers for tracking endpoints (cost optimization)
+    // Cache headers for tracking endpoints
     if (request.nextUrl.pathname.includes('/track')) {
       response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=59');
     }
