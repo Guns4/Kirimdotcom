@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -16,6 +16,30 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Command Center',
         icon: LayoutDashboard,
         description: 'Real-time analytics and system overview dashboard.'
+    },
+    {
+        id: 'AI_INTEL',
+        label: 'AI Intelligence',
+        icon: Brain,
+        description: 'AI cost monitoring, chatbot training, and fraud detection management.'
+    },
+    {
+        id: 'O2O',
+        label: 'Agent Network',
+        icon: Store,
+        description: 'O2O agent management, approval queue, and POS monitoring.'
+    },
+    {
+        id: 'IOT',
+        label: 'Device & IoT',
+        icon: Cpu,
+        description: 'IoT device monitoring for printers, lockers, and hardware.'
+    },
+    {
+        id: 'FLEET',
+        label: 'Fleet Tracking',
+        icon: Map,
+        description: 'Real-time GPS tracking of delivery fleet and drivers.'
     },
     {
         id: 'MOBILE',
