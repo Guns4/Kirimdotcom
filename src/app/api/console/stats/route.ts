@@ -8,7 +8,7 @@ const supabase = createClient(
 
 // ==========================================
 // GET /api/console/stats
-// Get usage statistics for user
+// Get comprehensive usage statistics
 // ==========================================
 
 export async function GET(req: Request) {
@@ -19,6 +19,14 @@ export async function GET(req: Request) {
         if (!user_id) {
             return NextResponse.json({ error: 'user_id required' }, { status: 400 });
         }
+
+        // Get API key info (quota limit)
+        const { data: apiKey } = await supabase
+            .from('saas_api_keys')
+            .select('quota_limit, request_count')
+            .eq('user_id', user_id)
+            .eq('is_active', true)
+            .single();
 
         // Get total requests
         const { count: totalRequests } = await supabase
@@ -37,23 +45,50 @@ export async function GET(req: Request) {
             .eq('user_id', user_id)
             .gte('created_at', monthStart.toISOString());
 
-        // Get success rate
-        const { data: logs } = await supabase
+        // Get success rate (last 100 requests)
+        const { data: recentLogs } = await supabase
             .from('saas_usage_logs')
             .select('status_code')
             .eq('user_id', user_id)
+            .order('created_at', { ascending: false })
             .limit(100);
 
-        const successCount = logs?.filter((log) => log.status_code >= 200 && log.status_code < 300).length || 0;
-        const successRate = logs && logs.length > 0 ? Math.round((successCount / logs.length) * 100) : 100;
+        const successCount =
+            recentLogs?.filter((log) => log.status_code >= 200 && log.status_code < 300).length || 0;
+        const successRate =
+            recentLogs && recentLogs.length > 0 ? Math.round((successCount / recentLogs.length) * 100) : 100;
+
+        // Get average response time (last 100 requests)
+        const { data: timingLogs } = await supabase
+            .from('saas_usage_logs')
+            .select('response_time')
+            .eq('user_id', user_id)
+            .not('response_time', 'is', null)
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+        const avgResponseTime =
+            timingLogs && timingLogs.length > 0
+                ? Math.round(
+                    timingLogs.reduce((sum, log) => sum + (log.response_time || 0), 0) / timingLogs.length
+                )
+                : 150;
+
+        // Calculate reset date (first day of next month)
+        const resetDate = new Date();
+        resetDate.setMonth(resetDate.getMonth() + 1);
+        resetDate.setDate(1);
+        const resetDateStr = resetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
         return NextResponse.json({
             success: true,
             stats: {
                 total_requests: totalRequests || 0,
-                month_requests: monthRequests || 0,
+                month_requests: monthRequests || apiKey?.request_count || 0,
+                quota_limit: apiKey?.quota_limit || 10000,
                 success_rate: successRate,
-                avg_response_time: 150, // TODO: Calculate from logs
+                avg_response_time: avgResponseTime,
+                reset_date: resetDateStr,
             },
         });
     } catch (error: any) {
