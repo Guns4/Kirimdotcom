@@ -41,6 +41,8 @@ import GrowthHackingDeck from './GrowthHackingDeck';
 import CXForensics from './CXForensics';
 import KnowledgeCenter from './KnowledgeCenter';
 import InfrastructureFortress from './InfrastructureFortress';
+import EcosystemGovernance from './EcosystemGovernance';
+import DistributionLicensing from './DistributionLicensing';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -171,6 +173,8 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     {activeTab === 'CX' && <CXForensics adminKey={adminKey} />}
                     {activeTab === 'KNOWLEDGE' && <KnowledgeCenter adminKey={adminKey} />}
                     {activeTab === 'FORTRESS' && <InfrastructureFortress adminKey={adminKey} />}
+                    {activeTab === 'COMMERCE' && <EcosystemGovernance adminKey={adminKey} />}
+                    {activeTab === 'DISTRO' && <DistributionLicensing adminKey={adminKey} />}
                     {activeTab === 'LOGISTICS' && (
                         <div className="space-y-6">
                             <CourierControl adminKey={adminKey} />
