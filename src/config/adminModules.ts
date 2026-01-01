@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -22,6 +22,12 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'AI Intelligence',
         icon: Brain,
         description: 'AI cost monitoring, chatbot training, and fraud detection management.'
+    },
+    {
+        id: 'LOGISTICS',
+        label: 'Domestic Ops',
+        icon: Truck,
+        description: 'Indonesian logistics: COD reconciliation, courier control, and RTS tracking.'
     },
     {
         id: 'O2O',

@@ -29,6 +29,9 @@ import AgentCommandCenter from './AgentCommandCenter';
 import IoTDeviceGrid from './IoTDeviceGrid';
 import FleetLiveMap from './FleetLiveMap';
 import AIControlDeck from './AIControlDeck';
+import CourierControl from './CourierControl';
+import CODReconcileDesk from './CODReconcileDesk';
+import ProblematicShipment from './ProblematicShipment';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -136,6 +139,13 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
                     {activeTab === 'AI_INTEL' && <AIControlDeck adminKey={adminKey} />}
+                    {activeTab === 'LOGISTICS' && (
+                        <div className="space-y-6">
+                            <CourierControl adminKey={adminKey} />
+                            <CODReconcileDesk adminKey={adminKey} />
+                            <ProblematicShipment adminKey={adminKey} />
+                        </div>
+                    )}
                     {activeTab === 'O2O' && <AgentCommandCenter adminKey={adminKey} />}
                     {activeTab === 'IOT' && <IoTDeviceGrid adminKey={adminKey} />}
                     {activeTab === 'FLEET' && <FleetLiveMap adminKey={adminKey} />}
