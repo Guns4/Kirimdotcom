@@ -23,18 +23,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // ZONE 2: GEO-FENCING (Indonesia Only untuk routes sensitif)
-  const protectedRoutes = ['/auth', '/api', '/admin', '/console'];
+  // ONLY apply to sensitive admin/API routes, NOT public pages
+  const protectedRoutes = ['/api/admin', '/api/saas', '/admin', '/console', '/god-mode'];
   const isProtected = protectedRoutes.some(r => path.startsWith(r));
 
   if (isProtected && country !== 'ID') {
     // Exception untuk bots
-    if (userAgent.includes('Applebot') || userAgent.includes('Googlebot')) {
-      // Allow crawlers
+    if (userAgent.includes('Applebot') || userAgent.includes('Googlebot') || userAgent.includes('Vercel')) {
+      // Allow crawlers and Vercel bot
     } else {
       return new NextResponse(
         JSON.stringify({
           error: "Access Denied",
-          message: "CekKirim is only available in Indonesia."
+          message: "This section is only available in Indonesia."
         }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
