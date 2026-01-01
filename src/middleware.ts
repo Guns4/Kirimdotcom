@@ -27,9 +27,17 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes = ['/api/admin', '/api/saas', '/admin', '/console', '/god-mode'];
   const isProtected = protectedRoutes.some(r => path.startsWith(r));
 
-  if (isProtected && country !== 'ID') {
+  // DEVELOPMENT MODE BYPASS
+  const isDevelopment = process.env.NODE_ENV === 'development' ||
+    ip === '127.0.0.1' ||
+    ip === '::1' ||
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.') ||
+    userAgent.includes('Vercel');
+
+  if (isProtected && country !== 'ID' && !isDevelopment) {
     // Exception untuk bots
-    if (userAgent.includes('Applebot') || userAgent.includes('Googlebot') || userAgent.includes('Vercel')) {
+    if (userAgent.includes('Applebot') || userAgent.includes('Googlebot')) {
       // Allow crawlers and Vercel bot
     } else {
       return new NextResponse(
