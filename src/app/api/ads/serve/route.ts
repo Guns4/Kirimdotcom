@@ -1,39 +1,43 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
-export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const keyword = searchParams.get('keyword');
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-    if (!keyword) {
-        return NextResponse.json({ ads: [] });
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const zone = searchParams.get('zone');
+
+    if (!zone) {
+        return NextResponse.json({ error: 'Zone required' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    try {
+        // 1. Get active ads for this zone
+        const { data: ads, error } = await supabase
+            .from('ad_campaigns')
+            .select('*')
+            .eq('zone_code', zone)
+            .eq('is_active', true)
+            .gte('end_date', new Date().toISOString().split('T')[0]);
 
-    // 1. Find Active Bids for Keyword
-    // Order by Bid Price DESC to get highest bidder
-    const { data: bids } = await supabase
-        .from('ad_bids')
-        .select('*, products:product_id(*)') // Mocking relation to product
-        .eq('keyword', keyword.toLowerCase())
-        .eq('status', 'ACTIVE')
-        .order('bid_price', { ascending: false })
-        .limit(3); // Top 3 Slots
+        if (error) throw error;
 
-    if (!bids || bids.length === 0) {
-        return NextResponse.json({ ads: [] });
+        if (!ads || ads.length === 0) {
+            return NextResponse.json({ ad: null });
+        }
+
+        // 2. Random rotation (if multiple ads in same zone)
+        const randomAd = ads[Math.floor(Math.random() * ads.length)];
+
+        // 3. Increment view counter (fire and forget - async)
+        supabase.rpc('increment_ad_view', { ad_id: randomAd.id }).then();
+
+        return NextResponse.json({ ad: randomAd });
+    } catch (error: any) {
+        console.error('Ad serve error:', error);
+        return NextResponse.json({ ad: null });
     }
-
-    // 2. Async: Log Impressions (Don't await to speed up response)
-    const impressionLog = bids.map(bid => ({
-        bid_id: bid.id,
-        type: 'IMPRESSION',
-        cost: 0
-    }));
-    supabase.from('ad_analytics').insert(impressionLog).then(({ error }) => {
-        if (error) console.error('Ad Impression Log Error', error);
-    });
-
-    return NextResponse.json({ ads: bids });
 }

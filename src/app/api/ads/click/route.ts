@@ -1,45 +1,25 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
-export async function POST(request: Request) {
-    const body = await request.json();
-    const { bidId, sellerId } = body;
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-    if (!bidId) return NextResponse.json({ error: 'Missing Bid ID' }, { status: 400 });
+export async function POST(req: Request) {
+    try {
+        const { ad_id } = await req.json();
 
-    const supabase = await createClient();
+        if (!ad_id) {
+            return NextResponse.json({ error: 'ad_id required' }, { status: 400 });
+        }
 
-    // 1. Get Bid Details (Secure check)
-    const { data: bid } = await supabase
-        .from('ad_bids')
-        .select('bid_price')
-        .eq('id', bidId)
-        .single();
+        // Increment click counter
+        await supabase.rpc('increment_ad_click', { p_ad_id: ad_id });
 
-    if (!bid) return NextResponse.json({ error: 'Bid not found' }, { status: 404 });
-
-    const cost = bid.bid_price;
-
-    // 2. Charge Seller (CPC)
-    const { error: ledgerError } = await supabase.from('ledger_entries').insert({
-        user_id: sellerId,
-        amount: -cost,
-        type: 'AD_SPEND',
-        description: `Iklan Klik (Bid ID: ${bidId.substring(0, 8)})`
-    } as any);
-
-    if (ledgerError) {
-        console.error('Ad Billing Error', ledgerError);
-        // Continue to log analytic but maybe flag as unpaid?
-        // Ideally we check balance first, but for speed we optimistic charge
+        return NextResponse.json({ success: true });
+    } catch (error: any) {
+        console.error('Click tracking error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    // 3. Log Click Analytic
-    await supabase.from('ad_analytics').insert({
-        bid_id: bidId,
-        type: 'CLICK',
-        cost: cost
-    });
-
-    return NextResponse.json({ success: true, cost });
 }

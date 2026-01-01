@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Server, Globe, LucideIcon
+    ShieldAlert, Banknote, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -16,6 +16,12 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Command Center',
         icon: LayoutDashboard,
         description: 'Real-time analytics and system overview dashboard.'
+    },
+    {
+        id: 'MONETIZATION',
+        label: 'Monetization Engine',
+        icon: Banknote,
+        description: 'Ad management, affiliates, and passive revenue streams.'
     },
     {
         id: 'FINANCE',
@@ -41,11 +47,4 @@ export const ADMIN_MODULES: AdminModule[] = [
         icon: ShieldAlert,
         description: 'Live threat monitoring and security event logs.'
     },
-    // Future Division 4 integration point:
-    // { 
-    //   id: 'SAAS', 
-    //   label: 'SaaS & Plugins', 
-    //   icon: Globe,
-    //   description: 'B2B SaaS platform and WordPress plugin management (Division 4).' 
-    // },
 ];
