@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -16,6 +16,18 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Command Center',
         icon: LayoutDashboard,
         description: 'Real-time analytics and system overview dashboard.'
+    },
+    {
+        id: 'CONTROLS',
+        label: 'System Controls',
+        icon: Sliders,
+        description: 'Feature flags and emergency kill switches for instant service control.'
+    },
+    {
+        id: 'BACKUP',
+        label: 'Data Backup',
+        icon: HardDrive,
+        description: 'Export and backup critical data as CSV files.'
     },
     {
         id: 'SUPPORT',

@@ -17,6 +17,9 @@ import SaaSManager from './SaaSManager';
 import ContentCMS from './ContentCMS';
 import SupportDesk from './SupportDesk';
 import WebhookMonitor from './WebhookMonitor';
+import SystemControls from './SystemControls';
+import DataBackupCenter from './DataBackupCenter';
+import AdminActivityLog from './AdminActivityLog';
 
 export default function GodModeContainer({ adminKey }: { adminKey: string }) {
     const [activeTab, setActiveTab] = useState('OVERVIEW');
@@ -27,7 +30,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
         midtrans: 'Checking...'
     });
 
-    // Keyboard Shortcut Listener (Ctrl+K or Cmd+K)
+    // Keyboard Shortcut Listener
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -42,7 +45,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Health Check Loop (every 30 seconds)
+    // Health Check Loop
     useEffect(() => {
         const checkHealth = async () => {
             try {
@@ -64,13 +67,13 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
         <div className="min-h-screen bg-slate-50 flex">
             {showOmnibar && <Omnibar adminKey={adminKey} onClose={() => setShowOmnibar(false)} />}
 
-            {/* MODULAR SIDEBAR */}
+            {/* SIDEBAR */}
             <div className="w-72 bg-slate-900 text-white flex flex-col h-screen fixed left-0 top-0 z-40">
                 <div className="p-6 border-b border-slate-800">
                     <h1 className="text-2xl font-black tracking-tighter">
                         GOD<span className="text-blue-500">MODE</span>
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1">System Phase 401-500</p>
+                    <p className="text-xs text-slate-500 mt-1">System Phase 501-600</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -89,7 +92,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     ))}
                 </nav>
 
-                {/* HEALTH STATUS MINI WIDGET */}
+                {/* HEALTH WIDGET */}
                 <div className="p-4 border-t border-slate-800 text-xs">
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-slate-500">System Status</span>
@@ -122,12 +125,12 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="p-4 border-t border-slate-800">
                     <button className="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-900/20 rounded-lg text-sm transition">
-                        <LogOut size={16} /> Logout Secure Session
+                        <LogOut size={16} /> Logout
                     </button>
                 </div>
             </div>
 
-            {/* MAIN CONTENT AREA */}
+            {/* MAIN CONTENT */}
             <main className="flex-1 ml-72 p-8 overflow-y-auto">
                 <header className="flex justify-between items-center mb-8">
                     <div>
@@ -140,17 +143,13 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     </div>
 
                     <div className="flex gap-4 items-center">
-                        {/* NOTIFICATION BELL */}
                         <NotificationBell adminKey={adminKey} />
-
-                        {/* OMNIBAR TRIGGER BUTTON */}
                         <button
                             onClick={() => setShowOmnibar(true)}
                             className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border shadow-sm text-sm text-slate-500 hover:border-blue-400 hover:text-blue-500 transition"
                         >
                             <Search size={16} />
                             <span className="hidden md:inline">Search (Ctrl + K)</span>
-                            <span className="md:hidden">Search</span>
                         </button>
                         <div className="bg-white px-4 py-2 rounded-full border shadow-sm text-sm font-bold text-slate-600 flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -161,6 +160,13 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
 
                 <div className="animate-in fade-in duration-500">
                     {activeTab === 'OVERVIEW' && <OverviewView />}
+                    {activeTab === 'CONTROLS' && <SystemControls adminKey={adminKey} />}
+                    {activeTab === 'BACKUP' && (
+                        <div className="space-y-6">
+                            <DataBackupCenter adminKey={adminKey} />
+                            <AdminActivityLog adminKey={adminKey} />
+                        </div>
+                    )}
                     {activeTab === 'SUPPORT' && <SupportDesk adminKey={adminKey} />}
                     {activeTab === 'SYSTEM' && <WebhookMonitor adminKey={adminKey} />}
                     {activeTab === 'SAAS' && <SaaSManager adminKey={adminKey} />}
