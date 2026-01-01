@@ -1,6 +1,6 @@
 import {
     LayoutDashboard, Users, Wallet, ShoppingBag,
-    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, Rocket, Eye, BookOpen, LucideIcon
+    ShieldAlert, Banknote, Settings, Globe, FileText, LifeBuoy, Cpu, Sliders, HardDrive, Megaphone, LineChart, Smartphone, Plug, Store, Map, Brain, Truck, Trophy, Rocket, Eye, BookOpen, Shield, LucideIcon
 } from 'lucide-react';
 
 export interface AdminModule {
@@ -46,6 +46,12 @@ export const ADMIN_MODULES: AdminModule[] = [
         label: 'Knowledge & Legal',
         icon: BookOpen,
         description: 'Legal document versioning, API documentation control, and FAQ management.'
+    },
+    {
+        id: 'FORTRESS',
+        label: 'Infrastructure & Security',
+        icon: Shield,
+        description: 'Server monitoring, 2FA security, IP whitelist, honeypot defense, and cyber attack logging.'
     },
     {
         id: 'LOGISTICS',
