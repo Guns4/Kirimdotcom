@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy initialization to avoid errors during static generation
+function getSupabase() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
 
 export async function GET(req: Request) {
     const secret = req.headers.get('x-admin-secret');
@@ -13,7 +16,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const { data, error } = await supabase.rpc('get_high_risk_transactions');
+        const { data, error } = await getSupabase().rpc('get_high_risk_transactions');
 
         if (error) throw error;
 
@@ -52,7 +55,7 @@ export async function POST(req: Request) {
             // TODO: Implement actual ban/refund logic here
         }
 
-        const { error } = await supabase
+        const { error } = await getSupabase()
             .from('fraud_alerts')
             .update(updateData)
             .eq('id', alert_id);

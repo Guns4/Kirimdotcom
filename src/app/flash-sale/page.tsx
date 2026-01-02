@@ -1,7 +1,10 @@
 import React from 'react';
 import Countdown from '@/components/flashsale/Countdown';
 import FlashSaleCard from '@/components/flashsale/FlashSaleCard';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Smartphone } from 'lucide-react';
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 // Mock Data for Prototype
 const MOCK_ITEMS = [
@@ -83,8 +86,8 @@ export default function FlashSalePage() {
             <button
               key={tag}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${i === 0
-                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-black'
-                  : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'
+                ? 'bg-zinc-900 text-white dark:bg-white dark:text-black'
+                : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'
                 }`}
             >
               {tag}

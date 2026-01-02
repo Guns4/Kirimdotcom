@@ -32,15 +32,20 @@ ON CONFLICT (slug) DO NOTHING;
 -- ============================================================================
 -- 4. SECURITY: Prevent Withdrawals from System Wallets
 -- ============================================================================
+-- We can enforce this via RLS or inside the withdrawal function.
+-- Here is an RLS policy ensuring only Admins/Server can touch these.
+
 ALTER TABLE public.wallets ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "System Wallets Read-Only for Public" ON public.wallets
 FOR SELECT USING (
-  -- Users see their own, OR it's a system wallet
+  -- Users see their own, OR it's a system wallet (maybe needed for transparency, otherwise restrict)
   (auth.uid() = user_id) OR (is_system = TRUE AND auth.role() = 'service_role')
 );
 
--- HELPER
+-- NOTE: Direct updates are already blocked by Ledger System trigger.
+
+
 CREATE OR REPLACE FUNCTION get_system_wallet_id(p_slug TEXT) RETURNS UUID AS $$
 DECLARE
   v_id UUID;

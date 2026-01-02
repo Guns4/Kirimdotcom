@@ -1,4 +1,4 @@
-﻿'use server';
+'use server';
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
@@ -8,8 +8,7 @@ export async function saveBankAccount(
   accountNumber: string,
   accountName: string
 ) {
-  const supabasePromise = await createClient();
-  const supabase = await supabasePromise;
+  const supabase = createClient();
 
   // 1. Double check auth
   const {
@@ -18,7 +17,7 @@ export async function saveBankAccount(
   if (!user) throw new Error('Unauthorized');
 
   // 2. Insert
-  const { error } = await (supabase as any).from('saved_bank_accounts').insert({
+  const { error } = await supabase.from('saved_bank_accounts').insert({
     user_id: user.id,
     bank_code: bankCode,
     account_number: accountNumber,
@@ -33,9 +32,7 @@ export async function saveBankAccount(
 }
 
 export async function getSavedAccounts() {
-  const supabase = await createClient();
-  const { data } = await (supabase as any)
-    .from('saved_bank_accounts')
-    .select('*');
+  const supabase = createClient();
+  const { data } = await supabase.from('saved_bank_accounts').select('*');
   return data || [];
 }

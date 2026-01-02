@@ -11,9 +11,10 @@ export function ActionRequiredCard({ data }: { data: ActionMetrics }) {
     const isCritical = totalActions > 10;
 
     return (
-        <div className={`p-6 rounded-2xl border shadow-sm relative overflow-hidden ${isCritical ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'
-            }`}>
-            <div className="flex justify-between items-start mb-4">
+        <div className={`p-6 rounded-2xl border shadow-sm relative overflow-hidden ${
+            isCritical ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'
+        }`}>
+             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${isCritical ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
                         <AlertCircle className="w-5 h-5" />

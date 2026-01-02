@@ -1,4 +1,4 @@
-﻿// Flag to prevent double injection
+// Flag to prevent double injection
 if (!document.getElementById('cekkirim-sidebar-root')) {
     initInjector();
 }
@@ -9,7 +9,7 @@ function initInjector() {
     // 1. Create Toggle Button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'cekkirim-toggle';
-    toggleBtn.innerHTML = 'ðŸšš'; // Simple icon
+    toggleBtn.innerHTML = '🚚'; // Simple icon
     toggleBtn.title = 'Open CekKirim';
     
     // 2. Create Iframe Container (Sidebar)
@@ -35,9 +35,12 @@ function initInjector() {
         if (isOpen) {
             sidebar.classList.remove('hidden');
             toggleBtn.classList.add('active');
+            // Optional: Adjust WA main container width if needed
+            // document.getElementById('app').style.width = 'calc(100% - 350px)';
         } else {
             sidebar.classList.add('hidden');
             toggleBtn.classList.remove('active');
+            // document.getElementById('app').style.width = '100%';
         }
     });
 }

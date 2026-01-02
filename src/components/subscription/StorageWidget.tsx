@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Cloud, ArrowUpCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { StorageService, PLANS } from '@/lib/storage-service';
 import { useRouter } from 'next/navigation';
 

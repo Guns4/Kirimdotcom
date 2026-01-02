@@ -22,6 +22,7 @@ UPDATE USING (auth.uid() = user_id);
 -- ==========================================
 -- RPC Function: Deduct Balance (Atomic)
 -- ==========================================
+DROP FUNCTION IF EXISTS deduct_balance(UUID, NUMERIC);
 CREATE OR REPLACE FUNCTION deduct_balance(p_user_id UUID, p_amount NUMERIC) RETURNS TABLE (
         success BOOLEAN,
         message TEXT,
@@ -64,6 +65,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ==========================================
 -- RPC Function: Add Balance (Refund/Top-up)
 -- ==========================================
+DROP FUNCTION IF EXISTS add_balance(UUID, NUMERIC);
 CREATE OR REPLACE FUNCTION add_balance(p_user_id UUID, p_amount NUMERIC) RETURNS TABLE (
         success BOOLEAN,
         message TEXT,
@@ -89,6 +91,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ==========================================
 -- RPC Function: Get Balance
 -- ==========================================
+DROP FUNCTION IF EXISTS get_balance(UUID);
 CREATE OR REPLACE FUNCTION get_balance(p_user_id UUID) RETURNS NUMERIC AS $$
 DECLARE v_balance NUMERIC;
 BEGIN

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Camera as CameraIcon, X } from 'lucide-react';
 
 export function WarrantyCamera({ onCapture }: { onCapture: (base64: string) => void }) {

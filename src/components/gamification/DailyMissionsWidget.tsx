@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { CheckCircle, Clock, Gift } from 'lucide-react';
 import { claimMissionAction } from '@/app/actions/mission-actions'; // We need to create this action wrapper
 import { toast } from 'sonner';

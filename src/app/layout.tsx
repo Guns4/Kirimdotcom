@@ -24,6 +24,7 @@ import { VercelInsights } from '@/components/monitoring/VercelInsights';
 import EmulatorGuard from '@/components/security/EmulatorGuard';
 import LiveUpdateManager from '@/components/system/LiveUpdateManager';
 import ShakeFeedback from '@/components/qa/ShakeFeedback';
+import { ClientHooksInitializer } from '@/components/providers/ClientHooksInitializer';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,19 +80,13 @@ export const metadata: Metadata = {
   },
 };
 
-import { useDeepLink } from '@/hooks/useDeepLink';
-import { useShake } from '@/hooks/useShake';
+// Client hooks moved to ClientHooksInitializer component
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Initialize Deep Linking
-  useDeepLink();
-
-  // Initialize Shake-to-Refresh
-  useShake();
 
   // Wrap in try-catch to handle cases where request context is not available
   let isWidget = false;
@@ -175,6 +170,7 @@ export default function RootLayout({
         <VercelMonitoring />
         <LiveUpdateManager />
         <ShakeFeedback />
+        <ClientHooksInitializer />
       </body>
     </html>
   );

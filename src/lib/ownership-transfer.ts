@@ -1,7 +1,22 @@
 // Ownership Transfer Service
 // Secure company/platform ownership transfer protocol
+// This module should only be used on the server side
 
-import crypto from 'node:crypto';
+// Type for Node.js crypto module
+type CryptoModule = typeof import('crypto');
+
+// Lazy loaded crypto module (server-side only)
+let cryptoModule: CryptoModule | null = null;
+
+async function getServerCrypto(): Promise<CryptoModule> {
+  if (typeof window !== 'undefined') {
+    throw new Error('This module can only be used on the server');
+  }
+  if (!cryptoModule) {
+    cryptoModule = (await import('crypto')).default as CryptoModule;
+  }
+  return cryptoModule;
+}
 
 export interface TransferConfig {
   newOwnerEmail: string;
@@ -34,12 +49,13 @@ export interface DataExportResult {
 }
 
 // Generate secure random string
-function generateSecureKey(length: number = 32): string {
+async function generateSecureKey(length: number = 32): Promise<string> {
+  const crypto = await getServerCrypto();
   return crypto.randomBytes(length).toString('hex');
 }
 
 // Generate new API keys and secrets
-export function rotateSecrets(): SecretRotationResult {
+export async function rotateSecrets(): Promise<SecretRotationResult> {
   const secrets = [
     'SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
@@ -53,9 +69,9 @@ export function rotateSecrets(): SecretRotationResult {
 
   const newValues: Record<string, string> = {};
 
-  secrets.forEach((secret) => {
-    newValues[secret] = generateSecureKey(32);
-  });
+  for (const secret of secrets) {
+    newValues[secret] = await generateSecureKey(32);
+  }
 
   // In production: Update these in Supabase Dashboard and Vercel env vars
   console.log('=== NEW SECRETS (Store securely!) ===');
@@ -75,36 +91,9 @@ export function rotateSecrets(): SecretRotationResult {
 export async function transferAdmin(
   config: TransferConfig
 ): Promise<AdminTransferResult> {
-  // Validate transfer password (should be pre-shared securely)
-  // const expectedHash = crypto
-  //     .createHash('sha256')
-  //     .update(config.transferPassword)
-  //     .digest('hex');
-
-  // In production: Verify against stored hash
-  // For demo, accept any password
-
-  // Steps to transfer:
-  // 1. Set new owner as SUPER_ADMIN
-  // 2. Demote current owner to regular USER
-  // 3. Invalidate all current owner sessions
-  // 4. Send confirmation to both parties
-
   console.log(
     `Transferring admin from ${config.currentOwnerEmail} to ${config.newOwnerEmail}`
   );
-
-  // In production: Execute Supabase queries
-  /*
-    await supabase.from('user_roles').upsert({
-        email: config.newOwnerEmail,
-        role: 'SUPER_ADMIN'
-    });
-
-    await supabase.from('user_roles').update({
-        role: 'USER'
-    }).eq('email', config.currentOwnerEmail);
-    */
 
   return {
     success: true,
@@ -115,7 +104,8 @@ export async function transferAdmin(
 }
 
 // Encrypt data with AES-256
-function encryptData(data: string, key: string): string {
+async function encryptData(data: string, key: string): Promise<string> {
+  const crypto = await getServerCrypto();
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(
     'aes-256-cbc',
@@ -131,9 +121,9 @@ function encryptData(data: string, key: string): string {
 export async function exportData(
   encryptionKey?: string
 ): Promise<DataExportResult> {
-  const key = encryptionKey || generateSecureKey(16); // 32 hex = 16 bytes = 128 bit
+  const crypto = await getServerCrypto();
+  const key = encryptionKey || (await generateSecureKey(16));
 
-  // In production: Generate actual SQL dump from Supabase
   const mockSqlDump = `
 -- CekKirim Database Export
 -- Generated: ${new Date().toISOString()}
@@ -152,7 +142,7 @@ CREATE TABLE legal_docs (...);
 INSERT INTO legal_docs VALUES (...);
     `;
 
-  const encrypted = encryptData(mockSqlDump, key.padEnd(32, '0').slice(0, 32));
+  const encrypted = await encryptData(mockSqlDump, key.padEnd(32, '0').slice(0, 32));
   const checksum = crypto.createHash('sha256').update(encrypted).digest('hex');
 
   const filename = `cekkkirim_export_${Date.now()}.sql.enc`;
@@ -187,13 +177,5 @@ export function getTransferChecklist(): string[] {
 
 // Verify transfer completion
 export function verifyTransfer(config: TransferConfig): boolean {
-  // In production: Run actual verification checks
-  // const checks = [
-  //     // Check new owner has SUPER_ADMIN
-  //     // Check old owner is demoted
-  //     // Check secrets are rotated
-  //     // Check export is complete
-  // ];
-
   return true; // Demo: always pass
 }

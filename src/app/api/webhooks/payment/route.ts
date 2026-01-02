@@ -74,8 +74,12 @@ async function handleMidtransWebhook(body: any, signature: string) {
   const SERVER_KEY = process.env.PAYMENT_SERVER_KEY || 'mock-server-key';
   if (signature_key) {
     const payload = order_id + status_code + gross_amount + SERVER_KEY;
-    const crypto = await import('crypto');
-    const hash = crypto.createHash('sha512').update(payload).digest('hex');
+    // Use Web Crypto API (Edge compatible)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(payload);
+    const hashBuffer = await crypto.subtle.digest('SHA-512', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     if (hash !== signature_key) {
       return { success: false, error: 'Invalid signature' };
     }

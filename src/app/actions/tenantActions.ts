@@ -4,48 +4,53 @@ import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function updateTenantBranding(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createClient();
+
+  // 1. Auth Check
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  if (!user) return { error: 'Unauthorized' };
-
-  const brandName = formData.get('brandName') as string;
-  const primaryColor = formData.get('primaryColor') as string;
-  const logo = formData.get('logo') as string;
-
-  // Update tenant branding in database
-  const { error } = await (supabase.from('tenants') as any)
-    .update({
-      brand_name: brandName,
-      primary_color: primaryColor,
-      logo_url: logo,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('owner_id', user.id);
-
-  if (error) {
-    console.error('Update tenant branding error:', error);
-    return { error: 'Failed to update branding' };
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
   }
 
+  const tenantId = formData.get('tenantId') as string;
+  const colorPrimary = formData.get('colorPrimary') as string;
+  const logoUrl = formData.get('logoUrl') as string;
+
+  if (!tenantId) return { success: false, error: 'Tenant ID missing' };
+
+  // 2. Validate Inputs
+  if (colorPrimary && !/^#[0-9A-F]{6}$/i.test(colorPrimary)) {
+    return { success: false, error: 'Invalid color format' };
+  }
+
+  // 3. Update DB
+  const { error } = await supabase
+    .from('tenants')
+    .update({
+      color_primary: colorPrimary,
+      logo_url: logoUrl,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', tenantId);
+
+  if (error) {
+    console.error('Update branding failed:', error);
+    return { success: false, error: error.message };
+  }
+
+  // 4. Revalidate
   revalidatePath('/tenant-admin/settings');
+
   return { success: true };
 }
 
-export async function getTenantSettings() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export async function getTenantData(tenantId: string) {
+  const supabase = createClient();
 
-  if (!user) return null;
+  const { data, error } = await supabase.from('tenants').select('*').eq('id', tenantId).single();
 
-  const { data } = await (supabase.from('tenants') as any)
-    .select('*')
-    .eq('owner_id', user.id)
-    .single();
-
+  if (error) return null;
   return data;
 }

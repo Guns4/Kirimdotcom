@@ -76,7 +76,7 @@ export async function getMonthlyReport(year: number, month: number) {
 }
 
 // Anomaly Detection Logic
-export function detectAnomalies(transactions: any[]) {
+export async function detectAnomalies(transactions: any[]) {
     const anomalies: string[] = [];
 
     transactions.forEach(tx => {

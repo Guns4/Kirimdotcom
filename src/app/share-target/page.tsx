@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
 
-// This page handles incoming shares from Android Intent
-export default function ShareTargetPage() {
+// Force dynamic rendering to avoid Suspense boundary issues
+export const dynamic = 'force-dynamic';
+
+function ShareTargetContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [status, setStatus] = useState('Processing shared data...')
@@ -18,10 +20,10 @@ export default function ShareTargetPage() {
 
         // Heuristic: If text looks like a receipt number, go to tracking
         // If it looks like a lot of text, maybe go to parse receipt tool
-        
+
         // Simple logic for MVP:
         const payload = text || title || url
-        
+
         if (payload) {
             // Regex for receipt (Alphanumeric 8-20 chars)
             const receiptRegex = /\b[A-Z0-9]{8,20}\b/g
@@ -43,18 +45,27 @@ export default function ShareTargetPage() {
     }, [searchParams, router])
 
     return (
+        <Card className="w-full max-w-sm">
+            <CardHeader>
+                <CardTitle className="text-center flex flex-col items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    Analyzing Share...
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center text-muted-foreground">
+                {status}
+            </CardContent>
+        </Card>
+    )
+}
+
+// This page handles incoming shares from Android Intent
+export default function ShareTargetPage() {
+    return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <Card className="w-full max-w-sm">
-                <CardHeader>
-                    <CardTitle className="text-center flex flex-col items-center gap-4">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        Analyzing Share...
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center text-muted-foreground">
-                    {status}
-                </CardContent>
-            </Card>
+            <Suspense fallback={<div>Loading...</div>}>
+                <ShareTargetContent />
+            </Suspense>
         </div>
     )
 }

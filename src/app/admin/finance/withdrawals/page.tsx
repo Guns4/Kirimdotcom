@@ -1,6 +1,8 @@
 import { getPendingWithdrawals } from '@/app/actions/bulk-payout';
 import { BulkPayoutPanel } from '@/components/admin/finance/BulkPayoutPanel';
 
+export const dynamic = 'force-dynamic';
+
 export default async function WithdrawalsPage() {
     const withdrawals = await getPendingWithdrawals();
 

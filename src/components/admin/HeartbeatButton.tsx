@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Activity, CheckCircle, AlertTriangle } from 'lucide-react'; // Assuming you have lucide-react
 import { checkInAction } from '@/app/actions/dms-action';
 import { toast } from 'sonner';

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Trophy, TrendingUp, Truck, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

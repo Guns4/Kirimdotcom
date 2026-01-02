@@ -156,8 +156,8 @@ export default function FraudGuard({ adminKey }: { adminKey: string }) {
                                     <td className="p-4">
                                         <span
                                             className={`px-2 py-1 rounded text-xs font-bold ${alert.ai_verdict === 'BLOCK'
-                                                    ? 'bg-red-100 text-red-700'
-                                                    : 'bg-orange-100 text-orange-700'
+                                                ? 'bg-red-100 text-red-700'
+                                                : 'bg-orange-100 text-orange-700'
                                                 }`}
                                         >
                                             {alert.ai_verdict}
@@ -195,7 +195,7 @@ export default function FraudGuard({ adminKey }: { adminKey: string }) {
                 <strong>🛡️ Fraud Detection:</strong>
                 <ul className="mt-2 space-y-1 list-disc list-inside">
                     <li>AI monitors all transactions for suspicious patterns</li>
-                    <li>Risk score >80 requires manual review</li>
+                    <li>Risk score &gt;80 requires manual review</li>
                     <li>"Release" = Allow transaction to proceed</li>
                     <li>"Ban" = Refund amount and block user account</li>
                 </ul>

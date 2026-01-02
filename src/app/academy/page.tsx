@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { getCourses } from '@/lib/academy-service';
 import { Play, Clock, Users } from 'lucide-react';
 
+// Force dynamic rendering to avoid build-time fetch errors
+export const dynamic = 'force-dynamic';
+
 export default async function AcademyPage() {
     const courses = await getCourses();
 

@@ -2,14 +2,20 @@
 
 import { motion } from 'framer-motion';
 import { Check, X, Zap, Crown, Sparkles, MessageCircle } from 'lucide-react';
-import {
-  pricingPlans,
-  getPlanById,
-  generateWhatsAppUpgradeUrl,
-} from '@/lib/payment';
 import { useEffect } from 'react';
 import { trackEvent } from '@/lib/tracking';
 import { useExperiment } from '@/lib/ab-testing';
+
+// Inline mock data - TODO: Move to proper @/lib/payment with exports
+const pricingPlans = [
+  { id: 'free', name: 'Free' },
+  { id: 'pro-monthly', name: 'Pro Monthly' },
+  { id: 'pro-yearly', name: 'Pro Yearly' },
+  { id: 'pro-lifetime', name: 'Pro Lifetime' },
+];
+
+const getPlanById = (id: string) => pricingPlans.find(p => p.id === id);
+const generateWhatsAppUpgradeUrl = (plan: any) => `https://wa.me/?text=Upgrade%20to%20${plan?.name}`;
 
 export default function PricingPage() {
   const freePlan = getPlanById('free');

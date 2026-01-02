@@ -20,12 +20,12 @@ export function TrafficLiveCard() {
                     <Activity className="w-5 h-5" />
                 </div>
             </div>
-
+            
             {/* Fake Chart Visualization */}
             <div className="flex items-end gap-1 h-16 w-full opacity-50">
-                {[40, 65, 55, 80, 95, 70, 60, 85, 100, 75, 65, 90, 80, 60, 45].map((h, i) => (
-                    <div
-                        key={i}
+                {[40,65,55,80,95,70,60,85,100,75,65,90,80,60,45].map((h, i) => (
+                    <div 
+                        key={i} 
                         className="flex-1 bg-indigo-500 hover:bg-indigo-400 transition-all rounded-t-sm"
                         style={{ height: `${h}%` }}
                     />

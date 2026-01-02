@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Download, Package, Calendar } from 'lucide-react'
-import Link from 'link'
+import Link from 'next/link'
 
 export default function MyPurchasesPage() {
     const [purchases, setPurchases] = useState<any[]>([])

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { QrCode, RefreshCw, MessageSquare } from 'lucide-react';
 import { connectWAAction } from '@/app/actions/wa-actions';
 import { toast } from 'sonner';

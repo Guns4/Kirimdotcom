@@ -11,7 +11,7 @@ export default async function AdminBentoGrid() {
             <ProfitCard amount={metrics.profitToday} />
             <ActionRequiredCard data={metrics} />
             <TrafficLiveCard />
-
+            
             {/* Vendor Balance Alert (Conditional) */}
             {metrics.vendorBalanceLow && (
                 <div className="col-span-full bg-red-600 text-white p-4 rounded-xl flex items-center justify-between animate-pulse">

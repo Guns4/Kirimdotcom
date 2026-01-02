@@ -2,21 +2,21 @@ import {
   createServerClient as createSupabaseServerClient,
   type CookieOptions,
 } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import type { Database } from '@/types/database';
 
 // Re-export for backward compatibility
 export { createSupabaseServerClient as createServerClient };
 
 export async function createClient() {
-  // Try to get cookieStore - may fail during static generation or when no request context
-  let cookieStore: Awaited<ReturnType<typeof cookies>> | null = null;
+  // Dynamic import to avoid "next/headers" error in client components
+  let cookieStore: any = null;
 
   try {
+    const { cookies } = await import('next/headers');
     cookieStore = await cookies();
   } catch (error) {
     // Cookies not available - this can happen during static generation
-    // Return a client with empty cookie handlers
+    // or when called from client component context
     console.warn(
       'createClient: cookies() not available, using anonymous client'
     );
