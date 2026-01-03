@@ -10,7 +10,6 @@ export default function TrackingPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (resi) {
-      // Redirect ke halaman detail (Dummy dulu biar jalan)
       router.push(`/track/${resi}`);
     }
   };
@@ -20,7 +19,7 @@ export default function TrackingPage() {
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg border border-gray-100">
         <div className="text-center mb-8">
           <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">í³¦</span>
+            <span className="text-3xl">ğŸ“¦</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Cek Posisi Paket</h1>
           <p className="text-gray-500 mt-2">Lacak pengiriman real-time & akurat</p>
@@ -41,13 +40,9 @@ export default function TrackingPage() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-blue-500/30"
           >
-            Lacak Sekarang í´
+            Lacak Sekarang ğŸ”
           </button>
         </form>
-
-        <div className="mt-6 pt-6 border-t border-gray-100 text-center text-sm text-gray-400">
-          Didukung oleh <span className="font-semibold text-blue-600">KirimDotCom Engine</span>
-        </div>
       </div>
     </div>
   );
