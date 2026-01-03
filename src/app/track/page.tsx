@@ -10,6 +10,7 @@ export default function TrackingPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (resi) {
+      // Redirect ke halaman detail (Dummy dulu biar jalan)
       router.push(`/track/${resi}`);
     }
   };
@@ -43,6 +44,10 @@ export default function TrackingPage() {
             Lacak Sekarang Ì¥ç
           </button>
         </form>
+
+        <div className="mt-6 pt-6 border-t border-gray-100 text-center text-sm text-gray-400">
+          Didukung oleh <span className="font-semibold text-blue-600">KirimDotCom Engine</span>
+        </div>
       </div>
     </div>
   );
