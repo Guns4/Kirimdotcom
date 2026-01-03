@@ -1,23 +1,17 @@
-import { AffiliateLinkedText } from '@/components/affiliate/AffiliateLinkedText';
+import React from 'react';
 
-export default function DemoPage() {
-    const sample = "Paket berisi sepasang sepatu nike dan baju baru untuk lebaran, bonus tas cantik.";
-
-    return (
-        <div className="p-10">
-            <h1 className="text-2xl font-bold mb-4">Affiliate Injector Demo</h1>
-            <div className="border p-4 rounded-lg bg-card mb-4">
-                <h2 className="text-gray-500 text-sm uppercase font-bold mb-2">Original Text</h2>
-                <p>{sample}</p>
-            </div>
-
-            <div className="border p-4 rounded-lg bg-card">
-                <h2 className="text-green-500 text-sm uppercase font-bold mb-2">Injected Text</h2>
-                <p className="text-lg">
-                    <AffiliateLinkedText text={sample} />
-                </p>
-            </div>
-            <p className="mt-4 text-xs text-muted-foreground">Note: Words &apos;sepatu&apos;, &apos;baju&apos;, &apos;tas&apos; should be links.</p>
-        </div>
-    );
+export default function AffiliateDemo() {
+  return (
+    <div className="p-10 max-w-2xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">Affiliate Program</h1>
+      <p className="mb-4">
+        {/* FIX: Menggunakan &apos; pengganti tanda kutip tunggal */}
+        Welcome to our affiliate program. It&apos;s the best way to earn passive income.
+      </p>
+      <div className="p-4 bg-blue-50 rounded border border-blue-200">
+        <h3 className="font-bold">Your Referral Link:</h3>
+        <code className="bg-white px-2 py-1 rounded">https://kirim.com/ref/MEMBER001</code>
+      </div>
+    </div>
+  );
 }
