@@ -1,12 +1,5 @@
 import Link from 'next/link';
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Mail,
-  ExternalLink,
-  Heart,
-} from 'lucide-react';
+import { Facebook, Instagram, Twitter, Mail } from 'lucide-react';
 import { footerLinks } from '@/data/footer-links';
 import { LiteModeToggle } from '../ui/LiteModeToggle';
 import { siteConfig } from '@/config/site';
@@ -201,33 +194,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Tracking Links Horizontal (SEO Juice) */}
-        <div className="mt-12 pt-8 border-t border-border/50">
-          <p className="text-xs text-muted-foreground mb-4 font-medium uppercase tracking-wider">
-            Cek Resi Kilat
-          </p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {footerLinks.courierTracking.map((link, i) => (
-              <Link
-                key={i}
-                href={link.href}
-                className="text-xs text-muted-foreground hover:text-indigo-400 transition-colors"
-                title={link.title}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
         {/* Copyright */}
-        <div className="mt-8 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>
-            &copy; {currentYear} {siteConfig.name} Indonesia. Dibuat dengan{' '}
-            <Heart className="w-3 h-3 inline text-red-500 mx-0.5 animate-pulse" />{' '}
-            untuk UMKM.
+        <div className="mt-8 pt-8 border-t border-border/50 text-center">
+          <p className="text-sm text-muted-foreground">
+            &copy; {currentYear} {siteConfig.name} Indonesia
           </p>
-          <p>CekOngkir & CekResi All-in-One.</p>
         </div>
       </div>
     </footer>
