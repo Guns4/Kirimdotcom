@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-    Activity, DollarSign, Package, Truck, AlertTriangle, 
+import {
+    Activity, DollarSign, Package, Truck, AlertTriangle,
     Globe, Users, Zap, TrendingUp, Server
 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -13,21 +13,12 @@ export default function GodModeDashboard() {
     const [stats, setStats] = useState<any>(null)
     const [history, setHistory] = useState<any[]>([])
 
-    useEffect(() => {
-        // Initial load
-        loadStats()
-
-        // Auto-refresh every 5 seconds
-        const interval = setInterval(loadStats, 5000)
-        return () => clearInterval(interval)
-    }, [])
-
     const loadStats = async () => {
         try {
             const response = await fetch('/api/god-mode/stats')
             const data = await response.json()
             setStats(data)
-            
+
             // Keep last 20 data points for chart
             setHistory(prev => {
                 const updated = [...prev, {
@@ -42,6 +33,15 @@ export default function GodModeDashboard() {
             console.error('Failed to load stats:', error)
         }
     }
+
+    useEffect(() => {
+        // Initial load
+        loadStats()
+
+        // Auto-refresh every 5 seconds
+        const interval = setInterval(loadStats, 5000)
+        return () => clearInterval(interval)
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!stats) {
         return (
@@ -151,7 +151,7 @@ export default function GodModeDashboard() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                                 <XAxis dataKey="time" stroke="#9CA3AF" fontSize={10} />
                                 <YAxis stroke="#9CA3AF" fontSize={10} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ backgroundColor: '#1F2937', border: 'none' }}
                                     labelStyle={{ color: '#F3F4F6' }}
                                 />
@@ -174,7 +174,7 @@ export default function GodModeDashboard() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                                 <XAxis dataKey="time" stroke="#9CA3AF" fontSize={10} />
                                 <YAxis stroke="#9CA3AF" fontSize={10} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ backgroundColor: '#1F2937', border: 'none' }}
                                     labelStyle={{ color: '#F3F4F6' }}
                                 />

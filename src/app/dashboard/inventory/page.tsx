@@ -22,7 +22,7 @@ export default function InventoryPage() {
 
     useEffect(() => {
         loadProducts()
-    }, [])
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleStockAdjustment = async (id: string, amount: number) => {
         await updateStock(id, amount)
@@ -57,7 +57,7 @@ export default function InventoryPage() {
                     title="No Items"
                     description="Start tracking your stock by adding products."
                     icon={Package}
-                    action={{ label: "Add First Product", onClick: () => {} }} // Handled by top button
+                    action={{ label: "Add First Product", onClick: () => { } }} // Handled by top button
                 />
             ) : (
                 <div className="grid gap-4">
@@ -93,12 +93,12 @@ export default function InventoryPage() {
                                     </Button>
                                 </div>
                                 <ProductForm product={product} onSuccess={loadProducts} />
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     className="text-red-400 hover:text-red-600"
                                     onClick={async () => {
-                                        if(confirm('Delete product?')) {
+                                        if (confirm('Delete product?')) {
                                             await deleteProduct(product.id);
                                             loadProducts();
                                         }

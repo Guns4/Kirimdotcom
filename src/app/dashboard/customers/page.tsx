@@ -14,11 +14,6 @@ export default function CRMDashboard() {
     const [query, setQuery] = useState('')
     const [isLoading, setIsLoading] = useState(true)
 
-    useEffect(() => {
-        const timer = setTimeout(() => loadCustomers(), 500)
-        return () => clearTimeout(timer)
-    }, [query])
-
     const loadCustomers = async () => {
         setIsLoading(true)
         const data = await getCustomers(query)
@@ -26,15 +21,20 @@ export default function CRMDashboard() {
         setIsLoading(false)
     }
 
+    useEffect(() => {
+        const timer = setTimeout(() => loadCustomers(), 500)
+        return () => clearTimeout(timer)
+    }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold">Customer Database (CRM)</h1>
-            
+
             <div className="flex gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                    <Input 
-                        placeholder="Search by name or phone..." 
+                    <Input
+                        placeholder="Search by name or phone..."
                         className="pl-9"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
@@ -67,7 +67,7 @@ export default function CRMDashboard() {
                                 <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50">
                                     <td className="p-4 font-medium flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs uppercase">
-                                            {c.name.substring(0,2)}
+                                            {c.name.substring(0, 2)}
                                         </div>
                                         {c.name}
                                         {i < 3 && <Trophy className="w-3 h-3 text-yellow-500" />}

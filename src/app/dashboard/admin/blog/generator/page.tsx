@@ -41,17 +41,17 @@ export default function GeneratorPage() {
   const [loadingArticles, setLoadingArticles] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
-  // Load existing articles on mount
-  useEffect(() => {
-    loadArticles();
-  }, []);
-
   const loadArticles = async () => {
     setLoadingArticles(true);
     const data = await getArticles();
     setArticles(data);
     setLoadingArticles(false);
   };
+
+  // Load existing articles on mount
+  useEffect(() => {
+    loadArticles();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
@@ -230,11 +230,10 @@ export default function GeneratorPage() {
                     <div
                       key={article.id}
                       onClick={() => setSelectedArticle(article)}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition ${
-                        selectedArticle?.id === article.id
+                      className={`p-4 hover:bg-gray-50 cursor-pointer transition ${selectedArticle?.id === article.id
                           ? 'bg-indigo-50 border-l-4 border-indigo-500'
                           : ''
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
@@ -243,11 +242,10 @@ export default function GeneratorPage() {
                           </h3>
                           <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
                             <span
-                              className={`px-2 py-0.5 rounded-full ${
-                                article.status === 'published'
+                              className={`px-2 py-0.5 rounded-full ${article.status === 'published'
                                   ? 'bg-green-100 text-green-700'
                                   : 'bg-yellow-100 text-yellow-700'
-                              }`}
+                                }`}
                             >
                               {article.status}
                             </span>
@@ -276,11 +274,10 @@ export default function GeneratorPage() {
                     </h2>
                     <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-500">
                       <span
-                        className={`px-2.5 py-1 rounded-full font-medium ${
-                          selectedArticle.status === 'published'
+                        className={`px-2.5 py-1 rounded-full font-medium ${selectedArticle.status === 'published'
                             ? 'bg-green-100 text-green-700'
                             : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                          }`}
                       >
                         {selectedArticle.status === 'published'
                           ? '✓ Published'

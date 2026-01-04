@@ -26,10 +26,6 @@ export default function AuditLogPage() {
 
     const supabase = createClient();
 
-    useEffect(() => {
-        fetchLogs();
-    }, []);
-
     const fetchLogs = async () => {
         setLoading(true);
         const { data, error } = await (supabase as any)
@@ -43,6 +39,10 @@ export default function AuditLogPage() {
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchLogs();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const getActionColor = (action: string) => {
         if (action === 'DELETE') return 'text-red-600 bg-red-50';

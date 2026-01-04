@@ -5,14 +5,17 @@ import { motion } from 'framer-motion';
 import { Send, Users } from 'lucide-react';
 import ReferralWidget from '@/components/growth/ReferralWidget';
 
+// Calculate waitlist count once outside component to avoid impure Math.random() during render
+const initialWaitlistCount = 2450 + Math.floor(Math.random() * 50);
+
 export default function WaitlistPage() {
     const [email, setEmail] = useState('');
     const [joined, setJoined] = useState(false);
     const [loading, setLoading] = useState(false);
     const [referralData, setReferralData] = useState({ code: '', count: 0 });
 
-    // Fake Social Proof Number (static start + random increment)
-    const [waitlistCount] = useState(2450 + Math.floor(Math.random() * 50));
+    // Use pre-calculated value
+    const [waitlistCount] = useState(initialWaitlistCount);
 
     const handleJoin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -90,7 +93,7 @@ export default function WaitlistPage() {
                             <p className="text-green-400/80 text-sm">Cek email Anda untuk verifikasi.</p>
                         </div>
 
-                        <ReferralWidget {...referralData} />
+                        <ReferralWidget referralCode={referralData.code} referralCount={referralData.count} />
                     </motion.div>
                 )}
             </main>

@@ -14,16 +14,16 @@ export default function MarketplacePage() {
     const [category, setCategory] = useState('All')
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        loadVendors()
-    }, [category])
-
     const loadVendors = async () => {
         setLoading(true)
         const data = await getVendors(category)
         setVendors(data)
         setLoading(false)
     }
+
+    useEffect(() => {
+        loadVendors()
+    }, [category]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const categories = [
         { id: 'All', label: 'Semua', icon: null },

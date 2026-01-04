@@ -1,5 +1,11 @@
 import TrackingResult from '@/components/tracking/TrackingResult';
 
+// Generate mock dates outside component to avoid impure Date.now() during render
+const now = new Date();
+const oneDayAgo = new Date(now.getTime() - 86400000);
+const twoDaysAgo = new Date(now.getTime() - 172800000);
+const threeDaysAgo = new Date(now.getTime() - 259200000);
+
 export default function TrackingPage() {
     // Mock tracking data
     const mockTracking = {
@@ -8,22 +14,22 @@ export default function TrackingPage() {
         status: 'ON_PROCESS' as const,
         history: [
             {
-                date: new Date().toISOString(),
+                date: now.toISOString(),
                 desc: 'Paket sudah diterima kurir',
                 location: 'Jakarta Pusat',
             },
             {
-                date: new Date(Date.now() - 86400000).toISOString(),
+                date: oneDayAgo.toISOString(),
                 desc: 'Paket dalam proses packing',
                 location: 'Warehouse Jakarta',
             },
             {
-                date: new Date(Date.now() - 172800000).toISOString(),
+                date: twoDaysAgo.toISOString(),
                 desc: 'Pesanan telah dibuat',
                 location: 'Sistem',
             },
             {
-                date: new Date(Date.now() - 259200000).toISOString(),
+                date: threeDaysAgo.toISOString(),
                 desc: 'Menunggu konfirmasi pembayaran',
                 location: 'Sistem',
             },

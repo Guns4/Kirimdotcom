@@ -12,10 +12,6 @@ export default function MyPurchasesPage() {
     const [purchases, setPurchases] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        loadPurchases()
-    }, [])
-
     const loadPurchases = async () => {
         setLoading(true)
         const result = await getUserPurchases()
@@ -24,6 +20,10 @@ export default function MyPurchasesPage() {
         }
         setLoading(false)
     }
+
+    useEffect(() => {
+        loadPurchases()
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (loading) {
         return <div className="container-custom py-8">Loading...</div>

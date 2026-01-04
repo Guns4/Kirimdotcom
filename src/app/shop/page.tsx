@@ -14,16 +14,12 @@ export default function DigitalShopPage() {
     const [loading, setLoading] = useState(true)
     const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set())
 
-    useEffect(() => {
-        loadProducts()
-    }, [])
-
     const loadProducts = async () => {
         setLoading(true)
         const result = await getDigitalProducts()
         if (result?.data) {
             setProducts(result.data)
-            
+
             // Check purchase status for each product
             const purchased = new Set<string>()
             for (const product of result.data) {
@@ -36,6 +32,10 @@ export default function DigitalShopPage() {
         }
         setLoading(false)
     }
+
+    useEffect(() => {
+        loadProducts()
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handlePurchase = async (productId: string, productTitle: string) => {
         try {
@@ -105,7 +105,7 @@ export default function DigitalShopPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map(product => {
                     const isPurchased = purchasedIds.has(product.id)
-                    
+
                     return (
                         <Card key={product.id} className="hover:shadow-lg transition-all">
                             <CardHeader>
@@ -149,7 +149,7 @@ export default function DigitalShopPage() {
                                         </Button>
                                     </Link>
                                 ) : (
-                                    <Button 
+                                    <Button
                                         onClick={() => handlePurchase(product.id, product.title)}
                                         className="w-full gap-2"
                                     >

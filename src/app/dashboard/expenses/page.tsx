@@ -29,11 +29,11 @@ export default function ExpensesPage() {
 
     useEffect(() => {
         loadExpenses()
-    }, [])
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleSubmit = async () => {
         if (!formData.description || !formData.amount) return
-        
+
         const res = await createExpense({
             ...formData,
             amount: Number(formData.amount),
@@ -42,7 +42,7 @@ export default function ExpensesPage() {
 
         if (res.success) {
             toast.success('Expense recorded')
-            setFormData({...formData, description: '', amount: ''})
+            setFormData({ ...formData, description: '', amount: '' })
             loadExpenses()
         } else {
             toast.error('Error recording expense')
@@ -61,20 +61,20 @@ export default function ExpensesPage() {
                     <h2 className="font-semibold flex items-center gap-2">
                         <TrendingDown className="w-5 h-5 text-red-500" /> Record Expense
                     </h2>
-                    <Input 
-                        placeholder="Description (e.g., Lakban)" 
+                    <Input
+                        placeholder="Description (e.g., Lakban)"
                         value={formData.description}
-                        onChange={e => setFormData({...formData, description: e.target.value})}
+                        onChange={e => setFormData({ ...formData, description: e.target.value })}
                     />
-                    <Input 
-                        placeholder="Amount (Rp)" 
+                    <Input
+                        placeholder="Amount (Rp)"
                         type="number"
                         value={formData.amount}
-                        onChange={e => setFormData({...formData, amount: e.target.value})}
+                        onChange={e => setFormData({ ...formData, amount: e.target.value })}
                     />
-                    <Select 
-                        value={formData.category} 
-                        onValueChange={v => setFormData({...formData, category: v})}
+                    <Select
+                        value={formData.category}
+                        onValueChange={v => setFormData({ ...formData, category: v })}
                     >
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
@@ -84,10 +84,10 @@ export default function ExpensesPage() {
                             <SelectItem value="Other">Lainnya</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Input 
-                         type="date"
-                         value={formData.date}
-                         onChange={e => setFormData({...formData, date: e.target.value})}
+                    <Input
+                        type="date"
+                        value={formData.date}
+                        onChange={e => setFormData({ ...formData, date: e.target.value })}
                     />
                     <Button onClick={handleSubmit} className="w-full">Save Expense</Button>
                 </Card>
@@ -103,10 +103,10 @@ export default function ExpensesPage() {
                         {isLoading ? (
                             <div>Loading...</div>
                         ) : expenses.length === 0 ? (
-                            <EmptyState 
-                                title="No Expenses" 
-                                description="Your expense history will appear here." 
-                                icon={Wallet} 
+                            <EmptyState
+                                title="No Expenses"
+                                description="Your expense history will appear here."
+                                icon={Wallet}
                             />
                         ) : (
                             expenses.map(ex => (
@@ -122,12 +122,12 @@ export default function ExpensesPage() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <span className="font-semibold text-red-600">- Rp {Number(ex.amount).toLocaleString()}</span>
-                                        <Button 
-                                            size="icon" 
-                                            variant="ghost" 
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
                                             className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600"
                                             onClick={async () => {
-                                                if(confirm('Delete?')) {
+                                                if (confirm('Delete?')) {
                                                     await deleteExpense(ex.id);
                                                     loadExpenses();
                                                 }

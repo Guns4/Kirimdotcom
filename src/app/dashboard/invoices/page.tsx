@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,16 +16,15 @@ export default function InvoicesPage() {
     const [isCreating, setIsCreating] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
 
+    // Generate invoice number once on mount (avoid impure Date.now in render)
+    const initialInvoiceNumber = useMemo(() => `INV-${Date.now().toString().slice(-6)}`, [])
+
     // Form State (Simplified for demo)
     const [formData, setFormData] = useState({
-        invoice_number: `INV-${Date.now().toString().slice(-6)}`,
+        invoice_number: initialInvoiceNumber,
         customer_name: '',
         items: [{ description: 'Jasa Pengiriman', quantity: 1, price: 0 }]
     })
-
-    useEffect(() => {
-        loadInvoices()
-    }, [])
 
     const loadInvoices = async () => {
         setIsLoading(true)
@@ -33,6 +32,10 @@ export default function InvoicesPage() {
         setInvoices(data)
         setIsLoading(false)
     }
+
+    useEffect(() => {
+        loadInvoices()
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleSubmit = async () => {
         try {
@@ -62,35 +65,35 @@ export default function InvoicesPage() {
                         <CardTitle>Create Invoice</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <Input 
-                            placeholder="Invoice Number" 
+                        <Input
+                            placeholder="Invoice Number"
                             value={formData.invoice_number}
-                            onChange={e => setFormData({...formData, invoice_number: e.target.value})}
+                            onChange={e => setFormData({ ...formData, invoice_number: e.target.value })}
                         />
-                        <Input 
-                            placeholder="Customer Name" 
+                        <Input
+                            placeholder="Customer Name"
                             value={formData.customer_name}
-                            onChange={e => setFormData({...formData, customer_name: e.target.value})}
+                            onChange={e => setFormData({ ...formData, customer_name: e.target.value })}
                         />
                         {/* Simplified Item Input */}
                         <div className="flex gap-2">
-                             <Input 
-                                placeholder="Description" 
+                            <Input
+                                placeholder="Description"
                                 value={formData.items[0].description}
                                 onChange={e => {
                                     const newItems = [...formData.items]
                                     newItems[0].description = e.target.value
-                                    setFormData({...formData, items: newItems})
+                                    setFormData({ ...formData, items: newItems })
                                 }}
                             />
-                            <Input 
+                            <Input
                                 type="number"
-                                placeholder="Price" 
+                                placeholder="Price"
                                 value={formData.items[0].price}
                                 onChange={e => {
                                     const newItems = [...formData.items]
                                     newItems[0].price = Number(e.target.value)
-                                    setFormData({...formData, items: newItems})
+                                    setFormData({ ...formData, items: newItems })
                                 }}
                             />
                         </div>
@@ -102,8 +105,8 @@ export default function InvoicesPage() {
             {isLoading ? (
                 <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
             ) : invoices.length === 0 ? (
-                <EmptyState 
-                    title="Belum ada Invoice" 
+                <EmptyState
+                    title="Belum ada Invoice"
                     description="Buat invoice pertama Anda untuk pelanggan."
                     icon={FileText}
                     action={{ label: "Buat Invoice", onClick: () => setIsCreating(true) }}
@@ -132,14 +135,14 @@ export default function InvoicesPage() {
                                         loading ? 'Loading...' : <><Download className="w-4 h-4" /> PDF</>
                                     }
                                 </PDFDownloadLink>
-                                
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     className="text-red-500 hover:text-red-600 hover:bg-red-50"
                                     onClick={async () => {
-                                        if(confirm('Delete invoice?')) {
-                                            await deleteInvoice(inv.id); 
+                                        if (confirm('Delete invoice?')) {
+                                            await deleteInvoice(inv.id);
                                             loadInvoices();
                                         }
                                     }}

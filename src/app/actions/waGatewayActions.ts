@@ -356,3 +356,7 @@ export async function sendWhatsAppMessage(
     return { success: false, error: 'Failed to send message' };
   }
 }
+
+// Export alias for backward compatibility
+export const sendWAMessage = sendWhatsAppMessage;
+

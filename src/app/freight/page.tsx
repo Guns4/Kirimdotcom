@@ -23,14 +23,14 @@ export default function FreightMarketplacePage() {
         notes: ''
     })
 
-    useEffect(() => {
-        loadForwarders()
-    }, [])
-
     const loadForwarders = async () => {
         const data = await getFreightForwarders()
         setForwarders(data)
     }
+
+    useEffect(() => {
+        loadForwarders()
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleRequestQuote = async () => {
         if (!selectedForwarder) return
@@ -106,7 +106,7 @@ export default function FreightMarketplacePage() {
 
                             <Dialog>
                                 <DialogTrigger asChild>
-                                    <Button 
+                                    <Button
                                         className="w-full gap-2 mt-3"
                                         onClick={() => setSelectedForwarder(forwarder)}
                                     >
@@ -122,27 +122,27 @@ export default function FreightMarketplacePage() {
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium">Origin Port</label>
-                                                <Input 
+                                                <Input
                                                     placeholder="e.g. Shanghai"
                                                     value={quoteForm.originPort}
-                                                    onChange={e => setQuoteForm({...quoteForm, originPort: e.target.value})}
+                                                    onChange={e => setQuoteForm({ ...quoteForm, originPort: e.target.value })}
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium">Destination Port</label>
-                                                <Input 
+                                                <Input
                                                     placeholder="e.g. Jakarta"
                                                     value={quoteForm.destinationPort}
-                                                    onChange={e => setQuoteForm({...quoteForm, destinationPort: e.target.value})}
+                                                    onChange={e => setQuoteForm({ ...quoteForm, destinationPort: e.target.value })}
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">Cargo Type</label>
-                                            <Select 
-                                                value={quoteForm.cargoType} 
-                                                onValueChange={v => setQuoteForm({...quoteForm, cargoType: v})}
+                                            <Select
+                                                value={quoteForm.cargoType}
+                                                onValueChange={v => setQuoteForm({ ...quoteForm, cargoType: v })}
                                             >
                                                 <SelectTrigger>
                                                     <SelectValue />
@@ -158,30 +158,30 @@ export default function FreightMarketplacePage() {
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">Commodity</label>
-                                            <Input 
+                                            <Input
                                                 placeholder="e.g. Electronics, Garments"
                                                 value={quoteForm.commodity}
-                                                onChange={e => setQuoteForm({...quoteForm, commodity: e.target.value})}
+                                                onChange={e => setQuoteForm({ ...quoteForm, commodity: e.target.value })}
                                             />
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium">Weight (kg)</label>
-                                                <Input 
+                                                <Input
                                                     type="number"
                                                     placeholder="1000"
                                                     value={quoteForm.weight}
-                                                    onChange={e => setQuoteForm({...quoteForm, weight: e.target.value})}
+                                                    onChange={e => setQuoteForm({ ...quoteForm, weight: e.target.value })}
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium">Volume (CBM)</label>
-                                                <Input 
+                                                <Input
                                                     type="number"
                                                     placeholder="10"
                                                     value={quoteForm.volume}
-                                                    onChange={e => setQuoteForm({...quoteForm, volume: e.target.value})}
+                                                    onChange={e => setQuoteForm({ ...quoteForm, volume: e.target.value })}
                                                 />
                                             </div>
                                         </div>

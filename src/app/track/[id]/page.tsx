@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default async function TrackingResult({ params }: { params: Promise<{ id: string }> }) {
   // Await params karena di Next.js 15 params adalah Promise
@@ -9,7 +10,7 @@ export default async function TrackingResult({ params }: { params: Promise<{ id:
     <div className="min-h-screen bg-gray-50 p-4 md:p-10">
       <div className="max-w-4xl mx-auto">
         <a href="/track" className="text-blue-600 hover:underline mb-4 inline-block">ΓåÉ Cek Resi Lain</a>
-        
+
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Header Status */}
           <div className="bg-blue-600 p-6 text-white">
@@ -46,7 +47,7 @@ export default async function TrackingResult({ params }: { params: Promise<{ id:
                 <span className="text-4xl">φ╖║∩╕Å</span>
                 <p className="mt-2 font-semibold text-gray-600">Live Map Tracking</p>
                 <p className="text-xs text-gray-400">(Peta akan muncul di sini setelah API Vendor aktif)</p>
-                
+
                 {/* Banner Iklan (Monetisasi) */}
                 <div className="mt-8 p-4 bg-yellow-100 border border-yellow-200 rounded text-yellow-800 text-sm">
                   φ┤Ñ <strong>Promo:</strong> Diskon 50% Ongkir untuk member baru!

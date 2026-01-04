@@ -31,12 +31,12 @@ export default function AdminFinancePage() {
                     <h3 className="text-lg font-bold text-blue-900 mb-3">📋 Admin Instructions</h3>
                     <div className="space-y-2 text-sm text-blue-800">
                         <p>
-                            <strong>✅ To APPROVE:</strong> First manually transfer the money to the user's bank
+                            <strong>✅ To APPROVE:</strong> First manually transfer the money to the user&apos;s bank
                             account, then click APPROVE to record the transaction.
                         </p>
                         <p>
                             <strong>❌ To REJECT:</strong> Click REJECT and the system will automatically refund
-                            the amount to the user's wallet.
+                            the amount to the user&apos;s wallet.
                         </p>
                         <p>
                             <strong>💰 Total User Balance:</strong> This is your liability - make sure your bank

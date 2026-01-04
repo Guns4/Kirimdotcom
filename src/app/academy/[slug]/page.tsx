@@ -21,10 +21,6 @@ export default function CoursePlayerPage() {
     const [completedLessons, setCompletedLessons] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadCourse();
-    }, [slug]);
-
     const loadCourse = async () => {
         try {
             const courseData = await getCourseBySlug(slug);
@@ -53,6 +49,10 @@ export default function CoursePlayerPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        loadCourse();
+    }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleLessonClick = (lessonId: string) => {
         const lesson = modules

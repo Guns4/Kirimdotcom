@@ -188,3 +188,30 @@ export async function getMyReports() {
     return { data: null, error: 'Failed to fetch reports' };
   }
 }
+
+/**
+ * Get all blacklist reports for a phone number
+ */
+export async function getBlacklistReports(phoneNumber: string) {
+  try {
+    const supabase = await createClient();
+
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+
+    if (cleanPhone.length < 10) {
+      return { data: [], error: null };
+    }
+
+    const { data, error } = await (supabase as any)
+      .from('blacklist_reports')
+      .select('*')
+      .eq('customer_phone', cleanPhone)
+      .order('created_at', { ascending: false });
+
+    return { data: data || [], error };
+  } catch (error) {
+    console.error('Error fetching blacklist reports:', error);
+    return { data: [], error: 'Failed to fetch reports' };
+  }
+}
+
