@@ -35,7 +35,7 @@ export default function DigitalShopPage() {
 
     useEffect(() => {
         loadProducts()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handlePurchase = async (productId: string, productTitle: string) => {
         try {

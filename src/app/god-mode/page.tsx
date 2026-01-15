@@ -41,7 +41,7 @@ export default function GodModeDashboard() {
         // Auto-refresh every 5 seconds
         const interval = setInterval(loadStats, 5000)
         return () => clearInterval(interval)
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     if (!stats) {
         return (

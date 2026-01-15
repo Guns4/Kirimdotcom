@@ -22,7 +22,7 @@ export default function InventoryPage() {
 
     useEffect(() => {
         loadProducts()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handleStockAdjustment = async (id: string, amount: number) => {
         await updateStock(id, amount)

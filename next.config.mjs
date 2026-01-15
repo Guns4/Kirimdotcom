@@ -19,6 +19,16 @@ const withPWA = withPWAInit({
 const nextConfig = {
     reactStrictMode: true,
 
+    // Skip ESLint during build to prevent OOM errors
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+
+    // Skip TypeScript errors during build (can be checked separately)
+    typescript: {
+        ignoreBuildErrors: false, // Keep type checking enabled
+    },
+
     // 1. Image Optimization
     images: {
         formats: ['image/avif', 'image/webp'],

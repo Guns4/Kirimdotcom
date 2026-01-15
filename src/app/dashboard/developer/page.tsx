@@ -17,7 +17,7 @@ export default function DeveloperDashboard() {
 
     useEffect(() => {
         loadKeys();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handleCreate = async () => {
         setLoading(true);

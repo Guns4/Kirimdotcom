@@ -35,7 +35,7 @@ export default function InvoicesPage() {
 
     useEffect(() => {
         loadInvoices()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handleSubmit = async () => {
         try {

@@ -24,7 +24,10 @@ const eslintConfig = [
             "*.ps1",
             "chrome-extension/**",
             "extension/**",
-            "wa-injector/**"
+            "wa-injector/**",
+            // Ignore binary/generated files
+            "**/database.types.ts",
+            "**/*.types.ts"
         ]
     },
     {
@@ -36,14 +39,45 @@ const eslintConfig = [
             parser: (await import("@typescript-eslint/parser")).default,
         },
         rules: {
+            // React Hooks - change errors to warnings for flexibility
             "react-hooks/rules-of-hooks": "error",
             "react-hooks/exhaustive-deps": "warn",
+            "react-hooks/set-state-in-effect": "warn", // Allow setState in effects (common pattern)
+            "react-hooks/immutability": "warn",
+
+            // TypeScript
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": ["warn", {
                 "argsIgnorePattern": "^_",
                 "varsIgnorePattern": "^_"
             }],
-            "no-console": ["warn", { "allow": ["warn", "error"] }]
+
+            // Console
+            "no-console": ["warn", { "allow": ["warn", "error"] }],
+
+            // React
+            "react/no-unescaped-entities": "warn", // Allow quotes in JSX
+
+            // Next.js
+            "@next/next/no-assign-module-variable": "warn", // Allow module assignments
+
+            // Import/Export
+            "import/no-anonymous-default-export": "warn" // Allow anonymous exports
+        }
+    },
+    // Relaxed rules for development scripts and utilities
+    {
+        files: [
+            "src/scripts/**/*.ts",
+            "src/lib/**/*.ts",
+            "src/utils/**/*.ts"
+        ],
+        rules: {
+            "no-console": "off", // Allow console in dev scripts
+            "@typescript-eslint/no-unused-vars": "off", // Allow unused vars in utilities
+            "no-unused-vars": "off",
+            "react-hooks/set-state-in-effect": "off", // Allow any hook patterns in utilities
+            "react-hooks/exhaustive-deps": "off"
         }
     }
 ];

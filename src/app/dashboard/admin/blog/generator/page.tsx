@@ -51,7 +51,7 @@ export default function GeneratorPage() {
   // Load existing articles on mount
   useEffect(() => {
     loadArticles();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   const handleGenerate = async () => {
     if (!topic.trim()) {

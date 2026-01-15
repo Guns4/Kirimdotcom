@@ -29,7 +29,7 @@ export default function ExpensesPage() {
 
     useEffect(() => {
         loadExpenses()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handleSubmit = async () => {
         if (!formData.description || !formData.amount) return

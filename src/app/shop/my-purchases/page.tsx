@@ -23,7 +23,7 @@ export default function MyPurchasesPage() {
 
     useEffect(() => {
         loadPurchases()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     if (loading) {
         return <div className="container-custom py-8">Loading...</div>

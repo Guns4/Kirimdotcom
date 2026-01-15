@@ -30,7 +30,7 @@ export default function FreightMarketplacePage() {
 
     useEffect(() => {
         loadForwarders()
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []);  
 
     const handleRequestQuote = async () => {
         if (!selectedForwarder) return
