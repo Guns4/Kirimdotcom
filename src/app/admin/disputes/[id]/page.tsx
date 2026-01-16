@@ -3,8 +3,9 @@ import { DisputePanel } from '@/components/admin/disputes/DisputePanel';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-export default async function DisputeDetailPage({ params }: { params: { id: string } }) {
-    const { dispute, messages, evidence } = await getDisputeDetails(params.id);
+export default async function DisputeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const { dispute, messages, evidence } = await getDisputeDetails(id);
 
     if (!dispute) {
         return <div className="p-8">Sengketa tidak ditemukan</div>;

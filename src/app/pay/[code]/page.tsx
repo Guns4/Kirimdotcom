@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Shield, AlertTriangle } from 'lucide-react';
 
-export default function PaymentPage({ params }: { params: { code: string } }) {
+export default async function PaymentPage({ params }: { params: Promise<{ code: string }> }) {
+    const { code } = await params;
     const searchParams = useSearchParams();
     const item = searchParams.get('item') || 'Unknown Item';
     const price = Number(searchParams.get('price')) || 0;
@@ -54,7 +55,7 @@ export default function PaymentPage({ params }: { params: { code: string } }) {
                             Bayar Sekarang (QRIS/E-Wallet)
                         </Button>
                         <p className="text-xs text-center text-muted-foreground">
-                            Link Transaksi: {params.code}
+                            Link Transaksi: {code}
                         </p>
                     </div>
                 </div>

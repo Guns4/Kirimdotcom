@@ -11,11 +11,12 @@ import { redirect } from 'next/navigation';
 export default async function UserMobileProfile({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   let data;
   try {
-    data = await getUserDetails(params.id);
+    data = await getUserDetails(id);
   } catch (e) {
     return (
       <div className="p-8 text-white min-h-screen bg-gray-900">
@@ -41,7 +42,7 @@ export default async function UserMobileProfile({
           <div>
             <h1 className="text-xl font-bold">{data.email}</h1>
             <p className="text-blue-100 text-sm">
-              User ID: {params.id.slice(0, 8)}...
+              User ID: {id.slice(0, 8)}...
             </p>
           </div>
         </div>
@@ -58,7 +59,7 @@ export default async function UserMobileProfile({
         <form
           action={async () => {
             'use server';
-            await topupUserWallet(params.id, 50000);
+            await topupUserWallet(id, 50000);
           }}
         >
           <button className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 active:scale-95 transition-transform hover:bg-gray-50">
@@ -70,7 +71,7 @@ export default async function UserMobileProfile({
         <form
           action={async () => {
             'use server';
-            await resetUserPassword(params.id);
+            await resetUserPassword(id);
           }}
         >
           <button className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 active:scale-95 transition-transform hover:bg-gray-50">
@@ -82,7 +83,7 @@ export default async function UserMobileProfile({
         <form
           action={async () => {
             'use server';
-            await banUser(params.id);
+            await banUser(id);
           }}
           className="col-span-2"
         >

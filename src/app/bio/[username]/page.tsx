@@ -2,8 +2,9 @@ import { getBioProfile, trackBioEvent } from '@/lib/bio-link';
 import BioPageView from '@/components/bio/BioPageView';
 import { notFound } from 'next/navigation';
 
-export default async function BioPage({ params }: { params: { username: string } }) {
-    const profile = await getBioProfile(params.username);
+export default async function BioPage({ params }: { params: Promise<{ username: string }> }) {
+    const { username } = await params;
+    const profile = await getBioProfile(username);
 
     if (!profile) {
         notFound();
