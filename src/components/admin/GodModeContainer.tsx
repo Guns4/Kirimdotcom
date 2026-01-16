@@ -199,7 +199,7 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     {activeTab === 'CMS' && <ContentCMS adminKey={adminKey} />}
                     {activeTab === 'MONETIZATION' && <MonetizationManager adminKey={adminKey} />}
                     {activeTab === 'SECURITY' && <SecurityView adminKey={adminKey} />}
-                    {activeTab === 'FINANCE' && <FinancialDashboard customKey={adminKey} />}
+                    {activeTab === 'FINANCE' && <FinancialDashboard />}
                     {activeTab === 'USERS' && <UserManager adminKey={adminKey} />}
                     {activeTab === 'SETTINGS' && <SettingsManager adminKey={adminKey} />}
                 </div>

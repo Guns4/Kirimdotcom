@@ -103,7 +103,7 @@ export default function GodModeDashboard() {
                 </header>
 
                 {/* DYNAMIC VIEW */}
-                {activeTab === 'FINANCE' && <FinancialDashboard customKey={adminKey} />}
+                {activeTab === 'FINANCE' && <FinancialDashboard />}
             </div>
         </div>
     );
