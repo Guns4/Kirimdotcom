@@ -98,12 +98,6 @@ export const NAV_GROUPS: NavGroup[] = [
         description: 'Top up pulsa, PLN, BPJS',
       },
       {
-        label: 'Supplier Directory',
-        href: '/marketplace',
-        icon: Package,
-        description: 'Cari supplier dropship',
-      },
-      {
         label: 'Booking Kurir',
         href: '/dashboard/orders/new',
         icon: MapPin,
@@ -300,11 +294,7 @@ export const ADMIN_NAV: NavItem[] = [
     href: '/admin/transactions',
     icon: CreditCard,
   },
-  {
-    label: 'Products',
-    href: '/admin/products',
-    icon: Package,
-  },
+
   {
     label: 'Ads',
     href: '/admin/ads',
