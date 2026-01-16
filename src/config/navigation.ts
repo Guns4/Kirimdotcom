@@ -189,12 +189,6 @@ export const DASHBOARD_NAV: NavItem[] = [
 
 export const TOOLS_SHORTCUTS: NavItem[] = [
   {
-    label: 'Kalkulator Marketplace',
-    href: '/tools/kalkulator-marketplace',
-    icon: Calculator,
-    description: 'Hitung profit & fee',
-  },
-  {
     label: 'Generator Caption',
     href: '/tools/generator-caption',
     icon: Wand2,

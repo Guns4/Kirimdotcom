@@ -162,12 +162,6 @@ export const footerLinks = {
       title: 'Buat caption jualan dengan AI',
     },
     {
-      label: 'Kalkulator Marketplace',
-      href: '/tools/kalkulator-marketplace',
-      icon: Calculator,
-      title: 'Hitung keuntungan jualan di MP',
-    },
-    {
       label: 'Cek Resi Massal',
       href: '/bulk-tracking',
       icon: Grid,
