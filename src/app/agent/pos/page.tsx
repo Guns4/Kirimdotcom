@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { PosLayout } from '@/components/agent/PosLayout';
-import { ReceiptPrinter } from '@/components/agent/ReceiptPrinter';
 import {
   Card,
   CardContent,
@@ -21,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Trash2, Calculator } from 'lucide-react';
+import { Plus, Trash2, Calculator, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CartItem {
@@ -239,7 +238,47 @@ export default function AgentPosPage() {
 
         {/* Right Column: Actions & Printer */}
         <div className="space-y-6">
-          <ReceiptPrinter transactionData={transaction} />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Printer className="h-5 w-5" />
+                Receipt
+              </CardTitle>
+              <CardDescription>
+                Print receipt manually after transaction
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {transaction ? (
+                <div className="space-y-3 text-sm">
+                  <div className="border-b pb-2">
+                    <p className="font-bold">Transaction: {transaction.id}</p>
+                    <p className="text-xs text-muted-foreground">{transaction.date}</p>
+                  </div>
+                  <div className="space-y-1">
+                    {transaction.items.map((item: any) => (
+                      <div key={item.id} className="flex justify-between text-xs">
+                        <span>{item.name} ({item.weight}kg)</span>
+                        <span>Rp {(item.weight * item.price).toLocaleString('id-ID')}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t pt-2 flex justify-between font-bold">
+                    <span>Total:</span>
+                    <span>Rp {transaction.total.toLocaleString('id-ID')}</span>
+                  </div>
+                  <Button className="w-full" onClick={() => window.print()}>
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print Receipt
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Complete a transaction to generate receipt
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
           {transaction && (
             <Card className="bg-green-50 border-green-200">
