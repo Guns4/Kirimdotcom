@@ -26,7 +26,6 @@ import ProfitEngine from './ProfitEngine';
 import MobileAppManager from './MobileAppManager';
 import PluginRepository from './PluginRepository';
 import AgentCommandCenter from './AgentCommandCenter';
-import IoTDeviceGrid from './IoTDeviceGrid';
 import FleetLiveMap from './FleetLiveMap';
 import AIControlDeck from './AIControlDeck';
 import CourierControl from './CourierControl';
@@ -183,7 +182,6 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                         </div>
                     )}
                     {activeTab === 'O2O' && <AgentCommandCenter adminKey={adminKey} />}
-                    {activeTab === 'IOT' && <IoTDeviceGrid adminKey={adminKey} />}
                     {activeTab === 'FLEET' && <FleetLiveMap adminKey={adminKey} />}
                     {activeTab === 'MOBILE' && <MobileAppManager adminKey={adminKey} />}
                     {activeTab === 'PLUGINS' && <PluginRepository adminKey={adminKey} />}

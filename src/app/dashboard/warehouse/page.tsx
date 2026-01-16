@@ -1,6 +1,5 @@
 'use client'
 
-import { BarcodeScanner } from '@/components/warehouse/BarcodeScanner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Package, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -55,7 +54,13 @@ export default function WarehousePage() {
                 </Card>
             </div>
 
-            <BarcodeScanner />
+            <Card>
+                <CardContent className="pt-6">
+                    <p className="text-slate-500 text-center">
+                        Warehouse statistics and inventory management
+                    </p>
+                </CardContent>
+            </Card>
         </div>
     )
 }
