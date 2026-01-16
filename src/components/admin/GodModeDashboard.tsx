@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import FinancialDashboard from './FinancialDashboard';
-import MarketplaceManager from './MarketplaceManager';
 
 export default function GodModeDashboard() {
     const [adminKey, setAdminKey] = useState('');
@@ -65,28 +64,18 @@ export default function GodModeDashboard() {
                     <button
                         onClick={() => setActiveTab('FINANCE')}
                         className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'FINANCE'
-                                ? 'bg-blue-600 text-white'
-                                : 'text-gray-400 hover:bg-gray-800'
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-400 hover:bg-gray-800'
                             }`}
                     >
                         💰 Keuangan (Fintech)
                     </button>
 
                     <button
-                        onClick={() => setActiveTab('MARKET')}
-                        className={`w-full text-left px-4 py-3 rounded transition ${activeTab === 'MARKET'
-                                ? 'bg-purple-600 text-white'
-                                : 'text-gray-400 hover:bg-gray-800'
-                            }`}
-                    >
-                        📦 Toko & SMM
-                    </button>
-
-                    <button
                         disabled
                         className="w-full text-left px-4 py-3 rounded text-gray-600 cursor-not-allowed"
                     >
-                        ⚙️ Utilitas & Ongkir (Soon)
+                        ⚙️ Utilities & Tools (Soon)
                     </button>
                 </nav>
 
@@ -115,7 +104,6 @@ export default function GodModeDashboard() {
 
                 {/* DYNAMIC VIEW */}
                 {activeTab === 'FINANCE' && <FinancialDashboard customKey={adminKey} />}
-                {activeTab === 'MARKET' && <MarketplaceManager adminKey={adminKey} />}
             </div>
         </div>
     );

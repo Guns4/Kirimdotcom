@@ -11,7 +11,6 @@ import OverviewView from './views/OverviewView';
 import SecurityView from './views/SecurityView';
 import UserManager from './views/UserManager';
 import FinancialDashboard from './FinancialDashboard';
-import MarketplaceManager from './MarketplaceManager';
 import MonetizationManager from './MonetizationManager';
 import SettingsManager from './SettingsManager';
 import SaaSManager from './SaaSManager';
@@ -201,7 +200,6 @@ export default function GodModeContainer({ adminKey }: { adminKey: string }) {
                     {activeTab === 'MONETIZATION' && <MonetizationManager adminKey={adminKey} />}
                     {activeTab === 'SECURITY' && <SecurityView adminKey={adminKey} />}
                     {activeTab === 'FINANCE' && <FinancialDashboard customKey={adminKey} />}
-                    {activeTab === 'MARKET' && <MarketplaceManager adminKey={adminKey} />}
                     {activeTab === 'USERS' && <UserManager adminKey={adminKey} />}
                     {activeTab === 'SETTINGS' && <SettingsManager adminKey={adminKey} />}
                 </div>
